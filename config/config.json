@@ -8,6 +8,10 @@
     "dialect": "sqlite"
   },
   "production": {
+    "storage": "./db.development.sqlite",
+    "dialect": "sqlite"
+  },
+  "production-stub": {
     "username": "root",
     "password": null,
     "database": "database_production",
