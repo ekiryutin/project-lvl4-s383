@@ -23,15 +23,16 @@ import container from './container';
 export default () => {
   const app = new Koa();
 
-  const rollbar = new Rollbar(process.env.ROLLBAR_ACCESS_TOKEN);
-  app.use(async (ctx, next) => {
-    try {
-      await next();
-    } catch (err) {
-      rollbar.error(err, ctx.request);
-    }
-  });
-
+  if (process.env.NODE_ENV !== 'test') {
+    const rollbar = new Rollbar(process.env.ROLLBAR_ACCESS_TOKEN);
+    app.use(async (ctx, next) => {
+      try {
+        await next();
+      } catch (err) {
+        rollbar.error(err, ctx.request);
+      }
+    });
+  }
   app.keys = ['some secret hurr'];
   app.use(session(app));
   app.use(flash());
