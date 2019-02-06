@@ -9,14 +9,24 @@
   "engines": {
     "node": "9"
   },
-  "jest": {
-    "testEnvironment": "node"
-  },
   "scripts": {
     "test": "jest",
     "start": "gulp server",
     "build": "npx webpack -p --env production",
     "postinstall": "npm run build"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageReporters": [
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "routes/*.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/__tests__/__fixtures__"
+    ]
   },
   "repository": {
     "type": "git",

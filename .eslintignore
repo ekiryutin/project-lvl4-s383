@@ -2,3 +2,5 @@ node_modules
 dist
 flow-typed
 public
+coverage
+

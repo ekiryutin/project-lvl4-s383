@@ -15,15 +15,19 @@ describe('requests', () => {
   });
 
   it('GET 200', async () => {
-    const res = await request.agent(server)
-      .get('/');
-    expect(res).toHaveHTTPStatus(200);
+    // const res =
+    await request.agent(server)
+      .get('/')
+      .expect(200);
+    // expect(res).toHaveHTTPStatus(200);
   });
 
   it('GET 404', async () => {
-    const res = await request.agent(server)
-      .get('/wrong-path');
-    expect(res).toHaveHTTPStatus(404);
+    // const res =
+    await request.agent(server)
+      .get('/wrong-path')
+      .expect(404);
+    // expect(res).toHaveHTTPStatus(404);
   });
 
   afterEach((done) => {
