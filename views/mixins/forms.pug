@@ -1,22 +1,37 @@
 - const getInputName = (f, property) => `${f.name}[${property}]`
+- const isRequired = (f, property) => { const validate = f.model[property].validate; return validate ? validate.notEmpty : null; }
 
 mixin formFor(f, options = {})
   - const url = _.get(options, 'url');
   - const method = _.get(options, 'method', 'get').toLowerCase();
   - const isStandart = _.includes(['get', 'post'], method);
-  form(action= url method= isStandart ? method : 'post')
-    if !isStandart
-      input(name='_method' type='hidden' value= method)
-    block
+  div.card.shadow-sm
+    form(action= url method= isStandart ? method : 'post' class='card-body')
+      if !isStandart
+        input(name='_method' type='hidden' value= method)
+      block
 
-mixin input(f, property, options = { as: 'text' })
+mixin input(f, property, caption, options = { as: 'text' })
   - const value = f.object[property] === undefined ? '' : f.object[property]
+  - const invalidClass = f.errors[property] ? 'is-invalid' : '';
   .form-group(class=(f.errors[property] && 'has-danger'))
-    label= property
-    input(name=getInputName(f, property) class='form-control' type=options['as'] value=`${value}`)
+    label= caption
+      if isRequired(f, property) 
+        sup.text-danger.pl-1 *
+    input.form-control(name=getInputName(f, property) class=`${invalidClass}` autocomplete='off' type=options['as'] value=`${value}`)
     if f.errors[property]
-      .form-control-feedback= f.errors[property].map(({ message }) => message).join('. ')
+      .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
+
+mixin title(name)
+  h4.text-muted= name
+
+mixin toolbar(primaryName = 'Сохранить')
+  .form-group.text-right.pt-3
+    // a.btn.btn-light(onclick='history.back(); return false;') Отменить
+    a.btn.btn-light(href= referer.get()) Отменить
+    button.btn.btn-primary.pl-4.pr-4(type='submit')= primaryName
 
 mixin button(f, type = 'submit')
   .form-group
-    input(class='btn' type=`${type}` value=`Save`)
+    input(class='btn btn-primary' type=`${type}` value=`Save`)
+

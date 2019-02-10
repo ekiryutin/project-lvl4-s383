@@ -2,34 +2,56 @@ import { encrypt } from '../lib/secure';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    firstName: DataTypes.STRING,
+    firstName: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          msg: 'Введите имя',
+        },
+      },
+    },
     lastName: DataTypes.STRING,
     email: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: {
+        msg: 'Пользователь с таким e-mail уже есть',
+      },
+      allowNull: false,
       validate: {
-        isEmail: true,
+        notEmpty: {
+          msg: 'Введите e-mail',
+        },
+        isEmail: {
+          msg: 'Неверный формат e-mail',
+        },
       },
     },
     passwordDigest: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         notEmpty: true,
       },
     },
     password: {
       type: DataTypes.VIRTUAL,
-      set: (value) => {
+      set(value) {
         this.setDataValue('passwordDigest', encrypt(value));
         this.setDataValue('password', value);
         return value;
       },
       validate: {
-        len: [1, +Infinity],
+        notEmpty: {
+          msg: 'Введите пароль',
+        },
+        len: {
+          args: [3, +Infinity],
+          msg: 'Пароль должен быть не менее 3 символов',
+        },
       },
     },
   }, {
-    classMethods: {
+    getterMethods: {
       fullName() {
         return `${this.firstName} ${this.lastName}`;
       },

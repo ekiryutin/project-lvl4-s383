@@ -21,9 +21,10 @@ import addRoutes from './routes';
 import container from './container';
 
 export default () => {
+  const mode = process.env.NODE_ENV || 'development';
   const app = new Koa();
 
-  if (process.env.NODE_ENV !== 'test') {
+  if (mode !== 'test') {
     const rollbar = new Rollbar(process.env.ROLLBAR_ACCESS_TOKEN);
     app.use(async (ctx, next) => {
       try {
@@ -53,7 +54,7 @@ export default () => {
   }));
   app.use(serve(path.join(__dirname, 'public')));
 
-  if (process.env.NODE_ENV === 'development') {
+  if (mode === 'development') {
     koaWebpack({
       config: webpackConfig,
     }).then(m => app.use(m));
@@ -67,7 +68,7 @@ export default () => {
 
   const pug = new Pug({
     viewPath: path.join(__dirname, 'views'),
-    noCache: process.env.NODE_ENV === 'development',
+    noCache: mode === 'development',
     debug: true,
     pretty: true,
     compileDebug: true,

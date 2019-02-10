@@ -1,9 +1,13 @@
 extends /layouts/application.pug
 
 block content
-  +formFor(f, { url: urlFor('users'), method: 'post' })
-    +input(f, 'email')
-    +input(f, 'firstName')
-    +input(f, 'lastName')
-    +input(f, 'password', { as: 'password' })
-    +button(f)
+  div.row.justify-content-center
+    div.col-xl-4.col-lg-5.col-md-6.col-sm-8
+      +title('Регистрация')
+      +formFor(f, { url: urlFor('users'), method: 'post' })
+        +input(f, 'email', 'E-mail')
+        +input(f, 'firstName', 'Имя')
+        +input(f, 'lastName', 'Фамилия')
+        +input(f, 'password', 'Пароль', { as: 'password' })
+        +toolbar()
+

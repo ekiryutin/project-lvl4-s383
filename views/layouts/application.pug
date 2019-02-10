@@ -5,9 +5,10 @@ html(lang="en")
   head
     title TaskManager 
       = Title
+    link(rel='stylesheet' href='/assets/style.css')
     script(src='/assets/main.js')
   body.bg-light
-    nav.navbar.navbar-expand-lg.navbar-light.bg-white.shadow-sm
+    nav.navbar.navbar-expand-md.navbar-light.bg-white.shadow-sm
       .container
         a.navbar-brand(href="/") Task Manager
         button.navbar-toggler(data-toggle="collapse" data-target="#navbarSupportedContent")
@@ -22,11 +23,14 @@ html(lang="en")
                 a.nav-link(href=urlFor('session') data-method='delete' rel='nofollow') Выйти
             else
               li.nav-item
-                a.nav-link(href=urlFor('newSession')) Войти
+                a.nav-link(href=urlFor('newSession')) Вход
               li.nav-item
                 a.nav-link(href=urlFor('newUser')) Регистрация
     .container.pt-3
       - const msg = flash.get()
       if msg
-        .alert.alert-info.m-3= msg
+        .alert.alert-dismissible.fade.show(class=`alert-${msg.type}`)
+          = msg.text
+          button.close(type='button' data-dismiss='alert' area-label='Close')
+            span(area-hidden='true') &times;
       block content

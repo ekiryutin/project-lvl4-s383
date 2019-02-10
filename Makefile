@@ -50,7 +50,13 @@ compose-publish: compose-dist-build
 test:
 	npm test
 
+build:
+	npm run build
+
 lint:
 	npx eslint .
+
+migrate:
+	node_modules/.bin/sequelize db:migrate
 
 .PHONY: test
