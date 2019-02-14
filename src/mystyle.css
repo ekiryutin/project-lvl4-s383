@@ -1,0 +1,5 @@
+
+.thead-sticky th {
+  position: sticky;
+  top: 0;
+}

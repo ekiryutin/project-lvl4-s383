@@ -6,26 +6,33 @@ html(lang="en")
     title TaskManager 
       = Title
     link(rel='stylesheet' href='/assets/style.css')
-    script(src='/assets/main.js')
   body.bg-light
     nav.navbar.navbar-expand-md.navbar-light.bg-white.shadow-sm
       .container
         a.navbar-brand(href="/") Task Manager
-        button.navbar-toggler(data-toggle="collapse" data-target="#navbarSupportedContent")
+        button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' area-expanded='false')
           span.navbar-toggler-icon
-        .collapse.navbar-collapse
+        .collapse.navbar-collapse#navbarSupportedContent
           ul.navbar-nav.mr-auto
             li.nav-item.active
               a.nav-link(href=urlFor('users')) Пользователи
           ul.navbar-nav
             if isSignedIn()
+              //- li.nav-item
+              //-   a.nav-link(href='#')
+              //-     i.far.fa-bell
               li.nav-item
-                a.nav-link(href=urlFor('session') data-method='delete' rel='nofollow') Выйти
+                a.nav-link(href='#')
+                  i.fas.fa-user
+                  span.pl-1= userName()
+              li.nav-item
+                a.nav-link(href=urlFor('session') data-method='delete' rel='nofollow' data-toggle='tooltip' title='Выйти' data-placement='bottom')
+                  i.fas.fa-sign-out-alt
             else
               li.nav-item
-                a.nav-link(href=urlFor('newSession')) Вход
+                a.btn.btn-outline-primary.btn-sm(href=urlFor('newSession')) Вход
               li.nav-item
-                a.nav-link(href=urlFor('newUser')) Регистрация
+                a.btn.btn-link.btn-sm(href=urlFor('newUser')) Регистрация
     .container.pt-3
       - const msg = flash.get()
       if msg
@@ -34,3 +41,6 @@ html(lang="en")
           button.close(type='button' data-dismiss='alert' area-label='Close')
             span(area-hidden='true') &times;
       block content
+  script(src='/assets/vendor.js')
+  script(src='/assets/main.js')
+

@@ -1,8 +1,16 @@
+import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import $ from 'jquery';
 
-// import $ from 'jquery';
-// import popper from 'popper.js';
-// import bootstrap from 'bootstrap';
+import '@fortawesome/fontawesome-free/js/fontawesome';
+import '@fortawesome/fontawesome-free/js/solid';
+import '@fortawesome/fontawesome-free/js/regular';
+import '@fortawesome/fontawesome-free/js/brands';
 
-console.log('-- init -- ');
-// alert('init');
+import './mystyle.css';
+
+$(() => {
+  console.log('init');
+  // enable toolips
+  $('[data-toggle="tooltip"]').tooltip();
+});

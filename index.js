@@ -19,6 +19,7 @@ import Rollbar from 'rollbar';
 import webpackConfig from './webpack.config';
 import addRoutes from './routes';
 import container from './container';
+import Auth from './lib/Auth';
 
 export default () => {
   const mode = process.env.NODE_ENV || 'development';
@@ -41,9 +42,12 @@ export default () => {
     ctx.state = {
       flash: ctx.flash,
       isSignedIn: () => ctx.session.userId !== undefined,
+      userName: () => ctx.session.userName,
+      auth: new Auth(ctx.session.userId),
     };
     await next();
   });
+
   app.use(bodyParser());
   app.use(methodOverride((req) => {
     // return req?.body?._method;
@@ -59,7 +63,6 @@ export default () => {
       config: webpackConfig,
     }).then(m => app.use(m));
   }
-
   app.use(koaLogger());
   const router = new Router();
   addRoutes(router, container);

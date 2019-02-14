@@ -1,37 +1,95 @@
 - const getInputName = (f, property) => `${f.name}[${property}]`
-- const isRequired = (f, property) => { const validate = f.model[property].validate; return validate ? validate.notEmpty : null; }
+- const isRequired = (f, property) => { const obj = f.model[property]; return obj && obj.validate ? obj.validate.notEmpty : null; }
 
 mixin formFor(f, options = {})
   - const url = _.get(options, 'url');
   - const method = _.get(options, 'method', 'get').toLowerCase();
   - const isStandart = _.includes(['get', 'post'], method);
-  div.card.shadow-sm
-    form(action= url method= isStandart ? method : 'post' class='card-body')
+  div.card.card-body.shadow-sm
+    form(action= url method= isStandart ? method : 'post')
       if !isStandart
         input(name='_method' type='hidden' value= method)
       block
 
+//- input for Vertical form
 mixin input(f, property, caption, options = { as: 'text' })
   - const value = f.object[property] === undefined ? '' : f.object[property]
   - const invalidClass = f.errors[property] ? 'is-invalid' : '';
   .form-group(class=(f.errors[property] && 'has-danger'))
     label= caption
-      if isRequired(f, property) 
-        sup.text-danger.pl-1 *
+      //- if isRequired(f, property) 
+      //-  sup.text-danger.pl-1 *
     input.form-control(name=getInputName(f, property) class=`${invalidClass}` autocomplete='off' type=options['as'] value=`${value}`)
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
+//- input for Horizontal form
+mixin inputH(f, property, caption, options = { as: 'text' }, labelCol = 'col-4', inputCol = 'col-8')
+  - const value = f.object[property] === undefined ? '' : f.object[property]
+  - const invalidClass = f.errors[property] ? 'is-invalid' : '';
+  .form-group.row(class=(f.errors[property] && 'has-danger'))
+    label.col-form-label.text-muted(class=`${labelCol}`)= caption
+      if isRequired(f, property) 
+        sup.text-danger.pl-1 *
+    div(class= inputCol)
+      input.form-control(name=getInputName(f, property) class=`${invalidClass}` autocomplete='off' type=options['as'] value= value)
+      if f.errors[property]
+        .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
+
+
+mixin inputTextH(object, property, caption, labelCol = 'col-4', inputCol = 'col-8')
+  - const value = object[property] === undefined ? '' : object[property]
+  .form-group.row
+    label.col-form-label.text-muted(class= labelCol)= caption
+    div(class= inputCol)
+      input.form-control.form-control-plaintext.border-bottom(value= value)
+
 mixin title(name)
-  h4.text-muted= name
+  h4.pb-1
+    span.pr-2= name
+    block
 
-mixin toolbar(primaryName = 'Сохранить')
+mixin formFooter(primaryName = 'Сохранить')
   .form-group.text-right.pt-3
-    // a.btn.btn-light(onclick='history.back(); return false;') Отменить
-    a.btn.btn-light(href= referer.get()) Отменить
-    button.btn.btn-primary.pl-4.pr-4(type='submit')= primaryName
+    a.btn.btn-light(onclick='history.back(); return false;') Отменить
+    button.btn.btn-primary.pl-4.pr-4(type='submit')
+      //- .spinner-border.spinner-border-sm.mr-1.invisible
+      = primaryName
 
-mixin button(f, type = 'submit')
-  .form-group
-    input(class='btn btn-primary' type=`${type}` value=`Save`)
+mixin pagination(options)
+  - var current = Number(options.pages.currentPage);
+  div
+    ul.pagination
+      - var n = 1;
+      while n <= options.pages.pageCount
+        - const isActive = (n === current ? 'active' : '');
+        li.page-item(class= isActive)
+          a.page-link(href= `${options.url}?page=${n}`)= n++
+      //- li.text-muted.align-middle.pl-2= `Найдено: ${options.pages.recordCount} записей`
+
+mixin buttonEdit(url)
+  a.btn.btn-light(href= url data-toggle='tooltip' title='Изменить' data-placement='top')
+    i.fas.fa-pen.text-muted
+    //- span.pl-1 Изменить
+
+mixin buttonDelete(dataTarget = '#modalConfirmDelete')
+  button.btn.btn-light(type='button' data-toggle='modal' data-target= dataTarget)
+    i.fas.fa-trash-alt.text-muted
+
+mixin confirmDelete(msg, url, modalId = 'modalConfirmDelete')
+  .modal.fade(id= modalId tabindex='-1' role='dialog' area-hidden='true')
+    .modal-dialog.modal-dialog-centered(rolde='document')
+      .modal-content
+        .modal-header
+          h5.modal-title Подтверждение
+          button(type='button' class='close' data-dismiss='modal' area-label='close')
+            span(area-hidden='true') &times;
+        .modal-body
+          p= msg
+        .modal-footer
+          button.btn.btn-light(type='button' data-dismiss='modal') Отменить
+          a.btn.btn-danger.pl-3.pr-3(href=url data-method='delete' rel='nofollow') Удалить
+          //- form(action= url method='post')
+          //-   input(name='_method' type='hidden' value='delete')
+          //-   button.btn.btn-warning.pl-3.pr-3(type='submit') Удалить
 

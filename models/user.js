@@ -1,3 +1,4 @@
+import dateFns from 'date-fns';
 import { encrypt } from '../lib/secure';
 
 export default (sequelize, DataTypes) => {
@@ -54,6 +55,10 @@ export default (sequelize, DataTypes) => {
     getterMethods: {
       fullName() {
         return `${this.firstName} ${this.lastName}`;
+      },
+      formattedDate() {
+        const date = new Date(this.createdAt);
+        return dateFns.format(date, 'DD.MM.YYYY');
       },
       // associate(models) {
       //   // associations can be defined here

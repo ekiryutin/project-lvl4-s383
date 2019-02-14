@@ -5,8 +5,8 @@ block content
   //-   f: { name, object, model, errors }
   div.row.justify-content-center
     div.col-xl-5.col-lg-6.col-md-7.col-sm-9
-      +title('Регистрация')
-      +formFor(f, { url: urlFor('saveUser'), method: 'post' })
+      +title('Пользователь')
+      +formFor(f, { url: urlFor('updateUser', f.object.id), method: 'patch' })
         +inputH(f, 'firstName', 'Имя')
         +inputH(f, 'lastName', 'Фамилия')
         +inputH(f, 'email', 'E-mail')

@@ -1,12 +1,16 @@
 const path = require('path');
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  entry: ['./src/index.js'], // webpack-hot-client in koa-webpack
+  entry: {
+    main: ['./src/index.js'],
+    vendor: ['jquery', 'jquery-ujs', 'popper.js', 'bootstrap'],
+  },
   output: {
     path: path.join(__dirname, 'public', 'assets'),
-    // filename: 'main.js', // default
+    filename: '[name].js',
     publicPath: '/public/assets/',
   },
   module: {
@@ -22,16 +26,33 @@ module.exports = {
       },
     ],
   },
+  /* optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        default: {
+          enforce: true,
+          priority: 1,
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: 2,
+          name: 'vendors',
+          enforce: true,
+          chunks: 'all',
+        }
+      }
+    }
+  }, */
   plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery',
+      Popper: ['popper.js', 'default'],
+    }),
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
-
-    // new webpack.ProvidePlugin({
-    //   $: 'jquery',
-    //   jQuery: 'jquery',
-    //   'window.jQuery': 'jquery',
-    //   Popper: ['popper.js', 'default'],
-    // }),
   ],
 };
