@@ -1,4 +1,4 @@
-import URLSearchParams from 'url';
+import { URLSearchParams } from 'url';
 import buildFormObj from '../lib/formObjectBuilder';
 import { User } from '../models';
 
