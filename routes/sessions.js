@@ -23,10 +23,10 @@ export default (router) => {
         ctx.redirect(router.url('root'));
         return;
       }
-
-      ctx.flash.set({ type: 'danger', text: 'Неправильный логин или пароль. Попробуйте еще раз.' });
-      // ctx.render('sessions/new', { f: buildFormObj({ email }) });
-      ctx.redirect(router.url('newSession'));
+      const message = { type: 'danger', text: 'Неправильный логин или пароль. Попробуйте еще раз.' };
+      // ctx.flash.set(message);
+      // без редиректа сообщение не рендерится, т.к. ctx.flash.get() сразу возвращает ничего
+      ctx.render('sessions/new', { f: buildFormObj({ email }), message });
     })
 
     .delete('deleteSession', '/session', (ctx) => { // logout

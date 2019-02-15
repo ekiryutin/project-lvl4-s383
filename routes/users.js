@@ -21,6 +21,7 @@ export default (router) => {
       const pages = {
         pageCount, pageSize, currentPage, recordCount,
       };
+      // для pagination рекомендуется использовать sequelize-pagination
       ctx.render('users', { users, currentUser: ctx.session.userId, pages });
     })
 

@@ -73,8 +73,9 @@ mixin buttonEdit(url)
     //- span.pl-1 Изменить
 
 mixin buttonDelete(dataTarget = '#modalConfirmDelete')
-  button.btn.btn-light(type='button' data-toggle='modal' data-target= dataTarget)
-    i.fas.fa-trash-alt.text-muted
+  span(data-toggle='tooltip' title='Удалить' data-placement='top')
+    button.btn.btn-light(type='button' data-toggle='modal' data-target= dataTarget)
+      i.fas.fa-trash-alt.text-muted
 
 mixin confirmDelete(msg, url, modalId = 'modalConfirmDelete')
   .modal.fade(id= modalId tabindex='-1' role='dialog' area-hidden='true')

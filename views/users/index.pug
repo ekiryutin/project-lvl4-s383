@@ -1,11 +1,15 @@
 extends /layouts/application.pug
 
+block define
+  - const section = 'users';
+  - const pageTitle = 'Пользователи';
+
 block content
   //- параметры
   //-   users
   //-   currentUser
   //-   pages: { pageCount, pageSize, currentPage, recordCount }
-  +title('Пользователи')
+  +title(pageTitle)
   table.table.border-left.border-right.shadow-sm
     thead.thead-light.thead-sticky
       tr

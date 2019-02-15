@@ -3,3 +3,33 @@
   position: sticky;
   top: 0;
 }
+
+.footer-link {
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+}
+
+.callout {
+  border-left: 3px solid #eee;
+}
+
+.callout-info {
+  border-left: 3px solid #5bc0de;
+}
+
+.callout-success {
+  border-left: 3px solid #28a745;
+}
+
+.callout-warning {
+  border-left: 3px solid #f0ad4e;
+}
+
+.callout-danger {
+  border-left: 3px solid #d9534f;
+}

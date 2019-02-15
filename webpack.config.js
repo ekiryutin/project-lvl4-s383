@@ -6,7 +6,6 @@ module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
     main: ['./src/index.js'],
-    vendor: ['jquery', 'jquery-ujs', 'popper.js', 'bootstrap'],
   },
   output: {
     path: path.join(__dirname, 'public', 'assets'),

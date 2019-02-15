@@ -49,7 +49,7 @@ describe('users (guest)', () => {
 
   it('createUser', async () => {
     await request.agent(server)
-      .get('/users/new') // login form
+      .get('/users/new')
       .expect(200);
 
     await request.agent(server)
@@ -84,8 +84,7 @@ describe('users (guest)', () => {
     await request.agent(server)
       .post('/session')
       .send({ form: invalidUser })
-      .expect(302)
-      .expect('Location', '/session/new'); // not logged
+      .expect(200); // not logged
 
     await request.agent(server)
       .post('/session')

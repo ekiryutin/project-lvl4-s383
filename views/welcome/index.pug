@@ -1,30 +1,28 @@
 extends /layouts/application.pug
 
+block define
+  - const pageTitle = 'Главная страница';
+
 block content
   +title('Менеджер задач')
   p Демо веб-приложение разработано на 
-    a(href='https://nodejs.org') Node
+    a(href='https://nodejs.org' target='_blank') Node
     span.text-success.pl-1
       i.fab.fa-node-js
     span , 
-    a(href='https://koajs.com') Koa
+    a(href='https://koajs.com' target='_blank') Koa
     span , 
-    a(href='https://getbootstrap.com') Bootstrap 4
+    a(href='https://getbootstrap.com' target='_blank') Bootstrap 4
     span , 
-    a(href='https://docs.sequelize.com') Sequelize
+    a(href='https://docs.sequelize.com' target='_blank') Sequelize
     span .
 
-  p Обеспечивается 
+  p Обеспечиваются следующие функции:
     ul
-      li просмотр пользователей
-      li регистрация нового пользователя
       li аутентификация и авторизация
+      li просмотр пользователей
+      li регистрация новых пользователей
       li изменение и удаление (своего) пользователя
+      li валидация значений в формах ввода
       li.text-muted ...   
-
-  //- if isSignedIn()
-  //-  h5 Добро пожаловать!
-  //-else
-  //-  p Вы можете делать здесь все, что хотите.
-  //-  p Зарегистрируйте нового пользователя и зайдите под ним.
 

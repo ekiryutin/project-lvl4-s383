@@ -1,12 +1,12 @@
 include /mixins/forms.pug
 
 doctype html
-html(lang="en")
+html.h-100(lang="en")
   head
-    title TaskManager 
-      = Title
+    block define
+    title= `TaskManager / ${pageTitle}`
     link(rel='stylesheet' href='/assets/style.css')
-  body.bg-light
+  body.bg-light.d-flex.flex-column.h-100
     nav.navbar.navbar-expand-md.navbar-light.bg-white.shadow-sm
       .container
         a.navbar-brand(href="/") Task Manager
@@ -14,7 +14,11 @@ html(lang="en")
           span.navbar-toggler-icon
         .collapse.navbar-collapse#navbarSupportedContent
           ul.navbar-nav.mr-auto
-            li.nav-item.active
+            - const curTasks = section === 'tasks' ? 'active' : '';
+            li.nav-item(class= curTasks)
+              a.nav-link(href='#') Задания
+            - const curUsers = section === 'users' ? 'active' : '';
+            li.nav-item(class= curUsers)
               a.nav-link(href=urlFor('users')) Пользователи
           ul.navbar-nav
             if isSignedIn()
@@ -41,6 +45,23 @@ html(lang="en")
           button.close(type='button' data-dismiss='alert' area-label='Close')
             span(area-hidden='true') &times;
       block content
+
+    footer.footer.mt-auto.py-4.bg-white
+      .container.text-center.text-muted
+        .row.justify-content-center(style='font-size:80%')
+          .col
+            a.footer-link(href='#') Кирютин Эдуард
+          .col
+            a.footer-link(href='https://github.com/ekiryutin/project-lvl4-s383' target='_blank') 
+              span(style='font-size:120%') 
+                i.fab.fa-github
+              span.pl-1 github.com
+          .col
+            a.footer-link(href='https://ru.hexlet.io/u/kiryutin' target='_blank')
+              span(style='font-size:120%') 
+                i.far.fa-thumbs-up
+              span.pl-1 hexlet.io
+
   script(src='/assets/vendor.js')
   script(src='/assets/main.js')
 
