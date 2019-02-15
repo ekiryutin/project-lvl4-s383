@@ -1,4 +1,8 @@
 
+nav.navbar {
+  min-height: 56px;
+}
+
 .thead-sticky th {
   position: sticky;
   top: 0;
