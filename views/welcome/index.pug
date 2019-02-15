@@ -1,5 +1,30 @@
 extends /layouts/application.pug
 
 block content
-  h3 Welcome
+  +title('Менеджер задач')
+  p Демо веб-приложение разработано на 
+    a(href='https://nodejs.org') Node
+    span.text-success.pl-1
+      i.fab.fa-node-js
+    span , 
+    a(href='https://koajs.com') Koa
+    span , 
+    a(href='https://getbootstrap.com') Bootstrap 4
+    span , 
+    a(href='https://docs.sequelize.com') Sequelize
+    span .
+
+  p Обеспечивается 
+    ul
+      li просмотр пользователей
+      li регистрация нового пользователя
+      li аутентификация и авторизация
+      li изменение и удаление (своего) пользователя
+      li.text-muted ...   
+
+  //- if isSignedIn()
+  //-  h5 Добро пожаловать!
+  //-else
+  //-  p Вы можете делать здесь все, что хотите.
+  //-  p Зарегистрируйте нового пользователя и зайдите под ним.
 
