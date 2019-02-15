@@ -12,8 +12,8 @@ const user = {
   password: faker.internet.password(),
 };
 
-const fakeUser = {
-  email: faker.internet.email(),
+const invalidUser = {
+  email: 'none',
   password: faker.internet.password(),
 };
 
@@ -83,7 +83,7 @@ describe('users (guest)', () => {
 
     await request.agent(server)
       .post('/session')
-      .send({ form: fakeUser })
+      .send({ form: invalidUser })
       .expect(302)
       .expect('Location', '/session/new'); // not logged
 
@@ -143,6 +143,12 @@ describe('users (signed)', () => {
       .set('Cookie', authCookie)
       .send({ form: user })
       .expect(302); // success
+
+    await request.agent(server)
+      .patch(curUser)
+      .set('Cookie', authCookie)
+      .send({ form: invalidUser })
+      .expect(200);  // not saved
 
     await request.agent(server)
       .patch(otherUser)
