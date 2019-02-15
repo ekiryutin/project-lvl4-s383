@@ -3,6 +3,11 @@ nav.navbar {
   min-height: 56px;
 }
 
+.form_title {
+  height: 40px;
+  display: inline-block;
+}
+
 .thead-sticky th {
   position: sticky;
   top: 0;

@@ -44,9 +44,9 @@ mixin inputTextH(object, property, caption, labelCol = 'col-4', inputCol = 'col-
     div(class= inputCol)
       input.form-control.form-control-plaintext.border-bottom(value= value)
 
-mixin title(name, mb)
-  h4.pb-1(class= mb)
-    span.pr-2= name
+mixin title(name)
+  h4.mb-0
+    span.form_title.pr-2= name
     block
 
 mixin formFooter(primaryName = 'Сохранить')
