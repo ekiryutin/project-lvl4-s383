@@ -148,7 +148,7 @@ describe('users (signed)', () => {
       .patch(curUser)
       .set('Cookie', authCookie)
       .send({ form: invalidUser })
-      .expect(200);  // not saved
+      .expect(200); // not saved
 
     await request.agent(server)
       .patch(otherUser)
