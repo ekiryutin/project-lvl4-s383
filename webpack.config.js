@@ -1,17 +1,30 @@
 const path = require('path');
 const webpack = require('webpack');
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
     main: ['./src/index.js'],
+    vendor: ['jquery', 'jquery-ujs', 'popper.js', 'bootstrap'],
   },
   output: {
     path: path.join(__dirname, 'public', 'assets'),
     filename: '[name].js',
     publicPath: '/public/assets/',
   },
+  /* optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    },
+  }, */
   module: {
     rules: [
       {
@@ -21,28 +34,10 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'], // , 'sass-loader'
+        use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'], // , 'postcss-loader', 'sass-loader'
       },
     ],
   },
-  /* optimization: {
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        default: {
-          enforce: true,
-          priority: 1,
-        },
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          priority: 2,
-          name: 'vendors',
-          enforce: true,
-          chunks: 'all',
-        }
-      }
-    }
-  }, */
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',
@@ -53,5 +48,9 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
+    /* new CopyWebpackPlugin([
+      { from: './images', to: '../images' },
+      // { from: './favicon.ico', to: '../favicon.ico' },
+    ]), */
   ],
 };

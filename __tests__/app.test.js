@@ -180,3 +180,27 @@ describe('users (signed)', () => {
     done();
   });
 });
+
+describe('api', () => {
+  let server;
+
+  beforeAll(async () => {
+    expect.extend(matchers);
+    await sequelize.sync({ force: false });
+  });
+
+  beforeEach(() => {
+    server = app().listen();
+  });
+
+  it('users.json', async () => {
+    await request.agent(server)
+      .get('/api/users.json')
+      .expect(200);
+  });
+
+  afterEach((done) => {
+    server.close();
+    done();
+  });
+});

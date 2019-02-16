@@ -1,7 +1,11 @@
+import _ from 'lodash';
 import { URLSearchParams } from 'url';
 import buildFormObj from '../lib/formObjectBuilder';
-import { User } from '../models';
+// import { Sequelize } from '../models';
+import { User, Sequelize } from '../models';
 
+// const Op = Sequelize.Op;
+const { Op } = Sequelize;
 const pageSize = 10;
 
 export default (router) => {
@@ -13,7 +17,7 @@ export default (router) => {
       const result = await User.findAndCountAll({
         offset: (currentPage - 1) * pageSize,
         limit: pageSize,
-        order: ['firstName'],
+        order: ['lastName', 'firstName'],
       });
       const users = result.rows;
       const recordCount = result.count;
@@ -83,5 +87,23 @@ export default (router) => {
       ctx.flash.set({ type: 'success', text: `Пользователь '${user.fullName}' успешно удален.` });
       // logout ?
       ctx.redirect(router.url('users'));
+    })
+
+    .get('users.json', '/api/users.json', async (ctx) => { // список пользователей
+      const params = new URLSearchParams(ctx.request.querystring);
+      const name = _.upperFirst(_.lowerCase(params.get('name')));
+      const users = await User.findAll({
+        where: {
+          // firstName: { [Op.like]: `${name}%` },
+          [Op.or]: [
+            { firstName: { [Op.like]: `${name}%` } },
+            { lastName: { [Op.like]: `${name}%` } },
+          ],
+        },
+        order: ['lastName', 'firstName'],
+      });
+      const data = users.map(user => ({ id: user.id, name: user.fullName }));
+      ctx.type = 'application/json';
+      ctx.body = JSON.stringify({ users: data });
     });
 };
