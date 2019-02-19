@@ -16,7 +16,7 @@ html.h-100(lang="en")
           ul.navbar-nav.mr-auto
             - const curTasks = section === 'tasks' ? 'active' : '';
             li.nav-item(class= curTasks)
-              a.nav-link(href='#') Задания
+              a.nav-link(href=urlFor('tasks')) Задания
             - const curUsers = section === 'users' ? 'active' : '';
             li.nav-item(class= curUsers)
               a.nav-link(href=urlFor('users')) Пользователи

@@ -60,9 +60,6 @@ export default (sequelize, DataTypes) => {
         const date = new Date(this.createdAt);
         return dateFns.format(date, 'DD.MM.YYYY');
       },
-      // associate(models) {
-      //   // associations can be defined here
-      // },
     },
   });
   return User;

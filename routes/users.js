@@ -1,18 +1,15 @@
 import _ from 'lodash';
-import { URLSearchParams } from 'url';
 import buildFormObj from '../lib/formObjectBuilder';
-// import { Sequelize } from '../models';
 import { User, Sequelize } from '../models';
 
-// const Op = Sequelize.Op;
 const { Op } = Sequelize;
 const pageSize = 10;
 
 export default (router) => {
   router
     .get('users', '/users', async (ctx) => { // список пользователей
-      const params = new URLSearchParams(ctx.request.querystring);
-      const currentPage = params.get('page') || 1;
+      const { query } = ctx.request;
+      const currentPage = query.page || 1;
       // const users = await User.findAll({
       const result = await User.findAndCountAll({
         offset: (currentPage - 1) * pageSize,
@@ -50,7 +47,7 @@ export default (router) => {
       const user = await User.findByPk(ctx.params.id);
       const access = {
         edit: ctx.state.auth.hasAccess('editUser', ctx.params.id),
-        delete: ctx.state.auth.hasAccess('editUser', ctx.params.id),
+        delete: ctx.state.auth.hasAccess('deleteUser', ctx.params.id),
       };
       ctx.render('users/show', { user, access });
     })
@@ -90,9 +87,10 @@ export default (router) => {
     })
 
     .get('users.json', '/api/users.json', async (ctx) => { // список пользователей
-      const params = new URLSearchParams(ctx.request.querystring);
-      const name = _.upperFirst(_.lowerCase(params.get('name')));
+      const { query } = ctx.request;
+      const name = _.upperFirst(_.lowerCase(query.name));
       const users = await User.findAll({
+        // attributes: ['id', 'firstName', 'lastName'],
         where: {
           // firstName: { [Op.like]: `${name}%` },
           [Op.or]: [

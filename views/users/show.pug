@@ -3,6 +3,7 @@ extends /layouts/application.pug
 block define
   - const section = 'users';
   - const pageTitle = 'Просмотр пользователя';
+  - const defaultCol = { label: 'col-4', input: 'col-8' };
 
 block content
   //- параметры
@@ -17,9 +18,9 @@ block content
           +buttonDelete()
       div.card.card-body.shadow-sm
         form
-          +inputTextH(user, 'firstName', 'Имя')
-          +inputTextH(user, 'lastName', 'Фамилия')
-          +inputTextH(user, 'email', 'E-mail')
+          +inputText(user.firstName, 'Имя')
+          +inputText(user.lastName, 'Фамилия')
+          +inputText(user.email, 'E-mail')
       //- div.pt-3
       //-  a.btn.btn-outline-primary(href= urlFor('users'))
       //-    // i.fas.fa-arrow-left

@@ -1,0 +1,33 @@
+extends /layouts/application.pug
+
+block define
+  - const section = 'tasks';
+  - const pageTitle = 'Просмотр задания';
+  - const defaultCol = { label: 'col-3', input: 'col-9' };
+
+block content
+  //- параметры
+  //-   task
+  //-   access
+  div.row.justify-content-center
+    div.col-xl-7.col-lg-8.col-md-10.col-sm-12
+      +title('Задание')
+        if access.edit
+          +buttonEdit(urlFor('editTask', task.id))
+        if access.delete
+          +buttonDelete()
+      div.card.card-body.shadow-sm
+        form
+          +inputText(task.name, 'Что сделать')
+          +inputText(task.formattedDateTo, 'Срок', { col: { label: 'col-3', input: 'col-3' } })
+            +inputText(task.status.name, 'Статус', { col: { label: 'col-2', input: 'col-4' }, norow: true, inputClass: `alert-${task.status.color}` })
+          +textareaText(task.description, 'Описание')
+          +inputText(task.executor.fullName, 'Исполнитель')
+          +inputText(task.author.fullName, 'Автор')
+          +inputText('', 'Теги')
+      //- div.pt-3
+      //-  a.btn.btn-outline-primary(href= urlFor('tasks'))
+      //-    // i.fas.fa-arrow-left
+      //-    span.pl-1 К списку
+  +confirmDelete('Вы уверены, что хотите удалить задание?', urlFor('deleteTask', task.id))
+

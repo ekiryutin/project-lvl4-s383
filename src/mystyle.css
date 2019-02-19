@@ -27,6 +27,10 @@ nav.navbar {
   background-color: #f8f9fa;
 }
 
+.badge-lg {
+  font-size: 90%;
+}
+
 .callout {
   border-left: 3px solid #eee;
 }

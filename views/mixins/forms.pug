@@ -12,7 +12,7 @@ mixin formFor(f, options = {})
       block
 
 //- input for Vertical form
-mixin input(f, property, caption, options = { as: 'text' })
+mixin inputV(f, property, caption, options = { as: 'text' })
   - const value = f.object[property] === undefined ? '' : f.object[property]
   - const invalidClass = f.errors[property] ? 'is-invalid' : '';
   .form-group(class=(f.errors[property] && 'has-danger'))
@@ -24,9 +24,11 @@ mixin input(f, property, caption, options = { as: 'text' })
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
 //- input for Horizontal form
-mixin inputH(f, property, caption, options = { as: 'text' }, labelCol = 'col-4', inputCol = 'col-8')
+mixin input(f, property, caption, options = { as: 'text', col: null, norow: false })
   - const value = f.object[property] === undefined ? '' : f.object[property]
   - const invalidClass = f.errors[property] ? 'is-invalid' : '';
+  - const labelCol = options.col ? options.col.label : defaultCol.label;
+  - const inputCol = options.col ? options.col.input : defaultCol.input;
   .form-group.row(class=(f.errors[property] && 'has-danger'))
     label.col-form-label.text-muted(class=`${labelCol}`)= caption
       if isRequired(f, property) 
@@ -37,12 +39,28 @@ mixin inputH(f, property, caption, options = { as: 'text' }, labelCol = 'col-4',
         .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
 
-mixin inputTextH(object, property, caption, labelCol = 'col-4', inputCol = 'col-8')
-  - const value = object[property] === undefined ? '' : object[property]
-  .form-group.row
+mixin inputText(value, caption, options = { col: null, norow: false, inputClass: '' })
+  - const labelCol = options.col ? options.col.label : defaultCol.label;
+  - const inputCol = options.col ? options.col.input : defaultCol.input;
+  if options.norow
     label.col-form-label.text-muted(class= labelCol)= caption
     div(class= inputCol)
-      input.form-control.form-control-plaintext.border-bottom(value= value)
+      input.form-control.form-control-plaintext.border-bottom(class= options.inputClass value= value)
+  else
+    div.form-group.row
+      label.col-form-label.text-muted(class= labelCol)= caption
+      div(class= inputCol)
+        input.form-control.form-control-plaintext.border-bottom(class= options.inputClass value= value)
+      block
+
+mixin textareaText(value, caption, rows = 3, options = { col: null })
+  - const labelCol = options.col ? options.col.label : defaultCol.label;
+  - const inputCol = options.col ? options.col.input : defaultCol.input;
+  div.form-group.row
+    label.col-form-label.text-muted(class= labelCol)= caption
+    div(class= inputCol)
+      textarea.form-control.form-control-plaintext.border-bottom(rows= rows)= value
+    block
 
 mixin title(name)
   h4.mb-0
