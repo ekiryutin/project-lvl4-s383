@@ -7,7 +7,6 @@ block define
 block content
   //- параметры
   //-   users
-  //-   currentUser
   //-   pages: { pageCount, pageSize, currentPage, recordCount }
   +title(pageTitle)
   table.table.border-left.border-right.table-hover.shadow-sm
@@ -15,6 +14,8 @@ block content
       tr
         th(style='width: 5%') №
         th(style='width: 30%') Имя
+          span.text-muted.pl-2
+            i.fas.fa-sort-down
         th(style='width: 35%') E-mail
         th(style='width: 30%') Зарегистрирован
     tbody.bg-white
@@ -25,7 +26,7 @@ block content
           td= n++
           td
             a(href= urlFor('showUser', user.id))= user.fullName
-            if user.id === currentUser
+            if user.id === userId()
               span.float-right(data-toggle='tooltip' title='Текущий пользователь' data-placement='top')
                 i.fas.fa-user.text-primary
           td= user.email

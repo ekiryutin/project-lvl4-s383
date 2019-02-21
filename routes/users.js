@@ -17,11 +17,9 @@ export default (router) => {
         limit: pageSize,
         order: ['lastName', 'firstName'],
       });
-      const users = result.rows;
       // для pagination рекомендуется использовать sequelize-pagination
       ctx.render('users', {
-        users,
-        currentUser: ctx.session.userId,
+        users: result.rows,
         pages: pagination(ctx, result.count, pageSize, currentPage),
       });
     })

@@ -43,6 +43,13 @@ nav.navbar {
   background-color: #d2ffbf;
 }
 
+.pos-right {
+  position: absolute;
+  right: 1em;
+  top: 0em;
+}
+
+
 .callout {
   border-left: 3px solid #eee;
 }

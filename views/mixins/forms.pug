@@ -43,8 +43,9 @@ mixin autocompleteV(f, property, caption, options = { url:'#' })
     label.text-muted= caption
       //- if isRequired(f, propertyName) 
       //-  sup.text-danger.pl-1 *
-    input.form-control(name= propertyId autocomplete='off' type='hidden' value=_id)
-    input.form-control.autocomplete(name= propertyName class=`${invalidClass}` autocomplete='off' data-source=options.url data-target=propertyId value=_value)
+      block
+    input.form-control(name= propertyId id= propertyId autocomplete='off' type='hidden' value=_id)
+    input.form-control.autocomplete(name= propertyName id= propertyName class=`${invalidClass}` autocomplete='off' data-source=options.url data-target=propertyId value=_value)
     if f.errors[propertyName]
       .invalid-feedback= f.errors[propertyName].map(({ message }) => message).join('. ')
 

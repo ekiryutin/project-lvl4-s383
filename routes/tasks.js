@@ -46,20 +46,30 @@ export default (router) => {
         offset: (currentPage - 1) * pageSize,
         limit: pageSize,
       });
+      const access = {
+        new: ctx.state.auth.hasAccess('newTask'),
+      };
       ctx.render('tasks', {
         tasks: result.rows,
         pages: pagination(ctx, result.count, pageSize, currentPage),
         f: buildFormObj(query, null), // for filter
         statuses,
+        access,
       });
     })
 
     .get('newTask', '/tasks/new', (ctx) => { // добавление задания
+      if (!ctx.state.auth.checkAccess(ctx)) {
+        return;
+      }
       const task = Task.build();
       ctx.render('tasks/new', { f: buildFormObj(task, Task.attributes) });
     })
 
     .post('saveTask', '/tasks', async (ctx) => { // сохранение (нового) задания
+      if (!ctx.state.auth.checkAccess(ctx)) {
+        return;
+      }
       const form = ctx.request.body;
       const task = Task.build(form);
       try {
@@ -76,8 +86,8 @@ export default (router) => {
         include: queryInclude,
       });
       const access = {
-        edit: ctx.state.auth.hasAccess('editTask', task.author.id),
-        delete: ctx.state.auth.hasAccess('deleteTask', task.author.id),
+        edit: ctx.state.auth.hasAccess('editTask', task.authorId),
+        delete: ctx.state.auth.hasAccess('deleteTask', task.authorId),
       };
       console.log(JSON.stringify(task));
       ctx.render('tasks/show', { task, access });
@@ -87,7 +97,7 @@ export default (router) => {
       const task = await Task.findByPk(ctx.params.id, {
         include: queryInclude,
       });
-      if (!ctx.state.auth.checkAccess(ctx, task.author.id)) {
+      if (!ctx.state.auth.checkAccess(ctx, task.authorId)) {
         return;
       }
       ctx.render('tasks/edit', { f: buildFormObj(task, Task.attributes) });
@@ -109,10 +119,10 @@ export default (router) => {
     })
 
     .delete('deleteTask', '/tasks/:id', async (ctx) => { // удаление задания
-      if (!ctx.state.auth.checkAccess(ctx, ctx.params.id)) {
+      const task = await Task.findByPk(ctx.params.id);
+      if (!ctx.state.auth.checkAccess(ctx, task.authorId)) {
         return;
       }
-      const task = await Task.findByPk(ctx.params.id);
       await task.destroy();
       ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
       ctx.redirect(router.url('tasks'));

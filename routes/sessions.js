@@ -18,7 +18,7 @@ export default (router) => {
       });
       if (user && user.passwordDigest === encrypt(password)) {
         ctx.session.userId = user.id;
-        ctx.session.userName = user.firstName;
+        ctx.session.userName = user.fullName;
         // можно загрузить роли (доступные сервисы) и сохранить в кеш
         ctx.redirect(router.url('root'));
         return;

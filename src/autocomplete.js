@@ -28,9 +28,7 @@ $(() => {
           name: request.term,
         },
         success(data) {
-          console.log('data', data);
           const name = Object.keys(data)[0];
-          console.log('data[]', data[name]);
           const result = $.map(data[name], item => ({ code: item.id, label: item.name }));
           response(result);
         },
