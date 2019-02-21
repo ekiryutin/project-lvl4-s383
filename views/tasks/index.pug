@@ -7,36 +7,69 @@ block define
 block content
   //- параметры
   //-   tasks
-  //-   pages: { pageCount, pageSize, currentPage, recordCount }
+  //-   pages
+  //-   f: { name, object, errors }
+  //-   statuses
   +title(pageTitle)
-  table.table.border-left.border-right.table-hover.shadow-sm
-    thead.thead-light.thead-sticky
-      tr
-        th(style='width: 5%') №
-        th(style='width: 25%') Задание
-        th(style='width: 15%') Срок
-        th(style='width: 15%') Статус
-        th(style='width: 20%') Исполнитель
-        th(style='width: 20%') Теги
-    tbody.bg-white
-      - const startFrom = (pages.currentPage - 1) * pages.pageSize + 1;
-      - var n = startFrom;
-      each task in tasks
-        tr
-          td= n++
-          td
-            a(href= urlFor('showTask', task.id))= task.name
-          td= task.formattedDateTo
-          td
-            //-.badge.badge-lg(class= `badge-${task.status.color}`)
-            span.rounded.pl-2.pr-2.pb-1.pt-1(class= `alert-${task.status.color}`)
-              = task.status.name
-          td= task.executor.fullName
-          td
-          //-  each tag in tasks.tags
-          //-    span= tag
-      if n === startFrom
-        tr
-          td(colspan='6') Нет данных
-  if pages.pageCount > 1
-    +pagination({ url: urlFor('tasks'), pages })
+    // if access.edit
+    a.btn.btn-outline-primary(href= urlFor('newTask') style='margin-left: 40px')
+      span.pl-1 Добавить
+
+  .row
+    .col-xl-3.mb-3
+
+      +formFor(f, { url: urlFor('tasks'), method: 'get' })
+        //.card.shadow-sm.mb-3
+        //  .card-body
+        .row
+          .col-md.col-lg.col-xl-12
+            +selectV(f, 'statusId', 'Статус', statuses )
+
+          .col-md.col-lg.col-xl-12
+            +autocompleteV(f, 'executor', 'Исполнитель', { url: urlFor('users.json') })
+
+          .col-md.col-lg.col-xl-12
+            //+inputV(f, 'authorId', 'Автор')
+            +autocompleteV(f, 'author', 'Автор', { url: urlFor('users.json') })
+
+          .d-none.d-lg-block.col-lg.col-xl-12
+            +inputV(f, 'tags', 'Теги')
+
+          .col-auto.col-xl-12.text-right.mb-3
+            div.d-xl-none
+              label &nbsp;
+            button.btn.btn-default.btn-primary.pl-4.pr-4(type='submit') Найти
+
+    .col-xl-9
+
+      table.table.border-left.border-right.table-hover.shadow-sm
+        thead.thead-light.thead-sticky
+          tr
+            th(style='width: 5%') №
+            th(style='width: 25%') Задание
+            th(style='width: 15%') Срок
+            th(style='width: 15%') Статус
+            th(style='width: 20%') Исполнитель
+            th(style='width: 20%') Теги
+        tbody.bg-white
+          - const startFrom = (pages.currentPage - 1) * pages.pageSize + 1;
+          - var n = startFrom;
+          each task in tasks
+            tr
+              td= n++
+              td
+                a(href= urlFor('showTask', task.id))= task.name
+              td= task.formattedDateTo
+              td
+                //-.badge.badge-lg(class= `badge-${task.status.color}`)
+                span.rounded.pl-2.pr-2.pb-1.pt-1(class= `state-${task.status.color}`)
+                  = task.status.name
+              td= task.executor.fullName
+              td
+              //-  each tag in tasks.tags
+              //-    span= tag
+          if n === startFrom
+            tr
+              td(colspan='6') Нет данных
+      if pages.pageCount > 1
+        +pagination({ url: urlFor('tasks'), pages })

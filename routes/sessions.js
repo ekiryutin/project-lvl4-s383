@@ -10,7 +10,7 @@ export default (router) => {
     })
 
     .post('session', '/session', async (ctx) => {
-      const { email, password } = ctx.request.body.form;
+      const { email, password } = ctx.request.body;
       const user = await User.findOne({
         where: {
           email,

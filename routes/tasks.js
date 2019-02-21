@@ -1,5 +1,6 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import Where from '../lib/Where';
+import pagination from '../lib/pagination';
 import {
   Task, TaskStatus, User, // Sequelize,
 } from '../models';
@@ -19,29 +20,38 @@ const makeWhere = (ctx) => {
   return where.get();
 };
 
+const queryInclude = [
+  { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
+  { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
+  { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
+];
+
+/* const pagination = (recordCount, pageSize, currentPage) => {
+  const pageCount = Math.ceil(recordCount / pageSize);
+  return {
+    pageCount, pageSize, currentPage, recordCount,
+  };
+}; */
+
 export default (router) => {
   router
     .get('tasks', '/tasks', async (ctx) => { // список заданий
       const { query } = ctx.request;
       const currentPage = query.page || 1;
-
+      const statuses = await TaskStatus.findAll();
       const result = await Task.findAndCountAll({
         where: makeWhere(ctx),
-        include: [
-          { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
-          { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
-        ],
+        include: queryInclude,
         order: ['dateTo'],
         offset: (currentPage - 1) * pageSize,
         limit: pageSize,
       });
-      const tasks = result.rows;
-      const recordCount = result.count;
-      const pageCount = Math.ceil(recordCount / pageSize);
-      const pages = {
-        pageCount, pageSize, currentPage, recordCount,
-      };
-      ctx.render('tasks', { tasks, pages });
+      ctx.render('tasks', {
+        tasks: result.rows,
+        pages: pagination(ctx, result.count, pageSize, currentPage),
+        f: buildFormObj(query, null), // for filter
+        statuses,
+      });
     })
 
     .get('newTask', '/tasks/new', (ctx) => { // добавление задания
@@ -50,7 +60,7 @@ export default (router) => {
     })
 
     .post('saveTask', '/tasks', async (ctx) => { // сохранение (нового) задания
-      const { form } = ctx.request.body;
+      const form = ctx.request.body;
       const task = Task.build(form);
       try {
         await task.save();
@@ -63,11 +73,7 @@ export default (router) => {
 
     .get('showTask', '/tasks/:id', async (ctx) => { // просмотр задания
       const task = await Task.findByPk(ctx.params.id, {
-        include: [
-          { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
-          { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
-          { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
-        ],
+        include: queryInclude,
       });
       const access = {
         edit: ctx.state.auth.hasAccess('editTask', task.author.id),
@@ -79,11 +85,7 @@ export default (router) => {
 
     .get('editTask', '/tasks/:id/edit', async (ctx) => { // редактирование задания
       const task = await Task.findByPk(ctx.params.id, {
-        include: [
-          { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
-          { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
-          { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
-        ],
+        include: queryInclude,
       });
       if (!ctx.state.auth.checkAccess(ctx, task.author.id)) {
         return;
@@ -95,7 +97,7 @@ export default (router) => {
       if (!ctx.state.auth.checkAccess(ctx, ctx.params.id)) {
         return;
       }
-      const { form } = ctx.request.body;
+      const form = ctx.request.body;
       const task = await Task.findByPk(ctx.params.id);
       try {
         await task.update(form);
@@ -113,17 +115,13 @@ export default (router) => {
       const task = await Task.findByPk(ctx.params.id);
       await task.destroy();
       ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
-      // logout ?
       ctx.redirect(router.url('tasks'));
     })
 
     .get('tasks.json', '/api/tasks.json', async (ctx) => { // список заданий
       const tasks = await Task.findAll({
         where: makeWhere(ctx),
-        include: [
-          { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
-          { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
-        ],
+        include: queryInclude,
         order: ['dateTo'],
       });
       // const data = tasks.map(task => ({ id: task.id, name: task.fullName }));

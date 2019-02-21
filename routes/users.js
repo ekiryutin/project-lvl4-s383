@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
+import pagination from '../lib/pagination';
 import { User, Sequelize } from '../models';
 
 const { Op } = Sequelize;
@@ -17,13 +18,12 @@ export default (router) => {
         order: ['lastName', 'firstName'],
       });
       const users = result.rows;
-      const recordCount = result.count;
-      const pageCount = Math.ceil(recordCount / pageSize);
-      const pages = {
-        pageCount, pageSize, currentPage, recordCount,
-      };
       // для pagination рекомендуется использовать sequelize-pagination
-      ctx.render('users', { users, currentUser: ctx.session.userId, pages });
+      ctx.render('users', {
+        users,
+        currentUser: ctx.session.userId,
+        pages: pagination(ctx, result.count, pageSize, currentPage),
+      });
     })
 
     .get('newUser', '/users/new', (ctx) => { // регистрация пользователя
@@ -32,7 +32,7 @@ export default (router) => {
     })
 
     .post('saveUser', '/users', async (ctx) => { // сохранение (нового) пользователя
-      const { form } = ctx.request.body;
+      const form = ctx.request.body;
       const user = User.build(form);
       try {
         await user.save();
@@ -64,7 +64,7 @@ export default (router) => {
       if (!ctx.state.auth.checkAccess(ctx, ctx.params.id)) {
         return;
       }
-      const { form } = ctx.request.body;
+      const form = ctx.request.body;
       const user = await User.findByPk(ctx.params.id);
       try {
         await user.update(form);

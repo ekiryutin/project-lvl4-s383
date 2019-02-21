@@ -1,11 +1,11 @@
-- const getInputName = (f, property) => `${f.name}[${property}]`
+//- const getInputName = (f, property) => `${f.name}[${property}]`
 - const isRequired = (f, property) => { const obj = f.model[property]; return obj && obj.validate ? obj.validate.notEmpty : null; }
 
 mixin formFor(f, options = {})
   - const url = _.get(options, 'url');
   - const method = _.get(options, 'method', 'get').toLowerCase();
   - const isStandart = _.includes(['get', 'post'], method);
-  div.card.card-body.shadow-sm
+  div.card.card-body.shadow-sm.pb-1
     form(action= url method= isStandart ? method : 'post')
       if !isStandart
         input(name='_method' type='hidden' value= method)
@@ -16,12 +16,37 @@ mixin inputV(f, property, caption, options = { as: 'text' })
   - const value = f.object[property] === undefined ? '' : f.object[property]
   - const invalidClass = f.errors[property] ? 'is-invalid' : '';
   .form-group(class=(f.errors[property] && 'has-danger'))
-    label= caption
+    label.text-muted= caption
       //- if isRequired(f, property) 
       //-  sup.text-danger.pl-1 *
-    input.form-control(name=getInputName(f, property) class=`${invalidClass}` autocomplete='off' type=options['as'] value=`${value}`)
+    input.form-control(name= property class=`${invalidClass}` autocomplete='off' type=options['as'] value=`${value}`)
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
+
+mixin selectV(f, property, caption, list)
+  - const value = f.object[property] === undefined ? '' : f.object[property]
+  .form-group
+    label.text-muted= caption
+    select.form-control(name= property)
+      option= ''
+      for item in list
+        - const selected = item.id === Number(value);
+        option(value=item.id selected=selected)= item.name
+
+mixin autocompleteV(f, property, caption, options = { url:'#' })
+  - const propertyId = `${property}Id`;
+  - const propertyName = `${property}Name`;
+  - const _id = f.object[propertyId] === undefined ? '' : f.object[propertyId]
+  - const _value = f.object[propertyName] === undefined ? '' : f.object[propertyName]
+  - const invalidClass = f.errors[propertyName] ? 'is-invalid' : '';
+  .form-group(class=(f.errors[propertyName] && 'has-danger'))
+    label.text-muted= caption
+      //- if isRequired(f, propertyName) 
+      //-  sup.text-danger.pl-1 *
+    input.form-control(name= propertyId autocomplete='off' type='hidden' value=_id)
+    input.form-control.autocomplete(name= propertyName class=`${invalidClass}` autocomplete='off' data-source=options.url data-target=propertyId value=_value)
+    if f.errors[propertyName]
+      .invalid-feedback= f.errors[propertyName].map(({ message }) => message).join('. ')
 
 //- input for Horizontal form
 mixin input(f, property, caption, options = { as: 'text', col: null, norow: false })
@@ -34,7 +59,7 @@ mixin input(f, property, caption, options = { as: 'text', col: null, norow: fals
       if isRequired(f, property) 
         sup.text-danger.pl-1 *
     div(class= inputCol)
-      input.form-control(name=getInputName(f, property) class=`${invalidClass}` autocomplete='off' type=options['as'] value= value)
+      input.form-control(name= property class=`${invalidClass}` autocomplete='off' type=options['as'] value= value)
       if f.errors[property]
         .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
@@ -62,13 +87,18 @@ mixin textareaText(value, caption, rows = 3, options = { col: null })
       textarea.form-control.form-control-plaintext.border-bottom(rows= rows)= value
     block
 
-mixin title(name)
+mixin title(name, back = false)
   h4.mb-0
+    if back
+      //- не работает после редактирования
+      a.btn.btn-light.mr-1(href= '#' data-toggle='tooltip' title='Вернуться к списку' data-placement='top')
+        i.fas.fa-arrow-left.text-muted
     span.form_title.pr-2= name
     block
 
 mixin formFooter(primaryName = 'Сохранить')
   .form-group.text-right.pt-3
+    //- не работает после редактирования
     a.btn.btn-light(onclick='history.back(); return false;') Отменить
     button.btn.btn-primary.pl-4.pr-4(type='submit')
       //- .spinner-border.spinner-border-sm.mr-1.invisible
@@ -78,11 +108,14 @@ mixin pagination(options)
   - var current = Number(options.pages.currentPage);
   div
     ul.pagination
+      - const maxCount = Math.max(5, current);
       - var n = 1;
-      while n <= options.pages.pageCount
+      while n <= Math.min(options.pages.pageCount, maxCount)
         - const isActive = (n === current ? 'active' : '');
         li.page-item(class= isActive)
-          a.page-link(href= `${options.url}?page=${n}`)= n++
+          a.page-link(href= `${options.pages.searchurl}${n}`)= n++
+      if n <= options.pages.pageCount && n >= maxCount
+        a.page-link(href= `${options.pages.searchurl}${n}`) Далее
       //- li.text-muted.align-middle.pl-2= `Найдено: ${options.pages.recordCount} записей`
 
 mixin buttonEdit(url)

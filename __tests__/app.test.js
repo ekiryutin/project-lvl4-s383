@@ -17,7 +17,7 @@ const invalidUser = {
   password: faker.internet.password(),
 };
 
-describe('users (guest)', () => {
+describe('users (guest)', () => { // -------------------------------
   let server;
 
   beforeAll(async () => {
@@ -54,13 +54,13 @@ describe('users (guest)', () => {
 
     await request.agent(server)
       .post('/users')
-      .send({ form: user })
+      .send(user)
       .expect(302)
       .expect('Location', '/');
 
     await request.agent(server)
       .post('/users')
-      .send({ form: user }) // same not saved
+      .send(user) // same not saved
       .expect(200);
   });
 
@@ -83,12 +83,12 @@ describe('users (guest)', () => {
 
     await request.agent(server)
       .post('/session')
-      .send({ form: invalidUser })
+      .send(invalidUser)
       .expect(200); // not logged
 
     await request.agent(server)
       .post('/session')
-      .send({ form: user })
+      .send(user)
       .expect(302)
       .expect('Location', '/');
   });
@@ -99,7 +99,7 @@ describe('users (guest)', () => {
   });
 });
 
-describe('users (signed)', () => {
+describe('users (signed)', () => { // -------------------------------
   let server;
   let authCookie;
 
@@ -116,11 +116,11 @@ describe('users (signed)', () => {
 
     await request.agent(server) // add user
       .post('/users')
-      .send({ form: user });
+      .send(user);
 
     const response = await request.agent(server) // login
       .post('/session')
-      .send({ form: user });
+      .send(user);
     authCookie = response.headers['set-cookie'];
   });
 
@@ -140,19 +140,19 @@ describe('users (signed)', () => {
     await request.agent(server)
       .patch(curUser)
       .set('Cookie', authCookie)
-      .send({ form: user })
+      .send(user)
       .expect(302); // success
 
     await request.agent(server)
       .patch(curUser)
       .set('Cookie', authCookie)
-      .send({ form: invalidUser })
+      .send(invalidUser)
       .expect(200); // not saved
 
     await request.agent(server)
       .patch(otherUser)
       .set('Cookie', authCookie)
-      .send({ form: user })
+      .send(user)
       .expect(403); // forbidden
   });
 
@@ -181,7 +181,7 @@ describe('users (signed)', () => {
   });
 });
 
-describe('api', () => {
+describe('tasks', () => { // -------------------------------
   let server;
 
   beforeAll(async () => {
@@ -193,10 +193,56 @@ describe('api', () => {
     server = app().listen();
   });
 
-  it('users.json', async () => {
+  it('tasks', async () => {
     await request.agent(server)
-      .get('/api/users.json')
+      .get('/tasks')
       .expect(200);
+  });
+
+  /* it('createTask', async () => {
+    await request.agent(server)
+      .get('/tasks/new')
+      .expect(200);
+
+    await request.agent(server)
+      .post('/tasks')
+      .send(task)
+      .expect(302)
+      .expect('Location', '/tasks');
+  });
+
+  it('showTask', async () => {
+    await request.agent(server)
+      .get('/tasks/1')
+      .expect(200);
+  }); */
+
+  afterEach((done) => {
+    server.close();
+    done();
+  });
+});
+
+describe('api', () => { // -------------------------------
+  let server;
+
+  beforeAll(async () => {
+    expect.extend(matchers);
+    await sequelize.sync({ force: false });
+  });
+
+  beforeEach(() => {
+    server = app().listen();
+  });
+
+  const testUrl = ['users.json', 'tasks.json'];
+  testUrl.forEach((url) => {
+    it(url, async () => {
+      await request.agent(server)
+        .get(`/api/${url}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+    });
   });
 
   afterEach((done) => {

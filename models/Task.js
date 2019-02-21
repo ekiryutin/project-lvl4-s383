@@ -17,7 +17,6 @@ export default (sequelize, DataTypes) => {
     statusId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      // references: { table: 'TaskStatuses', field: 'id' },
       defaultValue: 1,
       validate: {
         notEmpty: {
@@ -43,17 +42,41 @@ export default (sequelize, DataTypes) => {
         },
       },
     },
-    executorId: {
-      type: DataTypes.INTEGER,
+    authorName: {
+      type: DataTypes.VIRTUAL,
       allowNull: false,
-      // references: { table: 'Users', field: 'id' },
       validate: {
         notEmpty: {
-          msg: 'Выберите исполнителя',
+          msg: 'Введите автора',
+        },
+        isSelected(value) {
+          if (value !== null && this.authorId === null) {
+            throw new Error('Выберите автора');
+          }
         },
       },
     },
-    // tags: {
+    executorId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    executorName: {
+      type: DataTypes.VIRTUAL,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Введите исполнителя',
+        },
+        isSelected(value) {
+          if (value !== null && this.executorId === null) {
+            throw new Error('Выберите исполнителя');
+          }
+        },
+      },
+    },
+    tags: {
+      type: DataTypes.VIRTUAL,
+    },
     // attachments: {
     // comments: {
   }, {

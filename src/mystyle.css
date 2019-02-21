@@ -31,6 +31,18 @@ nav.navbar {
   font-size: 90%;
 }
 
+.state-warning {
+  background-color: #ffdfcc;
+}
+
+.state-info {
+  background-color: #cce9ff;
+}
+
+.state-success {
+  background-color: #d2ffbf;
+}
+
 .callout {
   border-left: 3px solid #eee;
 }
@@ -50,3 +62,28 @@ nav.navbar {
 .callout-danger {
   border-left: 3px solid #d9534f;
 }
+
+
+/* autocomplete  */
+
+.ui-widget.ui-widget-content {
+	border: 1px solid #c5c5c5;
+}
+.ui-widget-content {
+	border: 1px solid #dddddd;
+	background: #ffffff;
+	color: #333333;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+	border: 1px solid #003eff;
+	background: #007fff;
+	font-weight: normal;
+	color: #ffffff;
+}
+

@@ -14,6 +14,11 @@ module.exports = {
     filename: '[name].js',
     publicPath: '/public/assets/',
   },
+  /* watch: process.env.NODE_ENV !== 'production',
+  watchOptions: {
+    aggregateTimeout: 300,
+    poll: 1000,
+  }, */
   /* optimization: {
     splitChunks: {
       cacheGroups: {
