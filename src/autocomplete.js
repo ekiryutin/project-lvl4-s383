@@ -12,7 +12,7 @@ const setSelected = (input, id) => {
   if (id === '') {
     input.removeClass('is-valid');
   } else {
-    input.addClass('is-valid');
+    input.addClass('is-valid').removeClass('is-invalid');
   }
 };
 

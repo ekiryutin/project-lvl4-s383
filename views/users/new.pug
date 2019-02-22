@@ -11,9 +11,13 @@ block content
     div.col-xl-5.col-lg-6.col-md-7.col-sm-9
       +title(pageTitle)
       +formFor(f, { url: urlFor('saveUser'), method: 'post' })
-        +input(f, 'firstName', 'Имя')
-        +input(f, 'lastName', 'Фамилия')
-        +input(f, 'email', 'E-mail')
-        +input(f, 'password', 'Пароль', { as: 'password' })
+        .form-group.row
+          +input(f, 'firstName', 'Имя', { autofocus: true })
+        .form-group.row
+          +input(f, 'lastName', 'Фамилия')
+        .form-group.row
+          +input(f, 'email', 'E-mail')
+        .form-group.row
+          +input(f, 'password', 'Пароль', { as: 'password' })
         +formFooter()
 

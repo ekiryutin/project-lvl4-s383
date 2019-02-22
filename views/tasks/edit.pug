@@ -1,19 +1,30 @@
 extends /layouts/application.pug
 
 block define
-  - const section = 'users';
-  - const pageTitle = 'Редактирование пользователя';
+  - const section = 'tasks';
+  - const pageTitle = 'Редактирование задания';
+  - const defaultCol = { label: 'col-3', input: 'col-9' };
 
 block content
   //- параметры
   //-   f: { name, object, model, errors }
+  //-   statuses
   div.row.justify-content-center
-    div.col-xl-5.col-lg-6.col-md-7.col-sm-9
-      +title('Пользователь')
-      +formFor(f, { url: urlFor('updateUser', f.object.id), method: 'patch' })
-        +inputH(f, 'firstName', 'Имя')
-        +inputH(f, 'lastName', 'Фамилия')
-        +inputH(f, 'email', 'E-mail')
-        +inputH(f, 'password', 'Пароль', { as: 'password' })
+    div.col-xl-7.col-lg-8.col-md-10.col-sm-12
+      +title('Задание')
+      +formFor(f, { url: urlFor('updateTask', f.object.id), method: 'patch' })
+        .form-group.row
+          +input(f, 'name', 'Что сделать', { autofocus: true })
+        .form-group.row
+          +input(f, 'dateTo', 'Срок', { col: { label: 'col-3', input: 'col-3' } })
+          +select(f, 'statusId', 'Статус', statuses, { col: { label: 'col-2', input: 'col-4' } } )
+        .form-group.row
+          +textarea(f, 'description', 'Описание')
+        .form-group.row
+          +autocomplete(f, 'executor', 'Исполнитель', { url: urlFor('users.json') })
+        //- .form-group.row
+        //-  +autocomplete(f, 'author', 'Автор', { url: urlFor('users.json') })
+        //- .form-group.row
+          //- +input('', 'Теги')
         +formFooter()
 

@@ -24,26 +24,30 @@ block content
         //  .card-body
         .row
           .col-md.col-lg.col-xl-12
-            +selectV(f, 'statusId', 'Статус', statuses )
+            .form-group
+              +select(f, 'statusId', 'Статус', statuses )
 
           .col-md.col-lg.col-xl-12
-            +autocompleteV(f, 'executor', 'Исполнитель', { url: urlFor('users.json') })
-              if isSignedIn()
-                span.pos-right
-                  script= `function setExecutor() {  executorId.value = '${userId()}'; executorName.value = '${userName()}'; btnSearch.click(); }`
-                  .btn.footer-link.btn-sm(data-toggle='tooltip' title='Текущий пользователь' data-placement='top' onclick='setExecutor()')
-                    i.fas.fa-user
+            .form-group
+              +autocomplete(f, 'executor', 'Исполнитель', { url: urlFor('users.json') })
+                if isSignedIn()
+                  span.pos-right
+                    script= `function setExecutor() {  executorId.value = '${userId()}'; executorName.value = '${userName()}'; btnSearch.click(); }`
+                    .btn.footer-link.btn-sm(data-toggle='tooltip' title='Текущий пользователь' data-placement='top' onclick='setExecutor()')
+                      i.fas.fa-user
 
           .col-md.col-lg.col-xl-12
-            +autocompleteV(f, 'author', 'Автор', { url: urlFor('users.json') })
-              if isSignedIn()
-                span.pos-right
-                  script= `function setAuthor() {  authorId.value = '${userId()}'; authorName.value = '${userName()}'; btnSearch.click(); }`
-                  .btn.footer-link.btn-sm(data-toggle='tooltip' title='Текущий пользователь' data-placement='top' onclick='setAuthor()')
-                    i.fas.fa-user
+            .form-group
+              +autocomplete(f, 'author', 'Автор', { url: urlFor('users.json') })
+                if isSignedIn()
+                  span.pos-right
+                    script= `function setAuthor() {  authorId.value = '${userId()}'; authorName.value = '${userName()}'; btnSearch.click(); }`
+                    .btn.footer-link.btn-sm(data-toggle='tooltip' title='Текущий пользователь' data-placement='top' onclick='setAuthor()')
+                      i.fas.fa-user
 
           .d-none.d-lg-block.col-lg.col-xl-12
-            +inputV(f, 'tags', 'Теги')
+            .form-group
+              +input(f, 'tags', 'Теги')
 
           .col-auto.col-xl-12.text-right.mb-3
             div.d-xl-none
@@ -71,7 +75,7 @@ block content
               td= n++
               td
                 a(href= urlFor('showTask', task.id))= task.name
-              td= task.formattedDateTo
+              td= task.dateTo
               td
                 //-.badge.badge-lg(class= `badge-${task.status.color}`)
                 span.rounded.pl-2.pr-2.pb-1.pt-1(class= `state-${task.status.color}`)

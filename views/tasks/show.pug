@@ -11,27 +11,35 @@ block content
   //-   access
   div.row.justify-content-center
     div.col-xl-7.col-lg-8.col-md-10.col-sm-12
+
       +title('Задание')
-        if access.edit
-          +buttonEdit(urlFor('editTask', task.id))
-        if access.delete
-          +buttonDelete()
-      div.card.card-body.shadow-sm
-        form
+        span.offset-1
+          if access.edit
+            +buttonEdit(urlFor('editTask', task.id), true)
+          if access.delete
+            +buttonDelete()
+
+      .card.card-body.shadow-sm
+        .form-group.row
           +inputText(task.name, 'Что сделать', { inputClass: 'font-weight-bold' })
-          +inputText(task.formattedDateTo, 'Срок', { col: { label: 'col-3', input: 'col-3' } })
-            //- +inputText(task.status.name, 'Статус', { col: { label: 'col-2', input: 'col-4' }, norow: true, inputClass: `state-${task.status.color}` })
-            label.col-form-label.text-muted(class= 'col-2') Статус
-            div.input-group(class= 'col-4')
-              input.form-control.form-control-plaintext.border-bottom(class=`state-${task.status.color}` value= task.status.name)
-              .input-group-append
-                button.btn.btn-outline-primary(data-toggle='tooltip' title='Взять в работу' data-placement='top')
-                  i.fas.fa-check
+        .form-group.row
+          +inputText(task.dateTo, 'Срок', { col: { label: 'col-3', input: 'col-3' } })
+            //- +inputText(task.status.name, 'Статус', { col: { label: 'col-2', input: 'col-4' }, inputClass: `state-${task.status.color}` })
+          label.col-form-label.text-muted(class= 'col-2') Статус
+          .input-group(class= 'col-4')
+            input.form-control.form-control-plaintext.border-bottom(class=`state-${task.status.color}` value= task.status.name)
+            .input-group-append
+              button.btn.btn-outline-primary(data-toggle='tooltip' title='Взять в работу' data-placement='top')
+                i.fas.fa-check
                 //button.btn.btn-outline-success(data-toggle='tooltip' title='Завершить' data-placement='top')
                 //  i.fas.fa-check
+        .form-group.row
           +textareaText(task.description, 'Описание')
+        .form-group.row
           +inputText(task.executor.fullName, 'Исполнитель')
+        .form-group.row
           +inputText(task.author.fullName, 'Автор')
+        .form-group.row
           +inputText('', 'Теги')
       //- div.pt-3
       //-  a.btn.btn-outline-primary(href= urlFor('tasks'))

@@ -26,19 +26,14 @@ const queryInclude = [
   { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
 ];
 
-/* const pagination = (recordCount, pageSize, currentPage) => {
-  const pageCount = Math.ceil(recordCount / pageSize);
-  return {
-    pageCount, pageSize, currentPage, recordCount,
-  };
-}; */
-
 export default (router) => {
   router
     .get('tasks', '/tasks', async (ctx) => { // список заданий
       const { query } = ctx.request;
       const currentPage = query.page || 1;
       const statuses = await TaskStatus.findAll();
+      statuses.unshift({ id: '', name: '' }); // append empty status
+
       const result = await Task.findAndCountAll({
         where: makeWhere(ctx),
         include: queryInclude,
@@ -49,6 +44,7 @@ export default (router) => {
       const access = {
         new: ctx.state.auth.hasAccess('newTask'),
       };
+
       ctx.render('tasks', {
         tasks: result.rows,
         pages: pagination(ctx, result.count, pageSize, currentPage),
@@ -58,12 +54,16 @@ export default (router) => {
       });
     })
 
-    .get('newTask', '/tasks/new', (ctx) => { // добавление задания
+    .get('newTask', '/tasks/new', async (ctx) => { // добавление задания
       if (!ctx.state.auth.checkAccess(ctx)) {
         return;
       }
+      const statuses = await TaskStatus.findAll();
       const task = Task.build();
-      ctx.render('tasks/new', { f: buildFormObj(task, Task.attributes) });
+      ctx.render('tasks/new', {
+        f: buildFormObj(task, Task.attributes),
+        statuses,
+      });
     })
 
     .post('saveTask', '/tasks', async (ctx) => { // сохранение (нового) задания
@@ -77,7 +77,11 @@ export default (router) => {
         ctx.flash.set({ type: 'success', text: 'Задание успешно сохранено.' });
         ctx.redirect(router.url('showTask', task.id));
       } catch (err) {
-        ctx.render('tasks/new', { f: buildFormObj(task, Task.attributes, err) });
+        const statuses = await TaskStatus.findAll();
+        ctx.render('tasks/new', {
+          f: buildFormObj(task, Task.attributes, err),
+          statuses,
+        });
       }
     })
 
@@ -89,7 +93,7 @@ export default (router) => {
         edit: ctx.state.auth.hasAccess('editTask', task.authorId),
         delete: ctx.state.auth.hasAccess('deleteTask', task.authorId),
       };
-      console.log(JSON.stringify(task));
+      // console.log(JSON.stringify(task));
       ctx.render('tasks/show', { task, access });
     })
 
@@ -100,21 +104,29 @@ export default (router) => {
       if (!ctx.state.auth.checkAccess(ctx, task.authorId)) {
         return;
       }
-      ctx.render('tasks/edit', { f: buildFormObj(task, Task.attributes) });
+      const statuses = await TaskStatus.findAll();
+      ctx.render('tasks/edit', {
+        f: buildFormObj(task, Task.attributes),
+        statuses,
+      });
     })
 
     .patch('updateTask', '/tasks/:id', async (ctx) => { // сохранение задания
-      if (!ctx.state.auth.checkAccess(ctx, ctx.params.id)) {
-        return;
-      }
       const form = ctx.request.body;
       const task = await Task.findByPk(ctx.params.id);
+      if (!ctx.state.auth.checkAccess(ctx, task.authorId)) {
+        return;
+      }
       try {
         await task.update(form);
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
         ctx.redirect(router.url('showTask', task.id));
       } catch (err) {
-        ctx.render('tasks/edit', { f: buildFormObj(task, Task.attributes, err) });
+        const statuses = await TaskStatus.findAll();
+        ctx.render('tasks/edit', {
+          f: buildFormObj(task, Task.attributes, err),
+          statuses,
+        });
       }
     })
 

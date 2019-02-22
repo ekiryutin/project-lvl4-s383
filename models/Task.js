@@ -26,32 +26,40 @@ export default (sequelize, DataTypes) => {
     },
     dateTo: {
       type: DataTypes.DATE,
+      get() {
+        const value = this.getDataValue('dateTo');
+        const date = new Date(value);
+        return value ? dateFns.format(date, 'DD.MM.YYYY') : '';
+      },
       validate: {
         isDate: {
-          msg: 'Неверный формат даты (дд.мм.гггг)',
+          msg: 'Неверный формат дд.мм.гггг',
         },
       },
     },
     authorId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { table: 'Users', field: 'id' },
       validate: {
         notEmpty: {
-          msg: 'Обязательное поле',
+          msg: 'Введите автора',
         },
       },
     },
     authorName: {
       type: DataTypes.VIRTUAL,
+      get() {
+        const value = this.getDataValue('authorName');
+        return this.author ? this.author.fullName : value;
+      },
       allowNull: false,
       validate: {
         notEmpty: {
           msg: 'Введите автора',
         },
         isSelected(value) {
-          if (value !== null && this.authorId === null) {
-            throw new Error('Выберите автора');
+          if (value !== '' && this.authorId === '') {
+            throw new Error('Нужно выбрать из списка');
           }
         },
       },
@@ -59,17 +67,26 @@ export default (sequelize, DataTypes) => {
     executorId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Введите исполнителя',
+        },
+      },
     },
     executorName: {
       type: DataTypes.VIRTUAL,
+      get() {
+        const value = this.getDataValue('executorName');
+        return this.executor ? this.executor.fullName : value;
+      },
       allowNull: false,
       validate: {
         notEmpty: {
           msg: 'Введите исполнителя',
         },
         isSelected(value) {
-          if (value !== null && this.executorId === null) {
-            throw new Error('Выберите исполнителя');
+          if (value !== '' && this.executorId === '') {
+            throw new Error('Нужно выбрать из списка');
           }
         },
       },
@@ -80,12 +97,6 @@ export default (sequelize, DataTypes) => {
     // attachments: {
     // comments: {
   }, {
-    getterMethods: {
-      formattedDateTo() {
-        const date = new Date(this.dateTo);
-        return this.dateTo ? dateFns.format(date, 'DD.MM.YYYY') : null;
-      },
-    },
   });
   Task.associate = (models) => {
     Task.belongsTo(models.TaskStatus, { as: 'status' });

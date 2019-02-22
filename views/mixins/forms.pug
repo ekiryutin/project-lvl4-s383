@@ -1,5 +1,4 @@
-//- const getInputName = (f, property) => `${f.name}[${property}]`
-- const isRequired = (f, property) => { const obj = f.model[property]; return obj && obj.validate ? obj.validate.notEmpty : null; }
+- const isRequired = (f, property) => { const obj = f.model ? f.model[property] : null; return obj && obj.validate ? obj.validate.notEmpty : null; }
 
 mixin formFor(f, options = {})
   - const url = _.get(options, 'url');
@@ -11,87 +10,75 @@ mixin formFor(f, options = {})
         input(name='_method' type='hidden' value= method)
       block
 
-//- input for Vertical form
-mixin inputV(f, property, caption, options = { as: 'text' })
-  - const value = f.object[property] === undefined ? '' : f.object[property]
-  - const invalidClass = f.errors[property] ? 'is-invalid' : '';
-  .form-group(class=(f.errors[property] && 'has-danger'))
-    label.text-muted= caption
-      //- if isRequired(f, property) 
-      //-  sup.text-danger.pl-1 *
-    input.form-control(name= property class=`${invalidClass}` autocomplete='off' type=options['as'] value=`${value}`)
-    if f.errors[property]
-      .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
-
-mixin selectV(f, property, caption, list)
-  - const value = f.object[property] === undefined ? '' : f.object[property]
-  .form-group
-    label.text-muted= caption
+mixin select(f, property, caption, list, options = { col: null })
+  - const labelCol = options.col ? options.col.label : (defaultCol ? defaultCol.label : 'pt-0');
+  - const inputCol = options.col ? options.col.input : (defaultCol ? defaultCol.input : '');
+  label.col-form-label.text-muted(class=`${labelCol}`)= caption
+  div(class= inputCol)
+    - const value = f.object[property] === undefined ? '' : f.object[property]
     select.form-control(name= property)
-      option= ''
       for item in list
-        - const selected = item.id === Number(value);
-        option(value=item.id selected=selected)= item.name
+        option(value=item.id selected=(item.id === Number(value)))= item.name
 
-mixin autocompleteV(f, property, caption, options = { url:'#' })
+mixin autocomplete(f, property, caption, options = { url:'#', col: null })
   - const propertyId = `${property}Id`;
   - const propertyName = `${property}Name`;
-  - const _id = f.object[propertyId] === undefined ? '' : f.object[propertyId]
-  - const _value = f.object[propertyName] === undefined ? '' : f.object[propertyName]
   - const invalidClass = f.errors[propertyName] ? 'is-invalid' : '';
-  .form-group(class=(f.errors[propertyName] && 'has-danger'))
-    label.text-muted= caption
-      //- if isRequired(f, propertyName) 
-      //-  sup.text-danger.pl-1 *
-      block
+  - const labelCol = options.col ? options.col.label : (defaultCol ? defaultCol.label : 'pt-0');
+  - const inputCol = options.col ? options.col.input : (defaultCol ? defaultCol.input : '');
+  label.col-form-label.text-muted(class=`${labelCol}`)= caption
+    if isRequired(f, propertyName) 
+      sup.text-danger.pl-1 *
+    block
+  div(class= inputCol)
+    - const _id = f.object[propertyId] === undefined ? '' : f.object[propertyId]
+    - const _value = f.object[propertyName] === undefined ? '' : f.object[propertyName]
     input.form-control(name= propertyId id= propertyId autocomplete='off' type='hidden' value=_id)
     input.form-control.autocomplete(name= propertyName id= propertyName class=`${invalidClass}` autocomplete='off' data-source=options.url data-target=propertyId value=_value)
     if f.errors[propertyName]
       .invalid-feedback= f.errors[propertyName].map(({ message }) => message).join('. ')
 
-//- input for Horizontal form
-mixin input(f, property, caption, options = { as: 'text', col: null, norow: false })
-  - const value = f.object[property] === undefined ? '' : f.object[property]
+mixin input(f, property, caption, options = { as: 'text', col: null, autofocus: false })
   - const invalidClass = f.errors[property] ? 'is-invalid' : '';
+  - const labelCol = options.col ? options.col.label : (defaultCol ? defaultCol.label : 'pt-0');
+  - const inputCol = options.col ? options.col.input : (defaultCol ? defaultCol.input : '');
+  label.col-form-label.text-muted(class=`${labelCol}`)= caption
+    if isRequired(f, property) 
+      sup.text-danger.pl-1 *
+  div(class= inputCol)
+    - const value = f.object[property] === undefined ? '' : f.object[property]
+    input.form-control(name= property class=`${invalidClass}` autocomplete='off' autofocus=options.autofocus type=options['as'] value= value)
+    if f.errors[property]
+      .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
+
+mixin textarea(f, property, caption, rows = 3, options = { col: null })
   - const labelCol = options.col ? options.col.label : defaultCol.label;
   - const inputCol = options.col ? options.col.input : defaultCol.input;
-  .form-group.row(class=(f.errors[property] && 'has-danger'))
-    label.col-form-label.text-muted(class=`${labelCol}`)= caption
-      if isRequired(f, property) 
-        sup.text-danger.pl-1 *
-    div(class= inputCol)
-      input.form-control(name= property class=`${invalidClass}` autocomplete='off' type=options['as'] value= value)
-      if f.errors[property]
-        .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
+  label.col-form-label.text-muted(class= labelCol)= caption
+  div(class= inputCol)
+    - const value = f.object[property] === undefined ? '' : f.object[property]
+    textarea.form-control(rows= rows)= value
 
+//- ---------------------------
 
-mixin inputText(value, caption, options = { col: null, norow: false, inputClass: '' })
+mixin inputText(value, caption, options = { col: null, inputClass: '' })
   - const labelCol = options.col ? options.col.label : defaultCol.label;
   - const inputCol = options.col ? options.col.input : defaultCol.input;
-  if options.norow
-    label.col-form-label.text-muted(class= labelCol)= caption
-    div(class= inputCol)
-      input.form-control.form-control-plaintext.border-bottom(class= options.inputClass value= value)
-  else
-    div.form-group.row
-      label.col-form-label.text-muted(class= labelCol)= caption
-      div(class= inputCol)
-        input.form-control.form-control-plaintext.border-bottom(class= options.inputClass value= value)
-      block
+  label.col-form-label.text-muted(class= labelCol)= caption
+  div(class= inputCol)
+    input.form-control.form-control-plaintext.border-bottom(class= options.inputClass value= value)
 
 mixin textareaText(value, caption, rows = 3, options = { col: null })
   - const labelCol = options.col ? options.col.label : defaultCol.label;
   - const inputCol = options.col ? options.col.input : defaultCol.input;
-  div.form-group.row
-    label.col-form-label.text-muted(class= labelCol)= caption
-    div(class= inputCol)
-      textarea.form-control.form-control-plaintext.border-bottom(rows= rows)= value
-    block
+  label.col-form-label.text-muted(class= labelCol)= caption
+  div(class= inputCol)
+    textarea.form-control.form-control-plaintext.border-bottom(rows= rows)= value
 
 mixin title(name, back = false)
   h4.mb-0
     if back
-      //- не работает после редактирования
+      //- возврат не работает после редактирования, потом доделать
       a.btn.btn-light.mr-1(href= '#' data-toggle='tooltip' title='Вернуться к списку' data-placement='top')
         i.fas.fa-arrow-left.text-muted
     span.form_title.pr-2= name
@@ -99,7 +86,7 @@ mixin title(name, back = false)
 
 mixin formFooter(primaryName = 'Сохранить')
   .form-group.text-right.pt-3
-    //- не работает после редактирования
+    //- возврат не работает после редактирования, потом доделать
     a.btn.btn-light(onclick='history.back(); return false;') Отменить
     button.btn.btn-primary.pl-4.pr-4(type='submit')
       //- .spinner-border.spinner-border-sm.mr-1.invisible
@@ -119,10 +106,11 @@ mixin pagination(options)
         a.page-link(href= `${options.pages.searchurl}${n}`) Далее
       //- li.text-muted.align-middle.pl-2= `Найдено: ${options.pages.recordCount} записей`
 
-mixin buttonEdit(url)
-  a.btn.btn-light(href= url data-toggle='tooltip' title='Изменить' data-placement='top')
+mixin buttonEdit(url, full)
+  a.btn.btn-light(href= url data-toggle='tooltip' title=(full ? '' : 'Изменить') data-placement='top')
     i.fas.fa-pen.text-muted
-    //- span.pl-1 Изменить
+    if full
+      span.pl-2 Изменить
 
 mixin buttonDelete(dataTarget = '#modalConfirmDelete')
   span(data-toggle='tooltip' title='Удалить' data-placement='top')
