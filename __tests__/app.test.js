@@ -17,7 +17,25 @@ const invalidUser = {
   password: faker.internet.password(),
 };
 
-describe('users (guest)', () => { // -------------------------------
+const statuses = [
+  { name: 'Новое', color: 'warning' },
+  { name: 'В работе', color: 'info' },
+  { name: 'Завершено', color: 'success' },
+];
+
+const task = {
+  name: faker.lorem.sentence(),
+  description: faker.lorem.paragraph(),
+  dateTo: '01.01.2019', // new Date(),
+  statusId: 1, // + random(3)
+  executorId: 1,
+  executorName: 'неважно',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+
+describe('guest', () => { // -------------------------------
   let server;
 
   beforeAll(async () => {
@@ -55,8 +73,7 @@ describe('users (guest)', () => { // -------------------------------
     await request.agent(server)
       .post('/users')
       .send(user)
-      .expect(302)
-      .expect('Location', '/');
+      .expect(302);
 
     await request.agent(server)
       .post('/users')
@@ -89,8 +106,7 @@ describe('users (guest)', () => { // -------------------------------
     await request.agent(server)
       .post('/session')
       .send(user)
-      .expect(302)
-      .expect('Location', '/');
+      .expect(302);
   });
 
   afterEach((done) => {
@@ -99,7 +115,7 @@ describe('users (guest)', () => { // -------------------------------
   });
 });
 
-describe('users (signed)', () => { // -------------------------------
+describe('signed', () => { // -------------------------------
   let server;
   let authCookie;
 
@@ -109,9 +125,7 @@ describe('users (signed)', () => { // -------------------------------
   beforeAll(async () => {
     expect.extend(matchers);
     await sequelize.sync({ force: false });
-  });
 
-  beforeEach(async () => {
     server = app().listen();
 
     await request.agent(server) // add user
@@ -124,7 +138,54 @@ describe('users (signed)', () => { // -------------------------------
     authCookie = response.headers['set-cookie'];
   });
 
-  it('editUser', async () => {
+  it('showUser', async () => {
+    await request.agent(server)
+      .get('/users/1') // curUser
+      .expect(200);
+  });
+
+  it('addStatuses', async () => {
+    await request.agent(server)
+      .post('/statuses')
+      .send(statuses[0])
+      .expect(403); // forbidden
+
+    statuses.forEach(async (status) => {
+      await request.agent(server)
+        .post('/statuses')
+        .set('Cookie', authCookie)
+        .send(status)
+        .expect(302);
+    });
+  });
+
+  it('createTask', async () => { // -----------------------------------
+    await request.agent(server)
+      .get('/tasks/new')
+      .set('Cookie', authCookie)
+      .expect(200);
+
+    await request.agent(server)
+      .post('/tasks')
+      .set('Cookie', authCookie)
+      .send(task)
+      .expect(302);
+  });
+
+  it('tasks', async () => {
+    await request.agent(server)
+      .get('/tasks')
+      .set('Cookie', authCookie)
+      .expect(200);
+  });
+
+  it('showTask', async () => {
+    await request.agent(server)
+      .get('/tasks/1')
+      .expect(200);
+  });
+
+  it('editUser', async () => { // -----------------------------------
     await request.agent(server)
       .get(`${curUser}/edit`)
       .set('Cookie', authCookie)
@@ -156,7 +217,20 @@ describe('users (signed)', () => { // -------------------------------
       .expect(403); // forbidden
   });
 
-  it('deleteUser', async () => {
+  const testUrl = ['users.json', 'statuses.json', 'tasks.json'];
+  testUrl.forEach((url) => {
+    it(url, async () => {
+      await request.agent(server)
+        .get(`/api/${url}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      // .expect((res) => {
+      //  console.log(url, res.body);
+      // });
+    });
+  });
+
+  /* it('deleteUser', async () => {
     await request.agent(server)
       .delete(curUser)
       .set('Cookie', authCookie)
@@ -166,86 +240,15 @@ describe('users (signed)', () => { // -------------------------------
       .delete(otherUser)
       .set('Cookie', authCookie)
       .expect(403); // forbidden
-  });
+  }); */
 
   it('logout', async () => {
     await request.agent(server)
       .delete('/session')
-      .expect(302)
-      .expect('Location', '/');
+      .expect(302);
   });
 
-  afterEach((done) => {
-    server.close();
-    done();
-  });
-});
-
-describe('tasks', () => { // -------------------------------
-  let server;
-
-  beforeAll(async () => {
-    expect.extend(matchers);
-    await sequelize.sync({ force: false });
-  });
-
-  beforeEach(() => {
-    server = app().listen();
-  });
-
-  it('tasks', async () => {
-    await request.agent(server)
-      .get('/tasks')
-      .expect(200);
-  });
-
-  /* it('createTask', async () => {
-    await request.agent(server)
-      .get('/tasks/new')
-      .expect(200);
-
-    await request.agent(server)
-      .post('/tasks')
-      .send(task)
-      .expect(302)
-      .expect('Location', '/tasks');
-  });
-
-  it('showTask', async () => {
-    await request.agent(server)
-      .get('/tasks/1')
-      .expect(200);
-  }); */
-
-  afterEach((done) => {
-    server.close();
-    done();
-  });
-});
-
-describe('api', () => { // -------------------------------
-  let server;
-
-  beforeAll(async () => {
-    expect.extend(matchers);
-    await sequelize.sync({ force: false });
-  });
-
-  beforeEach(() => {
-    server = app().listen();
-  });
-
-  const testUrl = ['users.json', 'tasks.json'];
-  testUrl.forEach((url) => {
-    it(url, async () => {
-      await request.agent(server)
-        .get(`/api/${url}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8');
-    });
-  });
-
-  afterEach((done) => {
+  afterAll((done) => {
     server.close();
     done();
   });

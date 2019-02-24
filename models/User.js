@@ -52,13 +52,14 @@ export default (sequelize, DataTypes) => {
       },
     },
   }, {
+    // paranoid: true, - добавляет в запрос `User`.`deletedAt` IS NULL
     getterMethods: {
       fullName() {
         return `${this.lastName} ${this.firstName}`;
       },
       formattedDate() {
         const date = new Date(this.createdAt);
-        return dateFns.format(date, 'DD.MM.YYYY');
+        return date !== null && dateFns.isValid(date) ? dateFns.format(date, 'dd.MM.yyyy') : '';
       },
     },
   });

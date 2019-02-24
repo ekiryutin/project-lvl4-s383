@@ -1,4 +1,5 @@
 import dateFns from 'date-fns';
+// import StateMachine from 'javascript-state-machine';
 
 export default (sequelize, DataTypes) => {
   const Task = sequelize.define('Task', {
@@ -28,12 +29,27 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       get() {
         const value = this.getDataValue('dateTo');
-        const date = new Date(value);
-        return value ? dateFns.format(date, 'DD.MM.YYYY') : '';
+        const d = new Date(value);
+        // use locale?
+        return value !== null && dateFns.isValid(d) ? dateFns.format(d, 'dd.MM.yyyy') : value;
+      },
+      set(value) {
+        // use locale?
+        const d = dateFns.parse(value, 'dd.MM.yyyy', new Date());
+        if (dateFns.isValid(d)) {
+          this.setDataValue('dateTo', d);
+        } else {
+          this.setDataValue('dateTo', value === '' ? null : value);
+        }
       },
       validate: {
-        isDate: {
-          msg: 'Неверный формат дд.мм.гггг',
+        /* isDate: {
+          msg: 'Неверная дата',
+        }, */
+        checkDate(value) { // вызывается после set
+          if (typeof value === 'string' && value !== '') {
+            throw new Error('Неверная дата');
+          }
         },
       },
     },
@@ -59,7 +75,7 @@ export default (sequelize, DataTypes) => {
         },
         isSelected(value) {
           if (value !== '' && this.authorId === '') {
-            throw new Error('Нужно выбрать из списка');
+            throw new Error('Выберите автора из выпадающего списка');
           }
         },
       },
@@ -86,7 +102,7 @@ export default (sequelize, DataTypes) => {
         },
         isSelected(value) {
           if (value !== '' && this.executorId === '') {
-            throw new Error('Нужно выбрать из списка');
+            throw new Error('Выберите исполнителя из выпадающего списка');
           }
         },
       },
@@ -97,6 +113,17 @@ export default (sequelize, DataTypes) => {
     // attachments: {
     // comments: {
   }, {
+    // paranoid: true, - добавляет в запрос `Task`.`deletedAt` IS NULL
+    getterMethods: {
+      nextStatus() {
+        // по идее надо загружать из БД, иначе справочник нет смысла хранить в БД
+        switch (this.statusId) { // StateMachine :)
+          case 1: return { id: 2, action: 'Принять' };
+          case 2: return { id: 3, action: 'Завершить' };
+          default: return null;
+        }
+      },
+    },
   });
   Task.associate = (models) => {
     Task.belongsTo(models.TaskStatus, { as: 'status' });
@@ -105,3 +132,13 @@ export default (sequelize, DataTypes) => {
   };
   return Task;
 };
+
+/*
+StateMachine.factory(Task, {
+  init: 'init',
+  transitions: [
+    { name: 'accept', from: 'init', to: 'working' }
+    { name: 'complete', from: 'working', to: 'done' }
+  ],
+});
+*/

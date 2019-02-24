@@ -1,18 +1,30 @@
 extends /layouts/application.pug
 
 block define
-  - const pageTitle = 'Регистрация';
+  - const section = 'tasks';
+  - const pageTitle = 'Новое задание';
+  - const defaultCol = { label: 'col-3', input: 'col-9' };
 
 block content
   //- параметры
   //-   f: { name, object, model, errors }
+  //-   statuses
   div.row.justify-content-center
-    div.col-xl-5.col-lg-6.col-md-7.col-sm-9
+    div.col-xl-8.col-lg-9.col-md-12.col-sm-12
       +title(pageTitle)
-      +formFor(f, { url: urlFor('saveUser'), method: 'post' })
-        +inputH(f, 'firstName', 'Имя')
-        +inputH(f, 'lastName', 'Фамилия')
-        +inputH(f, 'email', 'E-mail')
-        +inputH(f, 'password', 'Пароль', { as: 'password' })
+      +formFor(f, { url: urlFor('saveTask'), method: 'post' })
+        .form-group.row
+          +input(f, 'name', 'Что сделать', { autofocus: true })
+        .form-group.row
+          +date(f, 'dateTo', 'Срок', { col: { label: 'col-3', input: 'col-3' } })
+          +select(f, 'statusId', 'Статус', statuses, { col: { label: 'col-2', input: 'col-4' } } )
+        .form-group.row
+          +textarea(f, 'description', 'Описание')
+        .form-group.row
+          +autocomplete(f, 'executor', 'Исполнитель', { url: urlFor('users.json') })
+        //- .form-group.row
+        //-   +autocomplete(f, 'author', 'Автор', { url: urlFor('users.json') })
+        //- .form-group.row
+          //- +input('', 'Теги')
         +formFooter()
 

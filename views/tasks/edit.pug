@@ -10,13 +10,13 @@ block content
   //-   f: { name, object, model, errors }
   //-   statuses
   div.row.justify-content-center
-    div.col-xl-7.col-lg-8.col-md-10.col-sm-12
+    div.col-xl-8.col-lg-9.col-md-12.col-sm-12
       +title('Задание')
       +formFor(f, { url: urlFor('updateTask', f.object.id), method: 'patch' })
         .form-group.row
           +input(f, 'name', 'Что сделать', { autofocus: true })
         .form-group.row
-          +input(f, 'dateTo', 'Срок', { col: { label: 'col-3', input: 'col-3' } })
+          +date(f, 'dateTo', 'Срок', { col: { label: 'col-3', input: 'col-3' } })
           +select(f, 'statusId', 'Статус', statuses, { col: { label: 'col-2', input: 'col-4' } } )
         .form-group.row
           +textarea(f, 'description', 'Описание')

@@ -45,6 +45,8 @@ export default () => {
       userId: () => ctx.session.userId,
       userName: () => ctx.session.userName,
       auth: new Auth(ctx.session.userId),
+      referer: new Map(ctx.session.referer || []),
+      referFor: route => ctx.state.referer.get(route || ctx._matchedRouteName), // eslint-disable-line
     };
     await next();
   });

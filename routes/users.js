@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import pagination from '../lib/pagination';
+import referer from '../lib/referer';
 import { User, Sequelize } from '../models';
 
 const { Op } = Sequelize;
@@ -24,8 +25,9 @@ export default (router) => {
       });
     })
 
-    .get('newUser', '/users/new', (ctx) => { // регистрация пользователя
+    .get('newUser', '/users/new', (ctx) => { // форма регистрация пользователя
       const user = User.build();
+      referer.saveFor(ctx, 'newUser');
       ctx.render('users/new', { f: buildFormObj(user, User.attributes) });
     })
 
@@ -47,6 +49,7 @@ export default (router) => {
         edit: ctx.state.auth.hasAccess('editUser', ctx.params.id),
         delete: ctx.state.auth.hasAccess('deleteUser', ctx.params.id),
       };
+      referer.saveFor(ctx, ['showUser', 'deleteUser']);
       ctx.render('users/show', { user, access });
     })
 
@@ -55,6 +58,7 @@ export default (router) => {
         return;
       }
       const user = await User.findByPk(ctx.params.id);
+      referer.saveFor(ctx, ['editUser', 'updateUser']); // для Cancel
       ctx.render('users/edit', { f: buildFormObj(user, User.attributes) });
     })
 
@@ -67,8 +71,10 @@ export default (router) => {
       try {
         await user.update(form);
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
+        referer.prevent(ctx);
         ctx.redirect(router.url('showUser', user.id));
       } catch (err) {
+        // referer.prevent(ctx); ?
         ctx.render('users/edit', { f: buildFormObj(user, User.attributes, err) });
       }
     })

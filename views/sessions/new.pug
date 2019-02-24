@@ -7,13 +7,14 @@ block content
   //- параметры
   //-   f: { name, object }
   //-   message
-  if message
-    .alert.alert-dismissible.fade.show(class=`alert-${message.type}`)
-      = message.text
   div.row.justify-content-center
     div.col-xl-4.col-lg-5.col-md-6.col-sm-8
       +title('Вход в систему')
       +formFor(f, { url: urlFor('session'), method: 'post' })
+        if message
+          .form-group
+            .text-danger= message.text
+
         .form-group
           +input(f, 'email', 'E-mail', { autofocus: true })
         .form-group

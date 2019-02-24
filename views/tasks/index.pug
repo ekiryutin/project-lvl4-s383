@@ -11,17 +11,16 @@ block content
   //-   f: { name, object, errors }
   //-   statuses
   //-   access
-  +title(pageTitle)
-    if access.new
-      a.btn.btn-outline-primary(href= urlFor('newTask') style='margin-left: 40px')
-        span.pl-1 Добавить
+  +title(pageTitle, 'col-xl-3 col-md-2 col-sm-3 pl-0')
+    span.ml-2
+      if access.new
+        a.btn.btn-outline-primary(href= urlFor('newTask') Xstyle='margin-left: 40px')
+          span.pl-1 Добавить
 
   .row
     .col-xl-3.mb-3
 
       +formFor(f, { url: urlFor('tasks'), method: 'get' })
-        //.card.shadow-sm.mb-3
-        //  .card-body
         .row
           .col-md.col-lg.col-xl-12
             .form-group

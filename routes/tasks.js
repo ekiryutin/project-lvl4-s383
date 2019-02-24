@@ -1,6 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import Where from '../lib/Where';
 import pagination from '../lib/pagination';
+import referer from '../lib/referer';
 import {
   Task, TaskStatus, User, // Sequelize,
 } from '../models';
@@ -15,7 +16,7 @@ const makeWhere = (ctx) => {
   where.searchBy('executorId');
   where.searchBy('authorId');
   // where.searchBy('tag', Op.in);
-  console.log(where.get());
+  // console.log(where.get());
 
   return where.get();
 };
@@ -54,12 +55,14 @@ export default (router) => {
       });
     })
 
-    .get('newTask', '/tasks/new', async (ctx) => { // добавление задания
-      if (!ctx.state.auth.checkAccess(ctx)) {
-        return;
-      }
+    .get('newTask', '/tasks/new', async (ctx) => { // форма добавления задания
+      // if (!ctx.state.auth.checkAccess(ctx)) { // не работает, т.к.matchedRoute = showTask
+      //   return;                               // сработает проверка при saveTask
+      // }
       const statuses = await TaskStatus.findAll();
       const task = Task.build();
+      referer.saveFor(ctx, ['showTask', 'newTask']); // чтобы после сохранения вернуться из просмотра и для Cancel
+
       ctx.render('tasks/new', {
         f: buildFormObj(task, Task.attributes),
         statuses,
@@ -72,9 +75,12 @@ export default (router) => {
       }
       const form = ctx.request.body;
       const task = Task.build(form);
+      task.set('authorId', ctx.state.userId());
+      task.set('authorName', ctx.state.userName());
       try {
         await task.save();
         ctx.flash.set({ type: 'success', text: 'Задание успешно сохранено.' });
+        referer.prevent(ctx);
         ctx.redirect(router.url('showTask', task.id));
       } catch (err) {
         const statuses = await TaskStatus.findAll();
@@ -85,19 +91,21 @@ export default (router) => {
       }
     })
 
-    .get('showTask', '/tasks/:id', async (ctx) => { // просмотр задания
+    .get('showTask', '/tasks/:id', async (ctx) => { // форма просмотра задания
       const task = await Task.findByPk(ctx.params.id, {
         include: queryInclude,
       });
       const access = {
         edit: ctx.state.auth.hasAccess('editTask', task.authorId),
         delete: ctx.state.auth.hasAccess('deleteTask', task.authorId),
+        status: ctx.state.auth.hasAccess('statusTask', task.executorId) && task.nextStatus !== null,
       };
-      // console.log(JSON.stringify(task));
+      console.log(JSON.stringify(task));
+      referer.saveFor(ctx, ['showTask', 'deleteTask']);
       ctx.render('tasks/show', { task, access });
     })
 
-    .get('editTask', '/tasks/:id/edit', async (ctx) => { // редактирование задания
+    .get('editTask', '/tasks/:id/edit', async (ctx) => { // форма редактирования задания
       const task = await Task.findByPk(ctx.params.id, {
         include: queryInclude,
       });
@@ -105,6 +113,8 @@ export default (router) => {
         return;
       }
       const statuses = await TaskStatus.findAll();
+      referer.saveFor(ctx, ['editTask', 'updateTask']); // для Cancel
+
       ctx.render('tasks/edit', {
         f: buildFormObj(task, Task.attributes),
         statuses,
@@ -120,14 +130,31 @@ export default (router) => {
       try {
         await task.update(form);
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
+        referer.prevent(ctx);
         ctx.redirect(router.url('showTask', task.id));
       } catch (err) {
         const statuses = await TaskStatus.findAll();
+        // referer.prevent(ctx); ?
         ctx.render('tasks/edit', {
           f: buildFormObj(task, Task.attributes, err),
           statuses,
         });
       }
+    })
+
+    .patch('statusTask', '/tasks/:id/status', async (ctx) => { // изменение статуса
+      const form = ctx.request.body;
+      const task = await Task.findByPk(ctx.params.id);
+      if (!ctx.state.auth.checkAccess(ctx, task.executorId)) {
+        return;
+      }
+      try {
+        await task.update(form);
+      } catch (err) {
+        ctx.flash.set({ type: 'error', text: err });
+      }
+      referer.prevent(ctx);
+      ctx.redirect(router.url('showTask', task.id));
     })
 
     .delete('deleteTask', '/tasks/:id', async (ctx) => { // удаление задания
@@ -137,7 +164,9 @@ export default (router) => {
       }
       await task.destroy();
       ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
-      ctx.redirect(router.url('tasks'));
+      // ctx.redirect(router.url('tasks'));
+      referer.prevent(ctx);
+      ctx.redirect(ctx.state.referFor()); // возврат обратно
     })
 
     .get('tasks.json', '/api/tasks.json', async (ctx) => { // список заданий
