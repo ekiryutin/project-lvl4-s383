@@ -7,7 +7,6 @@ module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
     main: ['./src/index.js'],
-    vendor: ['jquery', 'jquery-ujs', 'popper.js', 'bootstrap'],
   },
   output: {
     path: path.join(__dirname, 'public', 'assets'),
@@ -19,17 +18,22 @@ module.exports = {
     aggregateTimeout: 300,
     poll: 1000,
   }, */
-  /* optimization: {
+  optimization: {
     splitChunks: {
+      chunks: 'all',
       cacheGroups: {
         vendors: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: 'all',
+          /* name(module) {
+            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+            console.log(packageName);
+            return `npm.${packageName}`;
+          }, */
         },
       },
     },
-  }, */
+  },
   module: {
     rules: [
       {

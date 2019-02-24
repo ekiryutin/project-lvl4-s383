@@ -7,6 +7,7 @@ import '@fortawesome/fontawesome-free/js/regular';
 import '@fortawesome/fontawesome-free/js/brands';
 
 import $ from 'jquery';
+import 'jquery-ujs';
 
 import './mystyle.css';
 import './autocomplete';
