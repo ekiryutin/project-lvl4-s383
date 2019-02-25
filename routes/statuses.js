@@ -8,9 +8,8 @@ export default (router) => {
     }) */
 
     .post('saveStatus', '/statuses', async (ctx) => { // сохранение (нового) статуса
-      if (!ctx.state.auth.checkAccess(ctx)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx);
+
       const form = ctx.request.body;
       const status = TaskStatus.build(form);
       try {

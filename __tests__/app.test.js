@@ -26,12 +26,18 @@ const statuses = [
 const task = {
   name: faker.lorem.sentence(),
   description: faker.lorem.paragraph(),
-  dateTo: '01.01.2019', // new Date(),
+  dateTo: '01.01.2019',
   statusId: 1, // + random(3)
   executorId: 1,
   executorName: 'неважно',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+};
+
+const invalidTask = {
+  name: faker.lorem.sentence(),
+  description: faker.lorem.paragraph(),
+  statusId: 1, // + random(3)
+  executorId: null,
+  executorName: '',
 };
 
 
@@ -122,6 +128,9 @@ describe('signed', () => { // -------------------------------
   const curUser = '/users/1';
   const otherUser = '/users/2';
 
+  const ownerTask = '/tasks/1';
+  const otherTask = '/tasks/2';
+
   beforeAll(async () => {
     expect.extend(matchers);
     await sequelize.sync({ force: false });
@@ -137,6 +146,28 @@ describe('signed', () => { // -------------------------------
       .send(user);
     authCookie = response.headers['set-cookie'];
   });
+
+  const testGET = async (tests) => {
+    await Promise.all(tests.map(test => request.agent(server)
+      .get(test.url)
+      .set('Cookie', authCookie)
+      .expect(test.code)));
+  };
+
+  const testPATCH = async (tests) => {
+    await Promise.all(tests.map(test => request.agent(server)
+      .patch(test.url)
+      .set('Cookie', authCookie)
+      .send(test.data)
+      .expect(test.code)));
+  };
+
+  const testDELETE = async (tests) => {
+    await Promise.all(tests.map(test => request.agent(server)
+      .delete(test.url)
+      .set('Cookie', authCookie)
+      .expect(test.code)));
+  };
 
   it('showUser', async () => {
     await request.agent(server)
@@ -168,8 +199,14 @@ describe('signed', () => { // -------------------------------
     await request.agent(server)
       .post('/tasks')
       .set('Cookie', authCookie)
+      .send(invalidTask)
+      .expect(200); // not saved
+
+    await request.agent(server)
+      .post('/tasks')
+      .set('Cookie', authCookie)
       .send(task)
-      .expect(302);
+      .expect(302); // success
   });
 
   it('tasks', async () => {
@@ -181,44 +218,63 @@ describe('signed', () => { // -------------------------------
 
   it('showTask', async () => {
     await request.agent(server)
-      .get('/tasks/1')
+      .get(ownerTask)
       .expect(200);
   });
 
-  it('editUser', async () => { // -----------------------------------
-    await request.agent(server)
-      .get(`${curUser}/edit`)
-      .set('Cookie', authCookie)
-      .expect(200); // success
+  it('editTask', async () => {
+    const tests = [
+      { url: `${otherTask}/edit`, code: 403 }, // forbidden
+      { url: `${ownerTask}/edit`, code: 200 }, // success
+    ];
+    await testGET(tests);
+  });
 
-    await request.agent(server)
-      .get(`${otherUser}/edit`)
-      .set('Cookie', authCookie)
-      .expect(403); // forbidden
+  it('updateTask', async () => {
+    const tests = [
+      { url: ownerTask, data: task, code: 302 }, // success
+      { url: ownerTask, data: invalidTask, code: 200 }, // not saved
+      { url: otherTask, data: task, code: 403 }, // forbidden
+    ];
+    await testPATCH(tests);
+  });
+
+  it('statusTask', async () => {
+    const tests = [
+      { url: `${ownerTask}/status`, data: { statusId: 2 }, code: 302 }, // success
+      { url: `${ownerTask}/status`, data: { statusId: -1 }, code: 302 }, // with flash
+      { url: `${otherTask}/status`, data: { statusId: 2 }, code: 403 }, // forbidden
+    ];
+    await testPATCH(tests);
+  });
+
+  it('deleteTask', async () => {
+    const tests = [
+      { url: otherTask, code: 403 }, // forbidden
+      { url: ownerTask, code: 302 }, // success
+    ];
+    await testDELETE(tests);
+  });
+
+  it('editUser', async () => { // -----------------------------------
+    const tests = [
+      { url: `${otherUser}/edit`, code: 403 }, // forbidden
+      { url: `${curUser}/edit`, code: 200 }, // success
+    ];
+    await testGET(tests);
   });
 
   it('updateUser', async () => {
-    await request.agent(server)
-      .patch(curUser)
-      .set('Cookie', authCookie)
-      .send(user)
-      .expect(302); // success
-
-    await request.agent(server)
-      .patch(curUser)
-      .set('Cookie', authCookie)
-      .send(invalidUser)
-      .expect(200); // not saved
-
-    await request.agent(server)
-      .patch(otherUser)
-      .set('Cookie', authCookie)
-      .send(user)
-      .expect(403); // forbidden
+    const tests = [
+      { url: curUser, data: user, code: 302 }, // success
+      { url: curUser, data: invalidUser, code: 200 }, // not saved
+      { url: otherUser, data: user, code: 403 }, // forbidden
+    ];
+    await testPATCH(tests);
   });
 
-  const testUrl = ['users.json', 'statuses.json', 'tasks.json'];
-  testUrl.forEach((url) => {
+  const testJson = ['users.json', 'statuses.json', 'tasks.json'];
+  testJson.forEach((url) => {
     it(url, async () => {
       await request.agent(server)
         .get(`/api/${url}`)
@@ -230,17 +286,13 @@ describe('signed', () => { // -------------------------------
     });
   });
 
-  /* it('deleteUser', async () => {
-    await request.agent(server)
-      .delete(curUser)
-      .set('Cookie', authCookie)
-      .expect(302); // success
-
-    await request.agent(server)
-      .delete(otherUser)
-      .set('Cookie', authCookie)
-      .expect(403); // forbidden
-  }); */
+  it('deleteUser', async () => {
+    const tests = [
+      { url: otherUser, code: 403 }, // forbidden
+      { url: curUser, code: 302 }, // success
+    ];
+    await testDELETE(tests);
+  });
 
   it('logout', async () => {
     await request.agent(server)

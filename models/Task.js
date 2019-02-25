@@ -113,7 +113,8 @@ export default (sequelize, DataTypes) => {
     // attachments: {
     // comments: {
   }, {
-    // paranoid: true, - добавляет в запрос `Task`.`deletedAt` IS NULL
+    paranoid: true, // использует `deletedAt,-добавляет в запрос ...`deletedAt` IS NULL
+
     getterMethods: {
       nextStatus() {
         // по идее надо загружать из БД, иначе справочник нет смысла хранить в БД

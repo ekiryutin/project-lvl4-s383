@@ -54,18 +54,16 @@ export default (router) => {
     })
 
     .get('editUser', '/users/:id/edit', async (ctx) => { // редактирование пользователя
-      if (!ctx.state.auth.checkAccess(ctx, ctx.params.id)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx, ctx.params.id);
+
       const user = await User.findByPk(ctx.params.id);
       referer.saveFor(ctx, ['editUser', 'updateUser']); // для Cancel
       ctx.render('users/edit', { f: buildFormObj(user, User.attributes) });
     })
 
     .patch('updateUser', '/users/:id', async (ctx) => { // сохранение пользователя
-      if (!ctx.state.auth.checkAccess(ctx, ctx.params.id)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx, ctx.params.id);
+
       const form = ctx.request.body;
       const user = await User.findByPk(ctx.params.id);
       try {
@@ -80,9 +78,8 @@ export default (router) => {
     })
 
     .delete('deleteUser', '/users/:id', async (ctx) => { // удаление пользователя
-      if (!ctx.state.auth.checkAccess(ctx, ctx.params.id)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx, ctx.params.id);
+
       const user = await User.findByPk(ctx.params.id);
       await user.destroy();
       ctx.flash.set({ type: 'success', text: `Пользователь '${user.fullName}' успешно удален.` });

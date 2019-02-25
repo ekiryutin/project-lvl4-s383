@@ -56,9 +56,9 @@ export default (router) => {
     })
 
     .get('newTask', '/tasks/new', async (ctx) => { // форма добавления задания
-      // if (!ctx.state.auth.checkAccess(ctx)) { // не работает, т.к.matchedRoute = showTask
-      //   return;                               // сработает проверка при saveTask
-      // }
+      // ctx.state.auth.checkAccess(ctx); { // не работает, т.к. matchedRoute = showTask
+      //                                    // некритично - сработает проверка в saveTask
+
       const statuses = await TaskStatus.findAll();
       const task = Task.build();
       referer.saveFor(ctx, ['showTask', 'newTask']); // чтобы после сохранения вернуться из просмотра и для Cancel
@@ -70,9 +70,8 @@ export default (router) => {
     })
 
     .post('saveTask', '/tasks', async (ctx) => { // сохранение (нового) задания
-      if (!ctx.state.auth.checkAccess(ctx)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx);
+
       const form = ctx.request.body;
       const task = Task.build(form);
       task.set('authorId', ctx.state.userId());
@@ -109,9 +108,8 @@ export default (router) => {
       const task = await Task.findByPk(ctx.params.id, {
         include: queryInclude,
       });
-      if (!ctx.state.auth.checkAccess(ctx, task.authorId)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+
       const statuses = await TaskStatus.findAll();
       referer.saveFor(ctx, ['editTask', 'updateTask']); // для Cancel
 
@@ -124,9 +122,8 @@ export default (router) => {
     .patch('updateTask', '/tasks/:id', async (ctx) => { // сохранение задания
       const form = ctx.request.body;
       const task = await Task.findByPk(ctx.params.id);
-      if (!ctx.state.auth.checkAccess(ctx, task.authorId)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+
       try {
         await task.update(form);
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
@@ -145,9 +142,8 @@ export default (router) => {
     .patch('statusTask', '/tasks/:id/status', async (ctx) => { // изменение статуса
       const form = ctx.request.body;
       const task = await Task.findByPk(ctx.params.id);
-      if (!ctx.state.auth.checkAccess(ctx, task.executorId)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx, task ? task.executorId : 0);
+
       try {
         await task.update(form);
       } catch (err) {
@@ -159,9 +155,8 @@ export default (router) => {
 
     .delete('deleteTask', '/tasks/:id', async (ctx) => { // удаление задания
       const task = await Task.findByPk(ctx.params.id);
-      if (!ctx.state.auth.checkAccess(ctx, task.authorId)) {
-        return;
-      }
+      ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+
       await task.destroy();
       ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
       // ctx.redirect(router.url('tasks'));

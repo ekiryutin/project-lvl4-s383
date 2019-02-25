@@ -27,7 +27,7 @@ block content
 
           label.col-form-label.text-muted(class= 'col-2') Статус
           .input-group(class= 'col-4')
-            input.form-control.form-control-plaintext.border-bottom(class=`state-${task.status.color}` value= task.status.name)
+            .form-control.form-control-plaintext.border-bottom(class=`state-${task.status.color}`)= task.status.name
             if access.status 
               .input-group-append
                 form(action= urlFor('statusTask', task.id) method='post')

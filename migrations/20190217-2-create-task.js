@@ -36,6 +36,9 @@ module.exports = {
       type: Sequelize.DATE,
       allowNull: false,
     },
+    deletedAt: {
+      type: Sequelize.DATE,
+    },
   })
     .then(() => queryInterface.addConstraint('Tasks', ['statusId'], {
       type: 'foreign key',
@@ -53,10 +56,8 @@ module.exports = {
     .then(() => queryInterface.addIndex('Tasks', ['statusId']))
     .then(() => queryInterface.addIndex('Tasks', ['authorId']))
     .then(() => queryInterface.addIndex('Tasks', ['executorId']))
-    .then(() => queryInterface.addIndex('Tasks', ['dateTo'])),
+    .then(() => queryInterface.addIndex('Tasks', ['dateTo']))
+    .then(() => queryInterface.addIndex('Tasks', ['deletedAt'])),
 
   down: queryInterface => queryInterface.dropTable('Tasks'),
 };
-
-// insert into "Tasks" (name, statusId, authorId, executorId, createdAt, updatedAt)
-// values ('test', 1, 150, 150, date('now'), date('now'));

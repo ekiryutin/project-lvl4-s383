@@ -52,7 +52,8 @@ export default (sequelize, DataTypes) => {
       },
     },
   }, {
-    // paranoid: true, - добавляет в запрос `User`.`deletedAt` IS NULL
+    paranoid: true, // использует `deletedAt,-добавляет в запрос ...`deletedAt` IS NULL
+
     getterMethods: {
       fullName() {
         return `${this.lastName} ${this.firstName}`;

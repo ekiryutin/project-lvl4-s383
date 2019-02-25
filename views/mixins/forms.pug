@@ -82,7 +82,7 @@ mixin inputText(value, caption, options = { col: null, inputClass: '' })
   - const inputCol = options.col ? options.col.input : defaultCol.input;
   label.col-form-label.text-muted(class= labelCol)= caption
   div(class= inputCol)
-    input.form-control.form-control-plaintext.border-bottom(class= options.inputClass value= value)
+    .form-control.form-control-plaintext.border-bottom(class= options.inputClass)= value
 
 mixin textareaText(value, caption, rows = 3, options = { col: null })
   - const labelCol = options.col ? options.col.label : defaultCol.label;
@@ -144,7 +144,7 @@ mixin confirmDelete(msg, url, modalId = 'modalConfirmDelete')
           p= msg
         .modal-footer
           button.btn.btn-light(type='button' data-dismiss='modal') Отменить
-          a.btn.btn-danger.pl-3.pr-3(href=url data-method='delete' rel='nofollow') Удалить
+          a.btn.btn-outline-danger.pl-3.pr-3(href=url data-method='delete' rel='nofollow') Удалить
           //- form(action= url method='post')
           //-   input(name='_method' type='hidden' value='delete')
           //-   button.btn.btn-warning.pl-3.pr-3(type='submit') Удалить
