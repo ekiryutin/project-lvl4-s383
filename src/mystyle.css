@@ -43,6 +43,14 @@ nav.navbar {
   background-color: #d2ffbf;
 }
 
+.badge-gray {
+  background-color: #e9ecef;
+}
+
+.badge-gray:hover {
+  background-color: #d6d9db;
+}
+
 .pos-right {
   position: absolute;
   right: 1em;

@@ -24,7 +24,7 @@ block content
           +autocomplete(f, 'executor', 'Исполнитель', { url: urlFor('users.json') })
         //- .form-group.row
         //-   +autocomplete(f, 'author', 'Автор', { url: urlFor('users.json') })
-        //- .form-group.row
-          //- +input('', 'Теги')
+        .form-group.row
+          +input(f, 'tags', 'Теги')
         +formFooter()
 

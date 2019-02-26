@@ -42,7 +42,12 @@ block content
         .form-group.row
           +inputText(task.author.fullName, 'Автор')
         .form-group.row
-          +inputText('', 'Теги')
+          // +inputText('', 'Теги')
+          label.col-form-label.text-muted(class= defaultCol.label) Теги
+          div(class= defaultCol.input)
+            each tag in task.Tags
+              .btn.btn-sm.badge-pill.badge-gray.pt-0.pb-0.mr-1.mt-1(data-tag= tag.id)
+                = tag.name
 
   +confirmDelete('Вы уверены, что хотите удалить задание?', urlFor('deleteTask', task.id))
 

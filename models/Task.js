@@ -109,11 +109,21 @@ export default (sequelize, DataTypes) => {
     },
     tags: {
       type: DataTypes.VIRTUAL,
+      get() {
+        return this.Tags ? this.Tags.map(tag => tag.name).join(', ') : '';
+      },
+      set(value) { // array of id
+        if (this.Tags) {
+          const cur = this.Tags.map(tag => tag.id);
+          this.removeTags(cur);
+        }
+        this.setTags(value);
+      },
     },
     // attachments: {
     // comments: {
   }, {
-    paranoid: true, // использует `deletedAt,-добавляет в запрос ...`deletedAt` IS NULL
+    paranoid: true, // использует `deletedAt, добавляет в запрос ...`deletedAt` IS NULL
 
     getterMethods: {
       nextStatus() {
@@ -130,16 +140,7 @@ export default (sequelize, DataTypes) => {
     Task.belongsTo(models.TaskStatus, { as: 'status' });
     Task.belongsTo(models.User, { as: 'author' });
     Task.belongsTo(models.User, { as: 'executor' });
+    Task.belongsToMany(models.Tag, { through: 'TaskTag' });
   };
   return Task;
 };
-
-/*
-StateMachine.factory(Task, {
-  init: 'init',
-  transitions: [
-    { name: 'accept', from: 'init', to: 'working' }
-    { name: 'complete', from: 'working', to: 'done' }
-  ],
-});
-*/

@@ -3,19 +3,26 @@ import Where from '../lib/Where';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
 import {
-  Task, TaskStatus, User, // Sequelize,
+  Task, TaskStatus, Tag, User, Sequelize,
 } from '../models';
 
-// const { Op } = Sequelize;
+const { Op } = Sequelize;
 const pageSize = 10;
 
-const makeWhere = (ctx) => {
-  const where = new Where(ctx, Task);
+const makeWhere = (query) => {
+  const where = new Where(query, Task);
 
   where.searchBy('statusId');
   where.searchBy('executorId');
   where.searchBy('authorId');
-  // where.searchBy('tag', Op.in);
+  where.searchBy('tags', (value) => {
+    const tags = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    return {
+      param: '$Tags.name$',
+      // condition: { [Op.in]: [value] },
+      condition: { [Op.in]: tags }, // Op.or
+    };
+  });
   // console.log(where.get());
 
   return where.get();
@@ -25,6 +32,8 @@ const queryInclude = [
   { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
   { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
   { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
+  // { model: Tag, where: { name: { [Op.in]: ['nodejs'] } } },
+  { model: Tag },
 ];
 
 export default (router) => {
@@ -36,8 +45,9 @@ export default (router) => {
       statuses.unshift({ id: '', name: '' }); // append empty status
 
       const result = await Task.findAndCountAll({
-        where: makeWhere(ctx),
         include: queryInclude,
+        where: makeWhere(query),
+        subQuery: false,
         order: ['dateTo'],
         offset: (currentPage - 1) * pageSize,
         limit: pageSize,
@@ -73,9 +83,13 @@ export default (router) => {
       ctx.state.auth.checkAccess(ctx);
 
       const form = ctx.request.body;
-      const task = Task.build(form);
+      const tags = await Tag.findByNames(form.tags);
+      console.log('---- form after:', JSON.stringify({ ...form, tags }));
+
+      const task = Task.build({ ...form, tags });
       task.set('authorId', ctx.state.userId());
       task.set('authorName', ctx.state.userName());
+
       try {
         await task.save();
         ctx.flash.set({ type: 'success', text: 'Задание успешно сохранено.' });
@@ -99,7 +113,7 @@ export default (router) => {
         delete: ctx.state.auth.hasAccess('deleteTask', task.authorId),
         status: ctx.state.auth.hasAccess('statusTask', task.executorId) && task.nextStatus !== null,
       };
-      console.log(JSON.stringify(task));
+      // console.log(JSON.stringify(task));
       referer.saveFor(ctx, ['showTask', 'deleteTask']);
       ctx.render('tasks/show', { task, access });
     })
@@ -121,11 +135,16 @@ export default (router) => {
 
     .patch('updateTask', '/tasks/:id', async (ctx) => { // сохранение задания
       const form = ctx.request.body;
-      const task = await Task.findByPk(ctx.params.id);
+      const task = await Task.findByPk(ctx.params.id, {
+        include: { model: Tag }, // информация о тегах, если их надо будет удалить
+      });
       ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
 
+      const tags = await Tag.findByNames(form.tags);
+      console.log('---- form after:', JSON.stringify({ ...form, tags }));
+
       try {
-        await task.update(form);
+        await task.update({ ...form, tags });
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
         referer.prevent(ctx);
         ctx.redirect(router.url('showTask', task.id));
@@ -166,8 +185,9 @@ export default (router) => {
 
     .get('tasks.json', '/api/tasks.json', async (ctx) => { // список заданий
       const tasks = await Task.findAll({
-        where: makeWhere(ctx),
         include: queryInclude,
+        where: makeWhere(ctx.request.query),
+        subQuery: false,
         order: ['dateTo'],
       });
       // const data = tasks.map(task => ({ id: task.id, name: task.fullName }));

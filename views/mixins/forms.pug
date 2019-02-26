@@ -47,7 +47,7 @@ mixin input(f, property, caption, options = { as: 'text', col: null, autofocus: 
       sup.text-danger.pl-1 *
   div(class= inputCol)
     - const value = f.object[property] === undefined ? '' : f.object[property]
-    input.form-control(name= property class=`${invalidClass}` autocomplete='off' autofocus=options.autofocus type=options['as'] value= value)
+    input.form-control(name= property id= property class=`${invalidClass}` autocomplete='off' autofocus=options.autofocus type=options['as'] value= value)
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
