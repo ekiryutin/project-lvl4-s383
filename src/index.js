@@ -11,9 +11,12 @@ import 'jquery-ujs';
 
 import './mystyle.css';
 import './autocomplete';
+import './datepicker';
 
 $(() => {
   console.log('init');
   // enable toolips
   $('[data-toggle="tooltip"]').tooltip();
+
+  $('.toast').toast('show');
 });

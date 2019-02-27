@@ -39,12 +39,8 @@ html.h-100(lang="ru")
               li.nav-item
                 a.btn.btn-link.btn-sm(href=urlFor('newUser')) Регистрация
     .container.pt-3
-      - const msg = flash.get()
-      if msg
-        .alert.alert-dismissible.fade.show(class=`alert-${msg.type}`)
-          = msg.text
-          button.close(type='button' data-dismiss='alert' area-label='Close')
-            span(area-hidden='true') &times;
+      //- +flashMessage()
+      +toastMessage()
       block content
 
     footer.footer.mt-auto.py-4.bg-white

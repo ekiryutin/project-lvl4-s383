@@ -60,7 +60,7 @@ mixin date(f, property, caption, options = { col: null })
       sup.text-danger.pl-1 *
   div.input-group(class= inputCol)
     - const value = f.object[property] === undefined ? '' : f.object[property]
-    input.form-control(name= property class=`${invalidClass}` autocomplete='off' type='text' value= value)
+    input.form-control.datepicker(name= property class=`${invalidClass}` autocomplete='off' type='text' value= value)
     .input-group-append
       button.btn.btn-outline-secondary(disabled=true data-toggle='tooltip' title='Здесь будет выбор даты' data-placement='top')
         i.fas.fa-calendar-day
@@ -106,6 +106,32 @@ mixin formFooter(primaryName = 'Сохранить', referUrl)
     button.btn.btn-default.btn-primary.pl-4.pr-4(type='submit')
       //- .spinner-border.spinner-border-sm.mr-1.invisible
       = primaryName
+
+mixin flashMessage(param)
+  - const msg = flash.get()
+  if msg
+    .alert.alert-dismissible.fade.show(class=`alert-${msg.type}`)
+      = msg.text
+      button.close(type='button' data-dismiss='alert' area-label='Close')
+        span(area-hidden='true') &times;
+
+mixin toastMessage(param)
+  //- const msg = { type: 'success', title: 'Ошибка', text: 'Что-то сохранено успешно' };
+  - const msg = flash.get()
+  //- div(aria-live='polite' aria-atomic='true' Xstyle='position: relative; min-height: 200px;')
+  div.toast-container(style='position: fixed; z-index:10; top: 80px; right: 10px;')
+    if msg
+      .toast(role='alert' aria-live='assertive' aria-atomic='true' data-delay='5000')
+        .toast-header
+          //-img.rounded.mr-2(src='...')
+          strong.mr-auto(class=`text-${msg.type}`)
+            i.fas.fa-info-circle
+            span.ml-1= msg.title||'Информация'
+          //- small 11 min
+          button.close.ml-2.mb-1(type='button' data-dismiss='toast' area-label='Close')
+            span(area-hidden='true') &times;
+        .toast-body(class=`alert-${msg.type}`)
+          = msg.text
 
 mixin pagination(options)
   - var current = Number(options.pages.currentPage);

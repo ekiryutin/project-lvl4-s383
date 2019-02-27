@@ -4,10 +4,10 @@ import 'jquery-ui/themes/base/autocomplete.css';
 // import 'jquery-ui/themes/base/theme.css'; // ошибка при подключении, потом разобраться
 
 import $ from 'jquery';
-import autocomplete from 'jquery-ui/ui/widgets/autocomplete'; // eslint-disable-line
+import 'jquery-ui/ui/widgets/autocomplete';
 
 const setSelected = (input, id) => {
-  const propertyId = input.attr('data-target');
+  const propertyId = input.data('target');
   $(`input[name="${propertyId}"`).val(id);
   if (id === '') {
     input.removeClass('is-valid');
@@ -37,7 +37,7 @@ $(() => {
     minLength: 1, // вынести в data-min-length
 
     create() {
-      const propertyId = $(this).attr('data-target');
+      const propertyId = $(this).data('target');
       if ($(`input[name="${propertyId}"`).val()) {
         $(this).addClass('is-valid');
       }

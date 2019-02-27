@@ -83,7 +83,7 @@ block content
               td
                 span.rounded.pl-2.pr-2.pb-1.pt-1(class= `state-${task.status.color}`)
                   = task.status.name
-              td= task.executor.fullName
+              td= task.executor ? task.executor.fullName : 'unkonwn'
               td
                 each tag in task.Tags
                   .btn.btn-sm.badge-pill.badge-gray.pt-0.pb-0.mr-1.mb-1(onclick='setFilterTag(this)' data-filter= 'tags')
