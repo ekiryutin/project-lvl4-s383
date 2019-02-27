@@ -1,34 +1,27 @@
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('TaskTags', {
-    /* id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: Sequelize.INTEGER,
-    }, */
-    taskId: {
+    TaskId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    tagId: {
+    TagId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
   })
-    .then(() => queryInterface.addConstraint('TaskTags', ['taskId', 'tagId'], {
+    .then(() => queryInterface.addConstraint('TaskTags', ['TaskId', 'TagId'], {
       type: 'unique',
     }))
-    .then(() => queryInterface.addConstraint('TaskTags', ['taskId'], {
+    .then(() => queryInterface.addConstraint('TaskTags', ['TaskId'], {
       type: 'foreign key',
       references: { table: 'Tasks', field: 'id' },
     }))
-    .then(() => queryInterface.addConstraint('TaskTags', ['tagId'], {
+    .then(() => queryInterface.addConstraint('TaskTags', ['TagId'], {
       type: 'foreign key',
       references: { table: 'Tags', field: 'id' },
     }))
-    // .then(() => queryInterface.addIndex('TaskTags', ['id']))
-    .then(() => queryInterface.addIndex('TaskTags', ['taskId']))
-    .then(() => queryInterface.addIndex('TaskTags', ['tagId'])),
+    .then(() => queryInterface.addIndex('TaskTags', ['TaskId']))
+    .then(() => queryInterface.addIndex('TaskTags', ['TagId'])),
 
   down: queryInterface => queryInterface.dropTable('TaskTags'),
 };
