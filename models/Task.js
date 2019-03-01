@@ -75,7 +75,7 @@ export default (sequelize, DataTypes) => {
         },
         isSelected(value) {
           if (value !== '' && this.authorId === '') {
-            throw new Error('Выберите автора из выпадающего списка');
+            throw new Error('Выберите автора');
           }
         },
       },
@@ -102,7 +102,7 @@ export default (sequelize, DataTypes) => {
         },
         isSelected(value) {
           if (value !== '' && this.executorId === '') {
-            throw new Error('Выберите исполнителя из выпадающего списка');
+            throw new Error('Выберите исполнителя');
           }
         },
       },
