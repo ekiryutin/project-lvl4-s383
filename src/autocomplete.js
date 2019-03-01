@@ -1,8 +1,3 @@
-import 'jquery-ui/themes/base/core.css';
-import 'jquery-ui/themes/base/menu.css';
-import 'jquery-ui/themes/base/autocomplete.css';
-// import 'jquery-ui/themes/base/theme.css'; // ошибка при подключении, потом разобраться
-
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 
@@ -52,12 +47,14 @@ $(() => {
     },
 
     change(event, ui) {
-      console.log('change', ui);
       if (ui.item === null) { // не выбрано
         setSelected($(this), '');
         // $(this).addClass('is-invalid');
       }
     },
-
   });
+  // fix dropdown width
+  $.ui.autocomplete.prototype._resizeMenu = function () { // eslint-disable-line
+    this.menu.element.outerWidth(this.element.outerWidth());
+  };
 });

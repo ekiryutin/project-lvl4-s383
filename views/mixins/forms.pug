@@ -51,7 +51,7 @@ mixin input(f, property, caption, options = { as: 'text', col: null, autofocus: 
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
-mixin date(f, property, caption, options = { col: null })
+mixin date(f, property, caption, options = { col: null, menu: null })
   - const invalidClass = f.errors[property] ? 'is-invalid' : '';
   - const labelCol = options.col ? options.col.label : (defaultCol ? defaultCol.label : 'pt-0');
   - const inputCol = options.col ? options.col.input : (defaultCol ? defaultCol.input : '');
@@ -62,8 +62,14 @@ mixin date(f, property, caption, options = { col: null })
     - const value = f.object[property] === undefined ? '' : f.object[property]
     input.form-control.datepicker(name= property class=`${invalidClass}` autocomplete='off' type='text' value= value)
     .input-group-append
-      button.btn.btn-outline-secondary(disabled=true data-toggle='tooltip' title='Здесь будет выбор даты' data-placement='top')
+      button.btn.btn-outline-secondary(type='button' disabled=(!options.menu) data-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
         i.fas.fa-calendar-day
+      if options.menu
+        .dropdown-menu
+          .dropdown-item(href='#') завтра
+          .dropdown-item(href='#') 3 дня
+          .dropdown-item(href='#') неделю
+          .dropdown-item(href='#') 10 дней
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
@@ -102,8 +108,8 @@ mixin title(name, titleCol='', prevUrl = null)
 
 mixin formFooter(primaryName = 'Сохранить', referUrl)
   .form-group.text-right.pt-3
-    a.btn.btn-light(href=referUrl || referFor() rel='noreferrer') Отменить
-    button.btn.btn-default.btn-primary.pl-4.pr-4(type='submit')
+    a.btn.btn-light(href=(referUrl || referFor()) rel='noreferrer' id='btnCancel') Отменить
+    button.btn.btn-default.btn-primary.pl-4.pr-4(type='submit' id='btnSubmit')
       //- .spinner-border.spinner-border-sm.mr-1.invisible
       = primaryName
 

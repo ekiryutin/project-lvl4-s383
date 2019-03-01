@@ -17,7 +17,7 @@ block content
           +input(f, 'name', 'Что сделать', { autofocus: true })
         .form-group.row
           +date(f, 'dateTo', 'Срок', { col: { label: 'col-3', input: 'col-3' } })
-          +select(f, 'statusId', 'Статус', statuses, { col: { label: 'col-2', input: 'col-4' } } )
+          +select(f, 'statusId', 'Статус', statuses, { col: { label: 'col-2', input: 'col-4' } })
         .form-group.row
           +textarea(f, 'description', 'Описание')
         .form-group.row

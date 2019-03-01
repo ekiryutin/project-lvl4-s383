@@ -1,0 +1,107 @@
+
+$table-hover-bg:  rgba(#ced4da, .12);
+
+@import '~bootstrap/scss/bootstrap';
+
+@import '~jquery-ui/themes/base/core.css';
+@import '~jquery-ui/themes/base/menu.css';
+@import '~jquery-ui/themes/base/datepicker.css';
+@import '~jquery-ui/themes/base/theme.css';
+
+
+nav.navbar {
+  min-height: 56px;
+}
+
+.form_title {
+  height: 42px;
+  display: inline-block;
+}
+
+.thead-sticky th {
+  position: sticky;
+  top: 0;
+}
+
+.footer-link {
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+}
+
+.state-warning {
+  background-color: rgba($orange, .2);
+}
+
+.state-info {
+  background-color: rgba($blue, .2);
+}
+
+.state-success {
+  /* background-color: rgba($green, .2); */
+  background-color: #d2ffbf;
+}
+
+.badge-gray {
+  background-color: $gray-200;
+}
+
+.badge-gray:hover {
+  background-color: $gray-300;
+}
+
+.pos-right {
+  position: absolute;
+  right: 1em;
+  top: 0em;
+}
+
+/*
+.callout {
+  border-left: 3px solid #eee;
+}
+
+.callout-info {
+  border-left: 3px solid #5bc0de;
+}
+
+.callout-success {
+  border-left: 3px solid #28a745;
+}
+
+.callout-warning {
+  border-left: 3px solid #f0ad4e;
+}
+
+.callout-danger {
+  border-left: 3px solid #d9534f;
+}
+*/
+
+.ui-datepicker-header {
+  background-color: white;
+  border: 1px solid white;
+}
+
+.ui-datepicker th {
+  padding-top: 0.1em;
+}
+
+.ui-datepicker-today a {
+  border: 1px solid blue;
+  border-radius: 3px;
+}
+
+.ui-datepicker-current-day a {
+  border-radius: 3px;
+}
+
+.ui-state-default {
+  border: 1px solid transparent!important;
+}
+
+

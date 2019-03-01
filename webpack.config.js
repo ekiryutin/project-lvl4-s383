@@ -42,8 +42,16 @@ module.exports = {
         use: 'babel-loader',
       },
       {
+        test: /\.scss$/,
+        use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
+      },
+      {
         test: /\.css$/,
-        use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'], // , 'postcss-loader', 'sass-loader'
+        use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
+      },
+      {
+        test: /\.(svg|png)$/,
+        use: 'url-loader',
       },
     ],
   },
