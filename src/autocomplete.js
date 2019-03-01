@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import axios from 'axios';
 import 'jquery-ui/ui/widgets/autocomplete';
 
 const setSelected = (input, id) => {
@@ -16,18 +17,17 @@ $(() => {
     source(request, response) {
       // const dataUrl = $(this).attr('data-source');
       const dataUrl = this.element[0].getAttribute('data-source');
-      $.ajax({
-        url: dataUrl,
-        dataType: 'json',
-        data: {
-          name: request.term,
-        },
-        success(data) {
+      axios.get(dataUrl, {
+        params: { name: request.term },
+      })
+        .then(({ data }) => {
           const name = Object.keys(data)[0];
-          const result = $.map(data[name], item => ({ code: item.id, label: item.name }));
+          const result = data[name].length > 0
+            ? data[name].map(item => ({ code: item.id, label: item.name }))
+            : [{ code: '', label: 'Ничего не найдено' }];
           response(result);
-        },
-      });
+        })
+        .catch(err => console.log(err)); // show error under field
     },
     minLength: 1, // вынести в data-min-length
 

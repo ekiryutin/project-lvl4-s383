@@ -1,6 +1,5 @@
 import '../scss/main.scss';
 import 'bootstrap';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';
@@ -10,7 +9,6 @@ import '@fortawesome/fontawesome-free/js/brands';
 import $ from 'jquery';
 import 'jquery-ujs';
 
-// import './mystyle.css';
 import './autocomplete';
 import './datepicker';
 
