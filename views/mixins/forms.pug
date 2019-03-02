@@ -122,22 +122,17 @@ mixin flashMessage(param)
         span(area-hidden='true') &times;
 
 mixin toastMessage(param)
-  //- const msg = { type: 'success', title: 'Ошибка', text: 'Что-то сохранено успешно' };
+  //- const msg = { type: 'success', text: 'Задание сохранено успешно' };
   - const msg = flash.get()
-  //- div(aria-live='polite' aria-atomic='true' Xstyle='position: relative; min-height: 200px;')
   div.toast-container(style='position: fixed; z-index:10; top: 80px; right: 10px;')
     if msg
       .toast(role='alert' aria-live='assertive' aria-atomic='true' data-delay='5000')
-        .toast-header
-          //-img.rounded.mr-2(src='...')
-          strong.mr-auto(class=`text-${msg.type}`)
-            i.fas.fa-info-circle
-            span.ml-1= msg.title||'Информация'
-          //- small 11 min
-          button.close.ml-2.mb-1(type='button' data-dismiss='toast' area-label='Close')
-            span(area-hidden='true') &times;
-        .toast-body(class=`alert-${msg.type}`)
+        .toast-body(class=`text-${msg.type} callout-${msg.type}`)
+          span.mr-1
+            i.fas(class=(msg.icon || 'fa-check-circle'))
           = msg.text
+          button.close.ml-2(type='button' data-dismiss='toast' area-label='Close' style='margin-top:-5px')
+            small(area-hidden='true') &times;
 
 mixin pagination(options)
   - var current = Number(options.pages.currentPage);

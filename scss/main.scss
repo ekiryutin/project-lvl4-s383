@@ -60,27 +60,25 @@ nav.navbar {
   top: 0em;
 }
 
-/*
 .callout {
-  border-left: 3px solid #eee;
+  border-left: 3px solid $gray-200;
 }
 
 .callout-info {
-  border-left: 3px solid #5bc0de;
+  border-left: 3px solid $cyan;
 }
 
 .callout-success {
-  border-left: 3px solid #28a745;
+  border-left: 3px solid $green;
 }
 
 .callout-warning {
-  border-left: 3px solid #f0ad4e;
+  border-left: 3px solid $orange;
 }
 
 .callout-danger {
-  border-left: 3px solid #d9534f;
+  border-left: 3px solid $red;
 }
-*/
 
 .ui-datepicker-header {
   background-color: white;
@@ -92,7 +90,7 @@ nav.navbar {
 }
 
 .ui-datepicker-today a {
-  border: 1px solid blue;
+  border: 1px solid $blue;
   border-radius: 3px;
 }
 
