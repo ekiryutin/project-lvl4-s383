@@ -59,7 +59,7 @@ export default () => {
     }
     return null;
   }));
-  app.use(serve(path.join(__dirname, 'public'), {
+  app.use(serve(path.join(__dirname, '..', 'public'), {
     maxage: mode === 'development' ? 0 : 10 * 60 * 1000, // cache 10 min
   }));
 
