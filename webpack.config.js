@@ -11,7 +11,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'public', 'assets'),
     filename: '[name].js',
-    publicPath: '/public/assets/',
+    publicPath: '/assets/',
   },
   /* watch: process.env.NODE_ENV !== 'production',
   watchOptions: {

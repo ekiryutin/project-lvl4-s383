@@ -2,8 +2,8 @@ import request from 'supertest';
 import faker from 'faker';
 import matchers from 'jest-supertest-matchers';
 
-import { sequelize } from '../models';
-import app from '..';
+import { sequelize } from '../app/models';
+import app from '../app';
 
 const user = {
   firstName: faker.name.firstName(),
@@ -30,6 +30,7 @@ const task = {
   statusId: 1, // + random(3)
   executorId: 1,
   executorName: 'неважно',
+  tags: faker.lorem.word,
 };
 
 const invalidTask = {

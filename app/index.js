@@ -16,7 +16,7 @@ import _ from 'lodash';
 import methodOverride from 'koa-methodoverride';
 import Rollbar from 'rollbar';
 
-import webpackConfig from './webpack.config';
+import webpackConfig from '../webpack.config';
 import addRoutes from './routes';
 import container from './container';
 import Auth from './lib/Auth';

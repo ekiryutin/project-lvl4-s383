@@ -3,8 +3,8 @@
 import gulp from 'gulp';
 // import gutil from 'gulp-util';
 import repl from 'repl';
-import container from './container';
-import getServer from '.';
+import container from './app/container';
+import getServer from './app';
 
 // gulp.task('default', console.log('hello!'));
 
