@@ -16,7 +16,7 @@ block content
         if access.edit
           +buttonEdit(urlFor('editUser', user.id))
         if access.delete
-          +buttonDelete()
+          +buttonDelete(urlFor('deleteUser', user.id), 'пользователя')
 
       .card.card-body.shadow-sm
         .form-group.row
@@ -26,5 +26,5 @@ block content
         .form-group.row
           +inputText(user.email, 'E-mail')
 
-  +confirmDelete('Вы уверены, что хотите удалить пользователя?', urlFor('deleteUser', user.id))
+  +confirmDelete()
 

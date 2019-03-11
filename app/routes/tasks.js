@@ -3,7 +3,7 @@ import Where from '../lib/Where';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
 import {
-  Task, TaskStatus, Tag, User, Sequelize,
+  Task, TaskStatus, Tag, Attachment, User, Sequelize,
 } from '../models';
 
 const { Op } = Sequelize;
@@ -42,9 +42,13 @@ export default (router) => {
       const { query } = ctx.request;
       const currentPage = query.page || 1;
       const statuses = await TaskStatus.findAll();
-      statuses.unshift({ id: '', name: '' }); // append empty status
 
       const result = await Task.findAndCountAll({
+        attributes: {
+          include: [
+            [Sequelize.literal('(SELECT count(*) FROM "TaskAttachments" WHERE "TaskAttachments"."TaskId" = "Task"."id")'), 'attachAmount'],
+          ],
+        },
         include: queryInclude,
         where: makeWhere(query),
         subQuery: false,
@@ -55,18 +59,17 @@ export default (router) => {
       const access = {
         new: ctx.state.auth.hasAccess('newTask'),
       };
-
       ctx.render('tasks', {
         tasks: result.rows,
         pages: pagination(ctx, result.count, pageSize, currentPage),
         f: buildFormObj(query, null), // for filter
-        statuses,
+        statuses: [{ id: '', name: '' }, ...statuses], // append empty status
         access,
       });
     })
 
     .get('newTask', '/tasks/new', async (ctx) => { // форма добавления задания
-      // ctx.state.auth.checkAccess(ctx); { // не работает, т.к. matchedRoute = showTask
+      // ctx.state.auth.checkAccess(ctx); { // проверка не работает, т.к. matchedRoute = showTask
       //                                    // некритично - сработает проверка в saveTask
 
       const statuses = await TaskStatus.findAll();
@@ -106,14 +109,17 @@ export default (router) => {
 
     .get('showTask', '/tasks/:id', async (ctx) => { // форма просмотра задания
       const task = await Task.findByPk(ctx.params.id, {
-        include: queryInclude,
+        include: [
+          ...queryInclude,
+          { model: Attachment },
+        ],
       });
       const access = {
         edit: ctx.state.auth.hasAccess('editTask', task.authorId),
         delete: ctx.state.auth.hasAccess('deleteTask', task.authorId),
         status: ctx.state.auth.hasAccess('statusTask', task.executorId) && task.nextStatus !== null,
+        attach: ctx.state.auth.hasAccess('saveTaskAttachment', [task.authorId, task.executorId]),
       };
-      // console.log(JSON.stringify(task));
       referer.saveFor(ctx, ['showTask', 'deleteTask']);
       ctx.render('tasks/show', { task, access });
     })
@@ -141,8 +147,6 @@ export default (router) => {
       ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
 
       const tags = await Tag.findByNames(form.tags);
-      console.log('---- form after:', JSON.stringify({ ...form, tags }));
-
       try {
         await task.update({ ...form, tags });
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
@@ -178,7 +182,6 @@ export default (router) => {
 
       await task.destroy();
       ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
-      // ctx.redirect(router.url('tasks'));
       referer.prevent(ctx);
       ctx.redirect(ctx.state.referFor()); // возврат обратно
     })
@@ -190,9 +193,7 @@ export default (router) => {
         subQuery: false,
         order: ['dateTo'],
       });
-      // const data = tasks.map(task => ({ id: task.id, name: task.fullName }));
       ctx.type = 'application/json';
-      // ctx.body = JSON.stringify({ tasks: data });
       ctx.body = JSON.stringify({ tasks });
     });
 };

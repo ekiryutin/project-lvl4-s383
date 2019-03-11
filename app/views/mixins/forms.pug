@@ -81,6 +81,13 @@ mixin textarea(f, property, caption, rows = 3, options = { col: null })
     - const value = f.object[property] === undefined ? '' : f.object[property]
     textarea.form-control(name= property rows= rows)= value
 
+mixin fileupload(target, attachTo)
+    div.dm-uploader.p-4(id='drop-area' data-target= target  data-attach-to= attachTo)
+     span.btn.btn-outline-primary
+       span Выберите файл
+       input(type='file' title='Click to add Files')
+     span.pl-3.mb-4.mt-4.text-muted или перетащите файл сюда
+
 //- ---------------------------
 
 mixin inputText(value, caption, options = { col: null, inputClass: '' })
@@ -154,13 +161,13 @@ mixin buttonEdit(url, full)
     if full
       span.pl-2 Изменить
 
-mixin buttonDelete(dataTarget = '#modalConfirmDelete')
+mixin buttonDelete(url, name)
   span(data-toggle='tooltip' title='Удалить' data-placement='top')
-    button.btn.btn-light(type='button' data-toggle='modal' data-target= dataTarget)
+    button.btn.btn-light.btn-delete(type='button' data-toggle='modal' data-target= '#modalConfirmDelete' data-delete-url= url data-delete-name= name)
       i.fas.fa-trash-alt.text-muted
 
-mixin confirmDelete(msg, url, modalId = 'modalConfirmDelete')
-  .modal.fade(id= modalId tabindex='-1' role='dialog' area-hidden='true')
+mixin confirmDelete()
+  .modal.fade(id='modalConfirmDelete' tabindex='-1' role='dialog' area-hidden='true')
     .modal-dialog.modal-dialog-centered(rolde='document')
       .modal-content
         .modal-header
@@ -168,11 +175,10 @@ mixin confirmDelete(msg, url, modalId = 'modalConfirmDelete')
           button(type='button' class='close' data-dismiss='modal' area-label='close')
             span(area-hidden='true') &times;
         .modal-body
-          p= msg
+          p(id='confirmDeleteMsg') Нужно задать параметры в buttonDelete
         .modal-footer
           button.btn.btn-light(type='button' data-dismiss='modal') Отменить
-          a.btn.btn-outline-danger.pl-3.pr-3(href=url data-method='delete' rel='nofollow') Удалить
+          a.btn.btn-outline-danger.pl-3.pr-3(id='confirmDeleteButton' href='#' data-method='delete' rel='nofollow') Удалить
           //- form(action= url method='post')
           //-   input(name='_method' type='hidden' value='delete')
           //-   button.btn.btn-warning.pl-3.pr-3(type='submit') Удалить
-

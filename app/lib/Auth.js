@@ -18,9 +18,8 @@ export default class {
   // проверка доступа к текущему сервису (вызывает сам сервис)
   checkAccess(ctx, id) {
     const service = this.services.find(item => item.route === ctx._matchedRouteName); // eslint-disable-line
-    // console.log('route ', ctx._matchedRouteName);
-    // console.log('service ', service);
     if (service === undefined) {
+      // console.log(`checkAccess: '${ctx._matchedRouteName}' not found`);
       ctx.throw(403); // Forbidden
     }
     if (service.check === undefined) {

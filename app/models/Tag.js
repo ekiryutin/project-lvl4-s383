@@ -16,9 +16,7 @@ export default (sequelize, DataTypes) => {
   };
 
   Tag.findByNames = async (value = '') => { // параметр - строка с тегами через запятую
-    console.log('---- value:', value);
     const names = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    console.log('---- names:', names);
     if (names.length === 0) return [];
     // поиск новых тегов
     const hasTags = await Tag.findAll({

@@ -17,7 +17,7 @@ block content
           if access.edit
             +buttonEdit(urlFor('editTask', task.id), true)
           if access.delete
-            +buttonDelete()
+            +buttonDelete(urlFor('deleteTask', task.id), 'задание')
 
       .card.card-body.shadow-sm
         .form-group.row
@@ -49,5 +49,26 @@ block content
               .btn.btn-sm.badge-pill.badge-gray.pt-0.pb-0.mr-1.mt-1(data-tag= tag.id)
                 = tag.name
 
-  +confirmDelete('Вы уверены, что хотите удалить задание?', urlFor('deleteTask', task.id))
+      if task.Attachments.length > 0 || access.attach
+        .row.pt-3
+          .col-3
+            h5.pl-4 Файлы
+          .col-9
+            div(id='attachments')
+              each attach in task.Attachments
+                div.pl-4.pb-2.d-flex.justify-content-between.border-bottom
+                  span.pt-1
+                    big.text-muted.pr-2
+                      i.far(class=(`fa-file-${attach.type}`))
+                    a(href=attach.fileUrl)= attach.originalName
+                    small.pl-3.text-muted= attach.size
+                  if userId() === attach.userId
+                    +buttonDelete(urlFor('deleteTaskAttachment', task.id, attach.id), 'прикрепленный файл')
+            if access.attach
+              +fileupload('attachments', urlFor('saveTaskAttachment', task.id))
+      .row
+        .col
+          h5.pt-3.pl-4 Комментарии
+
+  +confirmDelete()
 

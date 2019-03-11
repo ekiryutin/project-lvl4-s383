@@ -120,7 +120,9 @@ export default (sequelize, DataTypes) => {
         this.setTags(value);
       },
     },
-    // attachments: {
+    attachAmount: {
+      type: DataTypes.VIRTUAL,
+    },
     // comments: {
   }, {
     paranoid: true, // использует `deletedAt, добавляет в запрос ...`deletedAt` IS NULL
@@ -141,6 +143,7 @@ export default (sequelize, DataTypes) => {
     Task.belongsTo(models.User, { as: 'author' });
     Task.belongsTo(models.User, { as: 'executor' });
     Task.belongsToMany(models.Tag, { through: 'TaskTag' });
+    Task.belongsToMany(models.Attachment, { through: 'TaskAttachment' });
   };
   return Task;
 };

@@ -1,5 +1,6 @@
 
-const isCurrentUser = (userId, id) => Number(id) === userId;
+const isCurrentUser = (userId, id) => (Array.isArray(id)
+  ? id.includes(userId) : Number(id) === userId);
 
 const isUser = userId => userId !== undefined;
 
@@ -17,6 +18,9 @@ export default {
     { route: 'statusTask', check: isCurrentUser }, // executor
 
     { route: 'saveStatus', check: isUser },
+
+    { route: 'saveTaskAttachment', check: isCurrentUser }, // [author, executor]
+    { route: 'deleteTaskAttachment', check: isCurrentUser }, // author
   ],
   admin: [
     { route: 'editUser' },

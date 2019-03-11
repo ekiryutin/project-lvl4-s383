@@ -1,3 +1,4 @@
+import path from 'path';
 import request from 'supertest';
 import faker from 'faker';
 import matchers from 'jest-supertest-matchers';
@@ -41,6 +42,8 @@ const invalidTask = {
   executorName: '',
 };
 
+const makePath = filename => path.resolve(__dirname, `fixtures/${filename}`);
+const testFile = makePath('file.png');
 
 describe('guest', () => { // -------------------------------
   let server;
@@ -170,6 +173,22 @@ describe('signed', () => { // -------------------------------
       .expect(test.code)));
   };
 
+  const testUpload = async (tests) => {
+    tests.forEach(async (test) => {
+      await request.agent(server)
+        .post('/attachments')
+        .set('Cookie', authCookie)
+        .field('attachTo', test.attachTo)
+        .attach('file', test.file)
+        .expect(test.code)
+        .then(response => request.agent(server)
+          .post(test.attachTo)
+          .set('Cookie', authCookie)
+          .send({ AttachmentId: response.body.id })
+          .expect(200, { type: 'success', text: 'Файл успешно прикреплен.' }));
+    });
+  };
+
   it('showUser', async () => {
     await request.agent(server)
       .get('/users/1') // curUser
@@ -238,6 +257,15 @@ describe('signed', () => { // -------------------------------
       { url: otherTask, data: task, code: 403 }, // forbidden
     ];
     await testPATCH(tests);
+  });
+
+  it('attachTask', async () => {
+    const tests = [
+      { attachTo: `${ownerTask}/attachment`, file: testFile, code: 200 }, // success
+      // { url: ownerTask, data: invalidTask, code: 200 }, // not saved
+      // { url: otherTask, data: task, code: 403 }, // forbidden
+    ];
+    await testUpload(tests);
   });
 
   it('statusTask', async () => {

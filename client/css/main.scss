@@ -80,6 +80,7 @@ nav.navbar {
   border-left: 3px solid $red;
 }
 
+
 .ui-datepicker-header {
   background-color: white;
   border: 1px solid white;
@@ -103,3 +104,17 @@ nav.navbar {
 }
 
 
+@import '~dm-file-uploader/dist/css/jquery.dm-uploader.min.css';
+
+.dm-uploader {
+  border: 2px dashed $gray-300;
+  background-color: white;
+}
+
+.dm-uploader.active {
+  border-color: $primary;
+}
+
+.dm-uploader.error {
+  border-color: $red;
+}

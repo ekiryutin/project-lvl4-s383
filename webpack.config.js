@@ -1,12 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
-    main: ['./src/index.js'],
+    main: ['./client/index.js'],
   },
   output: {
     path: path.join(__dirname, 'public', 'assets'),
@@ -19,6 +19,7 @@ module.exports = {
     poll: 1000,
   }, */
   optimization: {
+    // minimize: false,
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
@@ -65,9 +66,9 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
-    /* new CopyWebpackPlugin([
-      { from: './images', to: '../images' },
+    new CopyWebpackPlugin([
+      { from: './client/attachments', to: '../attachments' },
       // { from: './favicon.ico', to: '../favicon.ico' },
-    ]), */
+    ]),
   ],
 };
