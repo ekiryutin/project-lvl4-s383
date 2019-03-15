@@ -1,48 +1,14 @@
 import path from 'path';
 import request from 'supertest';
-import faker from 'faker';
 import matchers from 'jest-supertest-matchers';
 
 import { sequelize } from '../app/models';
 import app from '../app';
+import {
+  user, invalidUser, statuses, task, invalidTask,
+} from './__fixtures__/data';
 
-const user = {
-  firstName: faker.name.firstName(),
-  lastName: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-};
-
-const invalidUser = {
-  email: 'none',
-  password: faker.internet.password(),
-};
-
-const statuses = [
-  { name: 'Новое', color: 'warning' },
-  { name: 'В работе', color: 'info' },
-  { name: 'Завершено', color: 'success' },
-];
-
-const task = {
-  name: faker.lorem.sentence(),
-  description: faker.lorem.paragraph(),
-  dateTo: '01.01.2019',
-  statusId: 1, // + random(3)
-  executorId: 1,
-  executorName: 'неважно',
-  tags: faker.lorem.word,
-};
-
-const invalidTask = {
-  name: faker.lorem.sentence(),
-  description: faker.lorem.paragraph(),
-  statusId: 1, // + random(3)
-  executorId: null,
-  executorName: '',
-};
-
-const makePath = filename => path.resolve(__dirname, `fixtures/${filename}`);
+const makePath = filename => path.resolve(__dirname, `__fixtures__/${filename}`);
 const testFile = makePath('file.png');
 
 describe('guest', () => { // -------------------------------
