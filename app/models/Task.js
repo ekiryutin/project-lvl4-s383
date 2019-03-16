@@ -121,7 +121,8 @@ export default (sequelize, DataTypes) => {
       },
     },
     attachAmount: {
-      type: DataTypes.VIRTUAL,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     // comments: {
   }, {

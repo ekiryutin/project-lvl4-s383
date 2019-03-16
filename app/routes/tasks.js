@@ -44,11 +44,6 @@ export default (router) => {
       const statuses = await TaskStatus.findAll();
 
       const result = await Task.findAndCountAll({
-        attributes: {
-          include: [
-            [Sequelize.literal('(SELECT count(*) FROM "TaskAttachments" WHERE "TaskAttachments"."TaskId" = "Task"."id")'), 'attachAmount'],
-          ],
-        },
         include: queryInclude,
         where: makeWhere(query),
         subQuery: false,
@@ -87,7 +82,7 @@ export default (router) => {
 
       const form = ctx.request.body;
       const tags = await Tag.findByNames(form.tags);
-      console.log('---- form after:', JSON.stringify({ ...form, tags }));
+      // console.log('---- form after:', JSON.stringify({ ...form, tags }));
 
       const task = Task.build({ ...form, tags });
       task.set('authorId', ctx.state.userId());

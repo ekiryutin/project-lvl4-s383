@@ -9,7 +9,6 @@ export default (router) => {
       const task = await Task.findByPk(ctx.params.id);
       ctx.state.auth.checkAccess(ctx, task ? [task.authorId, task.executorId] : 0);
 
-      // const attachment = ctx.state.flash.get();
       const form = {
         TaskId: ctx.params.id,
         AttachmentId: ctx.request.body.AttachmentId,
@@ -18,9 +17,10 @@ export default (router) => {
       ctx.type = 'application/json';
       try {
         await taskAttach.save();
+        // Task.attachAmount increased in trigger
         ctx.body = JSON.stringify({ type: 'success', text: 'Файл успешно прикреплен.' });
       } catch (err) {
-        // console.log('-- TA.error-- ', err);
+        // console.log(' TaskAttachments.error: ', JSON.stringify(err));
         ctx.body = JSON.stringify({ type: 'error', text: err.errors[0].message });
       }
     })
@@ -35,9 +35,9 @@ export default (router) => {
           AttachmentId: ctx.params.attachId,
         },
       });
-      // запись в Attachments пометить удаленной
-      // удалить файл
+      // файл не удаляется
       await taskAttachment.destroy();
+      // Task.attachAmount decreased in trigger
       ctx.flash.set({ type: 'success', text: 'Файл успешно удален.' });
       referer.prevent(ctx);
       ctx.redirect(router.url('showTask', ctx.params.taskId));
