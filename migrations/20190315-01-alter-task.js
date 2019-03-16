@@ -11,14 +11,14 @@ CREATE TRIGGER ${triggerName}
 AFTER ${action} ON "TaskAttachments"
 FOR EACH ROW
 BEGIN
-  UPDATE "Tasks" set "attachAmount" = "attachAmount" ${sign} 1 where "Tasks"."id"=${rec}.TaskId;
+  UPDATE "Tasks" set "attachAmount" = "attachAmount" ${sign} 1 where "Tasks"."id"=${rec}."TaskId";
 END;`;
 
     case 'postgres':
       return `
 CREATE OR REPLACE FUNCTION ${procName}() RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE "Tasks" set "attachAmount" = "attachAmount" ${sign} 1 where "Tasks"."id"=${rec}.TaskId;
+  UPDATE "Tasks" set "attachAmount" = "attachAmount" ${sign} 1 where "Tasks"."id"=${rec}."TaskId";
   return new;
 END;
 $$ LANGUAGE plpgsql;
