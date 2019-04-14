@@ -9,10 +9,10 @@ export default class {
 
   searchBy(param, operator = Op.eq) {
     let value = this.query[param];
-    const { type } = this.model.attributes[param];
     if (value === undefined || value === '') {
       return;
     }
+    const { type } = this.model.rawAttributes[param];
     if (type instanceof DataTypes.INTEGER && !Number.isNaN(Number(value))) {
       // проверить postgres explain analyze
       // используется ли индекс при сравнении id со строкой
