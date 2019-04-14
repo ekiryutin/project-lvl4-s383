@@ -1,0 +1,18 @@
+extends /layouts/header.pug
+
+block define
+  - const section = 'tasks';
+  - const pageTitle = 'Задания';
+
+block content
+  //- параметры
+  //-   access
+  +title(pageTitle, 'col-xl-3 col-md-2 col-sm-3 pl-0')
+    span.ml-2
+      if access.new
+        a.btn.btn-outline-primary(href= urlFor('newTask') Xstyle='margin-left: 40px')
+          span.pl-1 Добавить
+
+  //-.row
+  <div class="row">
+

@@ -1,0 +1,14 @@
+mixin pagination(options)
+  - var current = Number(options.pages.currentPage);
+  div
+    ul.pagination
+      - const maxCount = Math.max(5, current);
+      - var n = 1;
+      while n <= Math.min(options.pages.pageCount, maxCount)
+        - const isActive = (n === current ? 'active' : '');
+        li.page-item(class= isActive)
+          a.page-link(href= `${options.pages.searchurl}${n}`)= n++
+      if n <= options.pages.pageCount && n >= maxCount
+        a.page-link(href= `${options.pages.searchurl}${n}`) Далее
+      //- li.text-muted.align-middle.pl-2= `Найдено: ${options.pages.recordCount} записей`
+

@@ -1,0 +1,30 @@
+mixin title(name, titleCol='', prevUrl = null)
+  h4.mb-0
+    if prevUrl
+      //- возврат не работает после редактирования, потом доделать
+      a.btn.btn-light.mr-1(href=prevUrl data-toggle='tooltip' title='Вернуться' data-placement='top')
+        i.fas.fa-arrow-left.text-muted
+    span.form_title.pr-2(class=titleCol)= name
+    block
+
+mixin flashMessage(param)
+  - const msg = flash.get()
+  if msg
+    .alert.alert-dismissible.fade.show(class=`alert-${msg.type}`)
+      = msg.text
+      button.close(type='button' data-dismiss='alert' area-label='Close')
+        span(area-hidden='true') &times;
+
+mixin toastMessage(param)
+  //- const msg = { type: 'success', text: 'Задание сохранено успешно' };
+  - const msg = flash.get()
+  div.toast-container(style='position: fixed; z-index:10; top: 80px; right: 10px;')
+    if msg
+      .toast(role='alert' aria-live='assertive' aria-atomic='true' data-delay='5000')
+        .toast-body(class=`text-${msg.type} callout-${msg.type}`)
+          span.mr-1
+            i.fas(class=(msg.icon || 'fa-check-circle'))
+          = msg.text
+          button.close.ml-2(type='button' data-dismiss='toast' area-label='Close' style='margin-top:-5px')
+            small(area-hidden='true') &times;
+

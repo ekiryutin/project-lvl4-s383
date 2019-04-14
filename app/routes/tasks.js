@@ -1,7 +1,10 @@
+// import util from 'util';
+import debug from 'debug';
 import buildFormObj from '../lib/formObjectBuilder';
 import Where from '../lib/Where';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
+import renderAndSend from '../lib/chunkRender';
 import {
   Task, TaskStatus, Tag, Attachment, User, Sequelize,
 } from '../models';
@@ -32,16 +35,23 @@ const queryInclude = [
   { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
   { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
   { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
-  // { model: Tag, where: { name: { [Op.in]: ['nodejs'] } } },
   { model: Tag },
 ];
+
+const log = debug('application:tasks');
+// const timeout = util.promisify(setTimeout);
 
 export default (router) => {
   router
     .get('tasks', '/tasks', async (ctx) => { // список заданий
+      log('GET');
       const { query } = ctx.request;
       const currentPage = query.page || 1;
       const statuses = await TaskStatus.findAll();
+      const access = {
+        new: ctx.state.auth.hasAccess('newTask'),
+      };
+      log('init');
 
       const result = await Task.findAndCountAll({
         include: queryInclude,
@@ -51,9 +61,8 @@ export default (router) => {
         offset: (currentPage - 1) * pageSize,
         limit: pageSize,
       });
-      const access = {
-        new: ctx.state.auth.hasAccess('newTask'),
-      };
+      log('sql query');
+
       ctx.render('tasks', {
         tasks: result.rows,
         pages: pagination(ctx, result.count, pageSize, currentPage),
@@ -61,6 +70,52 @@ export default (router) => {
         statuses: [{ id: '', name: '' }, ...statuses], // append empty status
         access,
       });
+      log('render');
+    })
+
+    .get('listTasks', '/tasks/list', async (ctx) => { // список заданий
+      // здесь тот же список рендерится не одним файлом, а частями (chunks)
+      log('GET');
+      const { query } = ctx.request;
+      const currentPage = query.page || 1;
+      const statuses = await TaskStatus.findAll();
+      const access = {
+        new: ctx.state.auth.hasAccess('newTask'),
+      };
+      log('init');
+
+      renderAndSend(ctx, 'tasks/list_header', {
+        access,
+      });
+      log('render header');
+      // await timeout(10, 'delay');
+
+      renderAndSend(ctx, 'tasks/list_filter', {
+        f: buildFormObj(query, null), // for filter
+        statuses: [{ id: '', name: '' }, ...statuses], // append empty status
+        access,
+      });
+      log('render filter');
+
+      const result = await Task.findAndCountAll({
+        include: queryInclude,
+        where: makeWhere(query),
+        subQuery: false,
+        order: ['dateTo'],
+        offset: (currentPage - 1) * pageSize,
+        limit: pageSize,
+      });
+      log('sql query');
+
+      renderAndSend(ctx, 'tasks/list_table', {
+        tasks: result.rows,
+        pages: pagination(ctx, result.count, pageSize, currentPage),
+        access,
+      });
+      log('render table');
+
+      renderAndSend(ctx, 'layouts/footer');
+      ctx.res.end();
     })
 
     .get('newTask', '/tasks/new', async (ctx) => { // форма добавления задания

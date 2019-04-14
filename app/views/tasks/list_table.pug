@@ -1,0 +1,48 @@
+include /mixins/pagination.pug
+
+//- параметры
+//-   tasks
+//-   pages
+//-   access
+.col-xl-9
+  table.table.border-left.border-right.table-hover.shadow-sm
+    thead.thead-light.thead-sticky
+      tr
+        th(style='width: 5%') №
+        th(style='width: 28%') Задание
+        th(style='width: 15%') Срок
+          span.text-muted.pl-2
+            i.fas.fa-sort-down
+        th(style='width: 15%') Статус
+        th(style='width: 20%') Исполнитель
+        th(style='width: 17%') Теги
+    tbody.bg-white
+      script= `function setFilterTag(elem) { document.getElementById('tags').value = elem.textContent.trim(); btnSearch.click(); }`
+      - const startFrom = (pages.currentPage - 1) * pages.pageSize + 1;
+      - var n = startFrom;
+      each task in tasks
+        tr
+          td= n++
+          td
+            if task.attachAmount > 0
+              span.float-right.text-muted(data-toggle='tooltip' title='Прикреплены файлы' data-placement='top')
+                i.fas.fa-paperclip
+            a(href= urlFor('showTask', task.id))= task.name
+
+            //- span.text-muted= JSON.stringify(task)
+          td
+            = task.dateTo
+          td
+            span.rounded.pl-2.pr-2.pb-1.pt-1(class= `state-${task.status.color}`)
+              = task.status.name
+          td= task.executor ? task.executor.fullName : 'unknown'
+          td
+            if task.Tags
+              each tag in task.Tags
+                .btn.btn-sm.badge-pill.badge-gray.pt-0.pb-0.mr-1.mb-1(onclick='setFilterTag(this)' data-filter= 'tags')
+                  = tag.name
+      if n === startFrom
+        tr
+          td(colspan='6') Нет данных
+  if pages.pageCount > 1
+    +pagination({ url: urlFor('tasks'), pages })

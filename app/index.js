@@ -47,6 +47,7 @@ export default () => {
       auth: new Auth(ctx.session.userId),
       referer: new Map(ctx.session.referer || []),
       referFor: route => ctx.state.referer.get(route || ctx._matchedRouteName), // eslint-disable-line
+      chunks: 0,
     };
     await next();
   });

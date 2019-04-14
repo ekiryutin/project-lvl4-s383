@@ -1,0 +1,41 @@
+include /mixins/forms.pug
+
+.col-xl-3.mb-3
+
+  +formFor(f, { url: urlFor('tasks'), method: 'get' })
+    .row
+      .col-md.col-lg.col-xl-12
+        .form-group
+          +select(f, 'statusId', 'Статус', statuses )
+          //-div.btn-group(style='width:240px')
+          //-  .btn.btn-outline-warning Новое
+          //-  .btn.btn-outline-primary В работе
+          //-  .btn.btn-outline-success Завершено
+
+      .col-md.col-lg.col-xl-12
+        .form-group
+          +autocomplete(f, 'executor', 'Исполнитель', { url: urlFor('users.json') })
+            if isSignedIn()
+              span.pos-right
+                script= `function setExecutor() {  executorId.value = '${userId()}'; executorName.value = '${userName()}'; btnSearch.click(); }`
+                .btn.footer-link.btn-sm(data-toggle='tooltip' title='Текущий пользователь' data-placement='top' onclick='setExecutor()')
+                  i.fas.fa-user
+
+      .col-md.col-lg.col-xl-12
+        .form-group
+          +autocomplete(f, 'author', 'Автор', { url: urlFor('users.json') })
+            if isSignedIn()
+              span.pos-right
+                script= `function setAuthor() {  authorId.value = '${userId()}'; authorName.value = '${userName()}'; btnSearch.click(); }`
+                .btn.footer-link.btn-sm(data-toggle='tooltip' title='Текущий пользователь' data-placement='top' onclick='setAuthor()')
+                  i.fas.fa-user
+
+      .d-none.d-lg-block.col-lg.col-xl-12
+        .form-group
+          +input(f, 'tags', 'Теги')
+
+      .col-auto.col-xl-12.text-right.mb-3
+        div.d-xl-none
+          label &nbsp;
+        button.btn.btn-default.btn-primary.pl-4.pr-4(type='submit' id='btnSearch') Найти
+

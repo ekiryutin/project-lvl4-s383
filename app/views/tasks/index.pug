@@ -95,9 +95,10 @@ block content
                   = task.status.name
               td= task.executor ? task.executor.fullName : 'unknown'
               td
-                each tag in task.Tags
-                  .btn.btn-sm.badge-pill.badge-gray.pt-0.pb-0.mr-1.mb-1(onclick='setFilterTag(this)' data-filter= 'tags')
-                    = tag.name
+                if task.Tags
+                  each tag in task.Tags
+                    .btn.btn-sm.badge-pill.badge-gray.pt-0.pb-0.mr-1.mb-1(onclick='setFilterTag(this)' data-filter= 'tags')
+                      = tag.name
           if n === startFrom
             tr
               td(colspan='6') Нет данных
