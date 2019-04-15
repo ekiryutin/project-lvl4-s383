@@ -80,6 +80,9 @@ nav.navbar {
   border-left: 3px solid $red;
 }
 
+.ui-autocomplete .highlight {
+  font-weight: bold;
+}
 
 .ui-datepicker-header {
   background-color: white;
