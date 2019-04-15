@@ -1,12 +1,5 @@
 
-const createTrigger = (dialect, action) => {
-  const triggerName = action === 'insert' ? 'taskAttachmentsAI' : 'taskAttachmentsAD';
-  const procName = action === 'insert' ? 'taskAttachAmountIncrease' : 'taskAttachAmountDecrease';
-  const sign = action === 'insert' ? '+' : '-';
-  const rec = action === 'insert' ? 'new' : 'old';
-  switch (dialect) {
-    case 'sqlite':
-      return `
+const sqliteTrigger = (triggerName, action, sign, rec) => `
 CREATE TRIGGER ${triggerName}
 AFTER ${action} ON "TaskAttachments"
 FOR EACH ROW
@@ -14,8 +7,7 @@ BEGIN
   UPDATE "Tasks" set "attachAmount" = "attachAmount" ${sign} 1 where "Tasks"."id"=${rec}."TaskId";
 END;`;
 
-    case 'postgres':
-      return `
+const postgresTrigger = (procName, triggerName, action, sign, rec) => `
 CREATE OR REPLACE FUNCTION ${procName}() RETURNS TRIGGER AS $$
 BEGIN
   UPDATE "Tasks" set "attachAmount" = "attachAmount" ${sign} 1 where "Tasks"."id"=${rec}."TaskId";
@@ -27,6 +19,18 @@ CREATE TRIGGER ${triggerName}
 AFTER ${action} ON "TaskAttachments"
 FOR EACH ROW
 EXECUTE PROCEDURE ${procName}();`;
+
+const createTrigger = (dialect, action) => {
+  const triggerName = action === 'insert' ? 'taskAttachmentsAI' : 'taskAttachmentsAD';
+  const procName = action === 'insert' ? 'taskAttachAmountIncrease' : 'taskAttachAmountDecrease';
+  const sign = action === 'insert' ? '+' : '-';
+  const rec = action === 'insert' ? 'new' : 'old';
+  switch (dialect) {
+    case 'sqlite':
+      return sqliteTrigger(triggerName, action, sign, rec);
+
+    case 'postgres':
+      return postgresTrigger(procName, triggerName, action, sign, rec);
 
     default:
       console.log(`Define trigger for '${dialect}' dialect`);
