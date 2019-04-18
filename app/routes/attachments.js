@@ -29,8 +29,7 @@ const getFileType = (mimetype) => {
 
 export default (router) => {
   router
-    .post('saveAttachment', '/attachments', formidable(options), async (ctx) => {
-      // ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+    .post('saveAttachment', '/attachments', formidable(options), async (ctx) => { // загрузка файла
       const { file } = ctx.request.files;
       // check size, format - on client
       // make preview / thumbnail - request to (micro) service

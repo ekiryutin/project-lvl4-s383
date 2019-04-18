@@ -1,10 +1,8 @@
-import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
-import { User, Sequelize } from '../models';
+import { User } from '../models';
 
-const { Op } = Sequelize;
 const pageSize = 10;
 
 export default (router) => {
@@ -18,7 +16,7 @@ export default (router) => {
         limit: pageSize,
         order: ['lastName', 'firstName'],
       });
-      // для pagination рекомендуется использовать sequelize-pagination
+      // sequelize-pagination ?
       ctx.render('users', {
         users: result.rows,
         pages: pagination(ctx, result.count, pageSize, currentPage),
@@ -85,24 +83,5 @@ export default (router) => {
       ctx.flash.set({ type: 'success', text: `Пользователь '${user.fullName}' успешно удален.` });
       // logout ?
       ctx.redirect(router.url('users'));
-    })
-
-    .get('users.json', '/api/users.json', async (ctx) => { // список пользователей
-      const { query } = ctx.request;
-      const name = _.upperFirst(_.lowerCase(query.name));
-      const users = await User.findAll({
-        // attributes: ['id', 'firstName', 'lastName'],
-        where: {
-          // firstName: { [Op.like]: `${name}%` },
-          [Op.or]: [
-            { firstName: { [Op.like]: `${name}%` } },
-            { lastName: { [Op.like]: `${name}%` } },
-          ],
-        },
-        order: ['lastName', 'firstName'],
-      });
-      const data = users.map(user => ({ id: user.id, name: user.fullName }));
-      ctx.type = 'application/json';
-      ctx.body = JSON.stringify({ users: data });
     });
 };

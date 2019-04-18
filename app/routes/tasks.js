@@ -10,9 +10,9 @@ import {
 } from '../models';
 
 const { Op } = Sequelize;
-const pageSize = 10;
+export const pageSize = 10;
 
-const makeWhere = (query) => {
+export const makeWhere = (query) => {
   const where = new Where(query, Task);
 
   where.searchBy('statusId');
@@ -26,12 +26,10 @@ const makeWhere = (query) => {
       condition: { [Op.in]: tags }, // Op.or
     };
   });
-  // console.log(where.get());
-
   return where.get();
 };
 
-const queryInclude = [
+export const queryInclude = [
   { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
   { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
   { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
@@ -234,16 +232,5 @@ export default (router) => {
       ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
       referer.prevent(ctx);
       ctx.redirect(ctx.state.referFor()); // возврат обратно
-    })
-
-    .get('tasks.json', '/api/tasks.json', async (ctx) => { // список заданий
-      const tasks = await Task.findAll({
-        include: queryInclude,
-        where: makeWhere(ctx.request.query),
-        subQuery: false,
-        order: ['dateTo'],
-      });
-      ctx.type = 'application/json';
-      ctx.body = JSON.stringify({ tasks });
     });
 };

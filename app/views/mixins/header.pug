@@ -1,7 +1,6 @@
 mixin title(name, titleCol='', prevUrl = null)
   h4.mb-0
     if prevUrl
-      //- возврат не работает после редактирования, потом доделать
       a.btn.btn-light.mr-1(href=prevUrl data-toggle='tooltip' title='Вернуться' data-placement='top')
         i.fas.fa-arrow-left.text-muted
     span.form_title.pr-2(class=titleCol)= name
