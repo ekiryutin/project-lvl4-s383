@@ -93,7 +93,7 @@ block content
               td
                 span.rounded.pl-2.pr-2.pb-1.pt-1(class= `state-${task.status.color}`)
                   = task.status.name
-              td= task.executor ? task.executor.fullName : 'unknown'
+              td= task.executorName
               td
                 if task.Tags
                   each tag in task.Tags

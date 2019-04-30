@@ -13,6 +13,11 @@ nav.navbar {
   min-height: 56px;
 }
 
+.nav-item.active {
+  border-bottom: 2px solid #ddd;
+  margin-bottom: -8px;
+}
+
 .form_title {
   height: 42px;
   display: inline-block;

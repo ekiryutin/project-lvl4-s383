@@ -62,12 +62,8 @@ export default (sequelize, DataTypes) => {
         },
       },
     },
-    authorName: {
-      type: DataTypes.VIRTUAL,
-      get() {
-        const value = this.getDataValue('authorName');
-        return this.author ? this.author.fullName : value;
-      },
+    authorName: { // *
+      type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -89,12 +85,8 @@ export default (sequelize, DataTypes) => {
         },
       },
     },
-    executorName: {
-      type: DataTypes.VIRTUAL,
-      get() {
-        const value = this.getDataValue('executorName');
-        return this.executor ? this.executor.fullName : value;
-      },
+    executorName: { // *
+      type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -141,10 +133,15 @@ export default (sequelize, DataTypes) => {
   });
   Task.associate = (models) => {
     Task.belongsTo(models.TaskStatus, { as: 'status' });
-    Task.belongsTo(models.User, { as: 'author' });
-    Task.belongsTo(models.User, { as: 'executor' });
+    // Task.belongsTo(models.User, { as: 'author' });
+    // Task.belongsTo(models.User, { as: 'executor' });
     Task.belongsToMany(models.Tag, { through: 'TaskTag' });
     Task.belongsToMany(models.Attachment, { through: 'TaskAttachment' });
   };
+  // * добавление authorName и executorName
+  // 1) упрощает и ускоряет запрос, т.к. не нужны join
+  // 2) можно удалить fk (связь будет логическая)
+  // 3) что позволит (при необходимости) легко сделать независимые (микро)сервисы tasks и users
+  // 4) в Users можно убрать paranoid и deletedAt
   return Task;
 };

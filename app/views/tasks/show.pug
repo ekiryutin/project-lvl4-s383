@@ -38,9 +38,9 @@ block content
         .form-group.row
           +textareaText(task.description, 'Описание')
         .form-group.row
-          +inputText(task.executor.fullName, 'Исполнитель')
+          +inputText(task.executorName, 'Исполнитель')
         .form-group.row
-          +inputText(task.author.fullName, 'Автор')
+          +inputText(task.authorName, 'Автор')
         .form-group.row
           // +inputText('', 'Теги')
           label.col-form-label.text-muted(class= defaultCol.label) Теги

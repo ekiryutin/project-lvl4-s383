@@ -6,7 +6,7 @@ import pagination from '../lib/pagination';
 import referer from '../lib/referer';
 import renderAndSend from '../lib/chunkRender';
 import {
-  Task, TaskStatus, Tag, Attachment, User, Sequelize,
+  Task, TaskStatus, Tag, Attachment, Sequelize,
 } from '../models';
 
 const { Op } = Sequelize;
@@ -31,8 +31,8 @@ export const makeWhere = (query) => {
 
 export const queryInclude = [
   { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
-  { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
-  { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
+  // { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
+  // { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
   { model: Tag },
 ];
 
