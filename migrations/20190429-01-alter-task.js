@@ -3,7 +3,7 @@
 // DROP CONSTRAINT "Tasks_${userType}Id_Users_fk";`;
 
 const updateTasks = userType => `UPDATE "Tasks" SET "${userType}Name" =
-(SELECT "lastName"||" "||"firstName" FROM "Users" WHERE "Users"."id" = "Tasks"."${userType}Id");`;
+(SELECT "lastName"||' '||"firstName" FROM "Users" WHERE "Users"."id" = "Tasks"."${userType}Id");`;
 
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.addColumn('Tasks',
@@ -16,7 +16,7 @@ module.exports = {
   // .then(() => queryInterface.sequelize.query(removeConstraint('author')))
   // .then(() => queryInterface.sequelize.query(removeConstraint('executor')))
   // SQLite does not support DROP CONSTRAINT
-    .catch(() => console.log('   Warning: drop constraints "Tasks"to "Users" manually!')),
+    .then(() => console.log('   Warning: drop constraints "Tasks"to "Users" manually!')),
 
   down: queryInterface => queryInterface.addConstraint('Tasks', ['authorId'], {
     type: 'foreign key',
