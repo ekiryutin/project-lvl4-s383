@@ -1,35 +1,18 @@
 // import util from 'util';
 import debug from 'debug';
 import buildFormObj from '../lib/formObjectBuilder';
-import Where from '../lib/Where';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
 import renderAndSend from '../lib/chunkRender';
+
+import Tasks from '../domain/Tasks';
 import {
-  Task, TaskStatus, Tag, Attachment, Sequelize,
+  Task, TaskStatus, Tag, Attachment,
 } from '../models';
 
-const { Op } = Sequelize;
-export const pageSize = 10;
+const pageSize = 10; // config
 
-export const makeWhere = (query) => {
-  const where = new Where(query, Task);
-
-  where.searchBy('statusId');
-  where.searchBy('executorId');
-  where.searchBy('authorId');
-  where.searchBy('tags', (value) => {
-    const tags = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    return {
-      param: '$Tags.name$',
-      // condition: { [Op.in]: [value] },
-      condition: { [Op.in]: tags }, // Op.or
-    };
-  });
-  return where.get();
-};
-
-export const queryInclude = [
+const queryInclude = [
   { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
   // { model: User, as: 'executor', attributes: ['id', 'firstName', 'lastName'] },
   // { model: User, as: 'author', attributes: ['id', 'firstName', 'lastName'] },
@@ -51,14 +34,7 @@ export default (router) => {
       };
       log('init');
 
-      const result = await Task.findAndCountAll({
-        include: queryInclude,
-        where: makeWhere(query),
-        subQuery: false,
-        order: ['dateTo'],
-        offset: (currentPage - 1) * pageSize,
-        limit: pageSize,
-      });
+      const result = await Tasks.find(query);
       log('sql query');
 
       ctx.render('tasks', {
@@ -95,14 +71,7 @@ export default (router) => {
       });
       log('render filter');
 
-      const result = await Task.findAndCountAll({
-        include: queryInclude,
-        where: makeWhere(query),
-        subQuery: false,
-        order: ['dateTo'],
-        offset: (currentPage - 1) * pageSize,
-        limit: pageSize,
-      });
+      const result = await Tasks.find(query);
       log('sql query');
 
       renderAndSend(ctx, 'tasks/list_table', {
@@ -134,22 +103,21 @@ export default (router) => {
       ctx.state.auth.checkAccess(ctx);
 
       const form = ctx.request.body;
-      const tags = await Tag.findByNames(form.tags);
-      // console.log('---- form after:', JSON.stringify({ ...form, tags }));
+      const attributes = {
+        ...form,
+        authorId: ctx.state.userId(),
+        authorName: ctx.state.userName(),
+      };
+      const { task, error } = await Tasks.createTask(attributes);
 
-      const task = Task.build({ ...form, tags });
-      task.set('authorId', ctx.state.userId());
-      task.set('authorName', ctx.state.userName());
-
-      try {
-        await task.save();
+      if (error === null) {
         ctx.flash.set({ type: 'success', text: 'Задание успешно сохранено.' });
         referer.prevent(ctx);
         ctx.redirect(router.url('showTask', task.id));
-      } catch (err) {
+      } else {
         const statuses = await TaskStatus.findAll();
         ctx.render('tasks/new', {
-          f: buildFormObj(task, Task.attributes, err),
+          f: buildFormObj(task, Task.attributes, error),
           statuses,
         });
       }
@@ -188,48 +156,55 @@ export default (router) => {
     })
 
     .patch('updateTask', '/tasks/:id', async (ctx) => { // сохранение задания
+      {
+        const task = await Task.findByPk(ctx.params.id);
+        ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+      }
       const form = ctx.request.body;
-      const task = await Task.findByPk(ctx.params.id, {
-        include: { model: Tag }, // информация о тегах, если их надо будет удалить
-      });
-      ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+      const { task, error } = await Tasks.updateTask(ctx.params.id, form);
 
-      const tags = await Tag.findByNames(form.tags);
-      try {
-        await task.update({ ...form, tags });
+      if (error === null) {
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
         referer.prevent(ctx);
         ctx.redirect(router.url('showTask', task.id));
-      } catch (err) {
+      } else {
         const statuses = await TaskStatus.findAll();
         // referer.prevent(ctx); ?
         ctx.render('tasks/edit', {
-          f: buildFormObj(task, Task.attributes, err),
+          f: buildFormObj(task, Task.attributes, error),
           statuses,
         });
       }
     })
 
     .patch('statusTask', '/tasks/:id/status', async (ctx) => { // изменение статуса
+      {
+        const task = await Task.findByPk(ctx.params.id);
+        ctx.state.auth.checkAccess(ctx, task ? task.executorId : 0);
+      }
       const form = ctx.request.body;
-      const task = await Task.findByPk(ctx.params.id);
-      ctx.state.auth.checkAccess(ctx, task ? task.executorId : 0);
+      const { task, error } = await Tasks.setTaskStatus(ctx.params.id, form);
 
-      try {
-        await task.update(form);
-      } catch (err) {
-        ctx.flash.set({ type: 'error', text: err });
+      if (error !== null) {
+        ctx.flash.set({ type: 'error', text: error });
       }
       referer.prevent(ctx);
       ctx.redirect(router.url('showTask', task.id));
     })
 
     .delete('deleteTask', '/tasks/:id', async (ctx) => { // удаление задания
-      const task = await Task.findByPk(ctx.params.id);
-      ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+      {
+        const task = await Task.findByPk(ctx.params.id);
+        ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
+      }
 
-      await task.destroy();
-      ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
+      const error = await Tasks.deleteTask(ctx.params.id);
+
+      if (error === null) {
+        ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });
+      } else {
+        ctx.flash.set({ type: 'error', text: error });
+      }
       referer.prevent(ctx);
       ctx.redirect(ctx.state.referFor()); // возврат обратно
     });

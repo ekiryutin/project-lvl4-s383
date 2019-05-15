@@ -138,10 +138,10 @@ export default (sequelize, DataTypes) => {
     Task.belongsToMany(models.Tag, { through: 'TaskTag' });
     Task.belongsToMany(models.Attachment, { through: 'TaskAttachment' });
   };
-  // * добавление authorName и executorName
+  // * добавление избыточных полей authorName и executorName
   // 1) упрощает и ускоряет запрос, т.к. не нужны join
-  // 2) можно удалить fk (связь будет логическая)
-  // 3) что позволит (при необходимости) легко сделать независимые (микро)сервисы tasks и users
-  // 4) в Users можно убрать paranoid и deletedAt
+  // 2) можно удалить fk (связь логическая)
+  // 3)   позволит (при необходимости) легко сделать независимые (микро)сервисы tasks и users
+  // 4)   в Users можно убрать paranoid и deletedAt
   return Task;
 };
