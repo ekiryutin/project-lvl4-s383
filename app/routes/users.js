@@ -1,9 +1,11 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
+import { getParamUrl } from '../lib/utils';
 import { User } from '../models';
 
 const pageSize = 10;
+
 
 export default (router) => {
   router
@@ -19,7 +21,8 @@ export default (router) => {
       // sequelize-pagination ?
       ctx.render('users', {
         users: result.rows,
-        pages: pagination(ctx, result.count, pageSize, currentPage),
+        pages: pagination(result.count, pageSize, currentPage),
+        paramUrl: getParamUrl(ctx), // для формирования ссылок
       });
     })
 

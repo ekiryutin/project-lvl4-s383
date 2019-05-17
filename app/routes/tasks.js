@@ -3,6 +3,7 @@ import debug from 'debug';
 import buildFormObj from '../lib/formObjectBuilder';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
+import { getParamUrl } from '../lib/utils';
 import renderAndSend from '../lib/chunkRender';
 
 import Tasks from '../domain/Tasks';
@@ -39,10 +40,11 @@ export default (router) => {
 
       ctx.render('tasks', {
         tasks: result.rows,
-        pages: pagination(ctx, result.count, pageSize, currentPage),
+        pages: pagination(result.count, pageSize, currentPage),
         f: buildFormObj(query, null), // for filter
         statuses: [{ id: '', name: '' }, ...statuses], // append empty status
         access,
+        paramUrl: getParamUrl(ctx), // для формирования ссылок
       });
       log('render');
     })
@@ -76,8 +78,9 @@ export default (router) => {
 
       renderAndSend(ctx, 'tasks/list_table', {
         tasks: result.rows,
-        pages: pagination(ctx, result.count, pageSize, currentPage),
+        pages: pagination(result.count, pageSize, currentPage),
         access,
+        paramUrl: getParamUrl(ctx), // для формирования ссылок
       });
       log('render table');
 

@@ -8,7 +8,6 @@ $table-hover-bg:  rgba(#ced4da, .12);
 @import '~jquery-ui/themes/base/datepicker.css';
 @import '~jquery-ui/themes/base/theme.css';
 
-
 nav.navbar {
   min-height: 56px;
 }
@@ -16,6 +15,10 @@ nav.navbar {
 .nav-item.active {
   border-bottom: 2px solid #ddd;
   margin-bottom: -8px;
+}
+
+.container {
+  min-width:770px;
 }
 
 .form_title {
@@ -40,15 +43,17 @@ nav.navbar {
 
 .state-warning {
   background-color: rgba($orange, .2);
+  border: 1px solid rgba($orange, .3);
 }
 
 .state-info {
   background-color: rgba($blue, .2);
+  border: 1px solid rgba($blue, .3);
 }
 
 .state-success {
-  /* background-color: rgba($green, .2); */
-  background-color: #d2ffbf;
+  background-color: rgba($green, .2);
+  border: 1px solid rgba($green, .3);
 }
 
 .badge-gray {
