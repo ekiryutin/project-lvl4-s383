@@ -30,6 +30,9 @@ const queryInclude = [
   { model: Tag },
 ];
 
+// про Entities
+// https://habr.com/ru/company/mobileup/blog/335382/
+
 export default {
   find: async (query) => { // поиск (список) заданий
     const currentPage = query.page || 1;
@@ -69,6 +72,7 @@ export default {
     }
   },
 
+  // для изменения статуса сделать отдельные функции: taskTaskInWork, completeTask
   setTaskStatus: async (id, form) => { // изменение статуса
     // const form = ctx.request.body;
     const task = await Task.findByPk(id);

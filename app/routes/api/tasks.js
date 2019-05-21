@@ -1,6 +1,6 @@
 import pagination from '../../lib/pagination';
 // import { Task } from '../../models';
-import Tasks from '../../domain/Tasks';
+import Tasks from '../../entities/Tasks';
 
 const pageSize = 10; // config
 

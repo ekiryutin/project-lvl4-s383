@@ -6,7 +6,7 @@ import referer from '../lib/referer';
 import { getParamUrl } from '../lib/utils';
 import renderAndSend from '../lib/chunkRender';
 
-import Tasks from '../domain/Tasks';
+import Tasks from '../entities/Tasks';
 import {
   Task, TaskStatus, Tag, Attachment,
 } from '../models';

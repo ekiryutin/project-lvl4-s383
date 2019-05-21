@@ -18,10 +18,15 @@ export default (router) => {
         limit: pageSize,
         order: ['lastName', 'firstName'],
       });
+      const users = result.rows;
+      const firstId = users.length > 0 ? users[0].id : null;
+      const showId = query.id || firstId;
+
       // sequelize-pagination ?
       ctx.render('users', {
-        users: result.rows,
+        users,
         pages: pagination(result.count, pageSize, currentPage),
+        showId,
         paramUrl: getParamUrl(ctx), // для формирования ссылок
       });
     })
