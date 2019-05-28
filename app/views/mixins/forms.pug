@@ -111,8 +111,22 @@ mixin formFooter(primaryName = 'Сохранить', referUrl)
       //- .spinner-border.spinner-border-sm.mr-1.invisible
       = primaryName
 
+mixin buttonCancelAjax(url, target)
+  button.btn.btn-light.btn-load(type='button' data-source= url data-target= target id='btnCancel') Отменить
+
+mixin buttonSaveAjax(url, target, buttonName = 'Сохранить')
+    button.btn.btn-default.btn-load.btn-primary.pl-4.pr-4(type='button' data-source= url data-target= target data-method='patch' id='btnSubmit')
+      //- .spinner-border.spinner-border-sm.mr-1.invisible
+      = buttonName
+
 mixin buttonEdit(url, full)
   a.btn.btn-light(href= url data-toggle='tooltip' title=(full ? '' : 'Изменить') data-placement='top')
+    i.fas.fa-pen.text-muted
+    if full
+      span.pl-2 Изменить
+
+mixin buttonEditAjax(url, target, full)
+  button.btn.btn-light.btn-load(data-toggle='tooltip' title=(full ? '' : 'Изменить') data-placement='top' data-source= url data-target= target)
     i.fas.fa-pen.text-muted
     if full
       span.pl-2 Изменить

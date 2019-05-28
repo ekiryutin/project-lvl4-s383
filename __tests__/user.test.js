@@ -103,7 +103,7 @@ describe('signed', () => { // -------------------------------
 
   it('updateUser', async () => {
     const tests = [
-      { url: curUser, data: user, code: 302 }, // success
+      { url: curUser, data: user, code: 200 }, // success, json redirect
       { url: curUser, data: invalidUser, code: 200 }, // not saved
       { url: otherUser, data: user, code: 403 }, // forbidden
     ];

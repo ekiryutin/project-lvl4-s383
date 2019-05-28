@@ -1,0 +1,24 @@
+// include /mixins/forms.pug
+
+//- параметры
+//-   user
+//-   access
+.col-lg-7.col-6(id= 'pnlDetail')
+  - const defaultCol = { label: 'col-4 col-lg-3', input: 'col-8 col-lg-9' };
+  div.toolbar-right
+    if access.edit
+      +buttonEditAjax(urlFor('editUser', user.id), 'pnlDetail', true)
+    if access.delete
+      +buttonDelete(urlFor('deleteUser', user.id), 'пользователя')
+
+  .card.card-body.shadow-sm
+    .form-group.row
+      +inputText(user.firstName, 'Имя', { inputClass: 'font-weight-bold' })
+    .form-group.row
+      +inputText(user.lastName, 'Фамилия')
+    .form-group.row
+      +inputText(user.email, 'E-mail')
+    .form-group.row
+      +inputText(user.formattedDate, 'Дата регистрации')
+
+  //- +confirmDelete()

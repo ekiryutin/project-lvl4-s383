@@ -72,7 +72,7 @@ export default {
     }
   },
 
-  // для изменения статуса сделать отдельные функции: taskTaskInWork, completeTask
+  // для изменения статуса сделать отдельные функции: takeTaskInWork, completeTask
   setTaskStatus: async (id, form) => { // изменение статуса
     // const form = ctx.request.body;
     const task = await Task.findByPk(id);

@@ -12,6 +12,7 @@ import 'jquery-ujs';
 import './autocomplete';
 import './datepicker';
 import './fileuploader';
+import './loader';
 
 // console.log('init');
 
@@ -19,6 +20,8 @@ $('[data-toggle="tooltip"]').tooltip();
 
 $('.toast').toast('show');
 
+
+// attachDeleteButton
 document.querySelectorAll('button.btn-delete')
   .forEach((btn) => {
     btn.addEventListener('click', () => {

@@ -8,34 +8,48 @@ block content
   //- параметры
   //-   users
   //-   pages: { pageCount, pageSize, currentPage, recordCount }
+  //-   showId
+  //-   user
+  //-   access
+  //-   paramUrl()
   +title(pageTitle)
     //- a.btn.btn-link.btn-sm.ml-4(href=urlFor('users.json'))
     //-  i.fas.fa-code
-      
-  table.table.border-left.border-right.table-hover.shadow-sm
-    thead.thead-light.thead-sticky
-      tr
-        th(style='width: 5%') №
-        th(style='width: 30%') Имя
-          span.text-muted.pl-2
-            i.fas.fa-sort-down
-        th(style='width: 35%') E-mail
-        th(style='width: 30%') Зарегистрирован
-    tbody.bg-white
-      - const startFrom = (pages.currentPage - 1) * pages.pageSize + 1;
-      - var n = startFrom;
-      each user in users
-        tr
-          td= n++
-          td
-            a(href= urlFor('showUser', user.id))= user.fullName
-            if user.id === userId()
-              span.float-right(data-toggle='tooltip' title='Текущий пользователь' data-placement='top')
-                i.fas.fa-user.text-primary
-          td= user.email
-          td= user.formattedDate
-      if n === startFrom
-        tr
-          td(colspan='4') Нет данных
-  if pages.pageCount > 1
-    +pagination({ url: urlFor('users'), pages })
+
+  .row
+    .col-lg-5.col-6
+      table.table.border-left.border-right.table-hover.shadow-sm.table-selectable
+        thead.thead-light.thead-sticky
+          tr
+            th(style='width: 5%') №
+            //- th(style='width: 30%') Имя
+            th Имя
+              span.text-muted.pl-2
+                i.fas.fa-sort-down
+            //- th(style='width: 35%') E-mail
+            //- th(style='width: 30%') Зарегистрирован
+        tbody.bg-white
+          - const startFrom = (pages.currentPage - 1) * pages.pageSize + 1;
+          - var n = startFrom;
+          each user in users
+            - const rowClass = String(user.id) === String(showId) ? 'table-primary' : '';
+            tr(class= rowClass)
+              td= n++
+              td
+                //- a(href= urlFor('showUser', user.id))= user.fullName
+                a(href= paramUrl({ 'id': user.id}))= user.fullName
+                if user.id === userId()
+                  span.float-right(data-toggle='tooltip' title='Текущий пользователь' data-placement='top')
+                    i.fas.fa-user.text-muted
+              //- td= user.email
+              //- td= user.formattedDate
+          if n === startFrom
+            tr
+              td(colspan='4') Нет данных
+      if pages.pageCount > 1
+        +pagination({ url: urlFor('users'), pages })
+
+    //-.col-lg-7.col-6(id='pnlDetail')
+    include detail.pug
+
+    +confirmDelete()

@@ -1,24 +1,20 @@
-extends /layouts/application.pug
-
-block define
-  - const section = 'users';
-  - const pageTitle = 'Редактирование пользователя';
-  - const defaultCol = { label: 'col-4', input: 'col-8' };
-
-block content
+include /mixins/forms.pug
   //- параметры
   //-   f: { name, object, model, errors }
-  div.row.justify-content-center
-    div.col-xl-5.col-lg-6.col-md-7.col-sm-9
-      +title('Пользователь')
-      +formFor(f, { url: urlFor('updateUser', f.object.id), method: 'patch' })
-        .form-group.row
-          +input(f, 'firstName', 'Имя', { autofocus: true })
-        .form-group.row
-          +input(f, 'lastName', 'Фамилия')
-        .form-group.row
-          +input(f, 'email', 'E-mail')
-        .form-group.row
-          +input(f, 'password', 'Пароль', { as: 'password' })
-        +formFooter()
 
+.col-lg-7.col-6(id= 'pnlDetail')
+  - const defaultCol = { label: 'col-4 col-lg-3', input: 'col-8 col-lg-9' };
+  +formFor(f, { url: urlFor('updateUser', f.object.id), method: 'patch' })
+    .form-group.row
+      +input(f, 'firstName', 'Имя', { autofocus: true })
+    .form-group.row
+      +input(f, 'lastName', 'Фамилия')
+    .form-group.row
+      +input(f, 'email', 'E-mail')
+    .form-group.row
+      +input(f, 'password', 'Пароль', { as: 'password' })
+
+    //- +formFooterAjax()
+    .form-group.text-right.pt-3
+      +buttonCancelAjax(urlFor('showUser', f.object.id), 'pnlDetail')
+      +buttonSaveAjax(urlFor('updateUser', f.object.id), 'pnlDetail')

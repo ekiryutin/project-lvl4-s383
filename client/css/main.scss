@@ -57,11 +57,16 @@ nav.navbar {
 }
 
 .badge-gray {
-  background-color: $gray-200;
+  background-color: #e5e5e5; /* $gray-200; */
 }
 
 .badge-gray:hover {
-  background-color: $gray-300;
+  background-color: #d9d9d9; /* $gray-300; */
+}
+
+.toolbar-right {
+  margin-top: -38px;
+  min-height: 38px;
 }
 
 .pos-right {
@@ -69,6 +74,22 @@ nav.navbar {
   right: 1em;
   top: 0em;
 }
+
+
+.table-primary,
+.table-primary td {
+  background-color: #d0e6ff;
+}
+
+.table-hover .table-primary:hover,
+.table-hover .table-primary:hover td {
+  background-color: #b8daff;
+}
+
+/* .table-primary:after {
+  content: "<";
+  position: absolute;
+} */ 
 
 .callout {
   border-left: 3px solid $gray-200;

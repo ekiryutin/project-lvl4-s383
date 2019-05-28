@@ -2,8 +2,8 @@ import { URL } from 'url';
 
 export const none = null; // убрать, когда будет еще одна функция
 
-export const getParamUrl = ctx => (params) => {
-  const url = new URL(ctx.url, ctx.origin);
+export const getParamUrl = ctx => (params, fromUrl = ctx.url) => {
+  const url = new URL(fromUrl, ctx.origin);
   const keys = Object.keys(params);
   keys.forEach((param) => {
     if (params[param] !== '') url.searchParams.set(param, params[param]);

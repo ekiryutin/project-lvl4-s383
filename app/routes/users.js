@@ -21,12 +21,18 @@ export default (router) => {
       const users = result.rows;
       const firstId = users.length > 0 ? users[0].id : null;
       const showId = query.id || firstId;
+      const user = users.find(usr => usr.id === Number(showId));
+      const access = {
+        edit: ctx.state.auth.hasAccess('editUser', user.id),
+        delete: ctx.state.auth.hasAccess('deleteUser', user.id),
+      };
 
-      // sequelize-pagination ?
-      ctx.render('users', {
+      ctx.render('users/index', {
         users,
-        pages: pagination(result.count, pageSize, currentPage),
+        pages: pagination(result.count, pageSize, currentPage), // sequelize-pagination ?
         showId,
+        user,
+        access,
         paramUrl: getParamUrl(ctx), // для формирования ссылок
       });
     })
@@ -74,11 +80,10 @@ export default (router) => {
       const user = await User.findByPk(ctx.params.id);
       try {
         await user.update(form);
-        // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
-        referer.prevent(ctx);
-        ctx.redirect(router.url('showUser', user.id));
+        // ctx.redirect(router.url('showUser', user.id)); // axios не поддерживает redirect
+        ctx.type = 'application/json';
+        ctx.body = JSON.stringify({ redirect: router.url('showUser', user.id) });
       } catch (err) {
-        // referer.prevent(ctx); ?
         ctx.render('users/edit', { f: buildFormObj(user, User.attributes, err) });
       }
     })
@@ -90,6 +95,7 @@ export default (router) => {
       await user.destroy();
       ctx.flash.set({ type: 'success', text: `Пользователь '${user.fullName}' успешно удален.` });
       // logout ?
-      ctx.redirect(router.url('users'));
+      const paramUrl = getParamUrl(ctx);
+      ctx.redirect(paramUrl({ id: '' }, ctx.get('Referer')));
     });
 };
