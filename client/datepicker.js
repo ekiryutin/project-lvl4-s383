@@ -2,10 +2,10 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/datepicker';
 import 'jquery-ui/ui/i18n/datepicker-ru';
 
-$(() => {
-  $.datepicker.setDefaults($.datepicker.regional.ru);
+$.datepicker.setDefaults($.datepicker.regional.ru);
 
-  $('input.datepicker').datepicker({
+export default (element) => { // attachDatepicker
+  $('input.datepicker', element).datepicker({
     dateFormat: 'dd.mm.yy',
     showOtherMonths: true,
     selectOtherMonths: true,
@@ -16,4 +16,4 @@ $(() => {
     },
     // стрелки вверх вниз для смены даты, месяца и года
   });
-});
+};

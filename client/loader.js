@@ -1,4 +1,5 @@
 import axios from 'axios';
+import attachEventHandlers from './eventhandler';
 
 const getParentElement = (elem, tag) => {
   const parent = elem.parentElement;
@@ -27,7 +28,7 @@ const getFormParams = (elem) => {
 // ~ data-data - form
 // ~ data-action - replace (default) / append
 
-const attachLoader = (element) => {
+export default (element) => { // attachLoader
   element.querySelectorAll('button.btn-load')
     .forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -46,8 +47,7 @@ const attachLoader = (element) => {
               target.replaceWith(elem.firstElementChild);
               // target.append(elem.firstElementChild);
 
-              attachLoader(document.getElementById(btn.dataset.target));
-              // attachEventHandlers
+              attachEventHandlers(document.getElementById(btn.dataset.target));
             };
 
             // axios не поддерживает http redirect, поэтому используется json { redirect }
@@ -66,5 +66,3 @@ const attachLoader = (element) => {
       });
     });
 };
-
-attachLoader(document);

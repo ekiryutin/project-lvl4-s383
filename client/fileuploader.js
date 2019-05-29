@@ -68,8 +68,8 @@ const makeFileElement = (data) => {
   return elem;
 };
 
-$(() => {
-  $('#drop-area').dmUploader({
+export default (element) => { // attachFileUploader
+  $('#drop-area', element).dmUploader({
     url: '/attachments',
     dataType: 'json',
     /* extraData() {
@@ -131,4 +131,4 @@ $(() => {
       showUploadError(this, 'Файл с таким расширением нельзя загрузить');
     },
   });
-});
+};

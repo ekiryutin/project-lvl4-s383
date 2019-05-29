@@ -27,8 +27,8 @@ const highlightText = (term, curText) => {
   return newText;
 };
 
-$(() => {
-  $('input.autocomplete').autocomplete({
+export default (element) => { // attachAutocomplete
+  $('input.autocomplete', element).autocomplete({
     source(request, response) {
       // const dataUrl = $(this).attr('data-source');
       const dataUrl = this.element[0].getAttribute('data-source');
@@ -80,4 +80,4 @@ $(() => {
   $.ui.autocomplete.prototype._resizeMenu = function () { // eslint-disable-line
     this.menu.element.outerWidth(this.element.outerWidth());
   };
-});
+};
