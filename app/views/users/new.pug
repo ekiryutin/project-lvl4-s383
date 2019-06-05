@@ -19,5 +19,5 @@ block content
           +input(f, 'email', 'E-mail')
         .form-group.row
           +input(f, 'password', 'Пароль', { as: 'password' })
-        +formFooter()
+        +formFooter('Сохранить', referFor('newUser'))
 
