@@ -92,23 +92,23 @@ nav.navbar {
 } */ 
 
 .callout {
-  border-left: 3px solid $gray-200;
+  border-left: 3px solid $gray-300!important;
 }
 
 .callout-info {
-  border-left: 3px solid $cyan;
+  border-left: 3px solid $cyan!important;
 }
 
 .callout-success {
-  border-left: 3px solid $green;
+  border-left: 3px solid $green!important;
 }
 
 .callout-warning {
-  border-left: 3px solid $orange;
+  border-left: 3px solid $orange!important;
 }
 
 .callout-danger {
-  border-left: 3px solid $red;
+  border-left: 3px solid $red!important;
 }
 
 .ui-autocomplete .highlight {
