@@ -14,10 +14,13 @@ const makeWhere = (query) => {
   where.searchBy('authorId');
   where.searchBy('tags', (value) => {
     const tags = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    const strTags = tags.map(s => `"${s}"`).join(',');
+    const subquery = `(select "TaskId" from "TaskTags" join "Tags" on "Tags"."id" = "tagId"
+ where "Tags"."name" in (${strTags}))`;
     return {
-      param: '$Tags.name$',
-      // condition: { [Op.in]: [value] },
-      condition: { [Op.in]: tags }, // Op.or
+      param: '$Task.id$',
+      // condition: { [Op.in]: [53] },
+      condition: { [Op.in]: Sequelize.literal(subquery) },
     };
   });
   return where.get();
