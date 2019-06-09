@@ -1,33 +1,52 @@
+import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
 import { getParamUrl } from '../lib/utils';
-import { User } from '../models';
+import { User, Sequelize } from '../models';
 
 const pageSize = 10;
 
+const { Op } = Sequelize;
+
+const makeWhere = (query) => {
+  const where = {};
+  if (query.name) {
+    const name = _.startCase(query.name); // normalize
+    where[Op.or] = [
+      { firstName: { [Op.like]: `${name}%` } },
+      { lastName: { [Op.like]: `${name}%` } },
+    ];
+  }
+  return where;
+};
 
 export default (router) => {
   router
     .get('users', '/users', async (ctx) => { // список пользователей
       const { query } = ctx.request;
       const currentPage = query.page || 1;
+
       // const users = await User.findAll({
       const result = await User.findAndCountAll({
+        where: makeWhere(query),
         offset: (currentPage - 1) * pageSize,
         limit: pageSize,
-        order: ['lastName', 'firstName'],
+        order: ['lastName', 'firstName'], // index
       });
       const users = result.rows;
+
       const firstId = users.length > 0 ? users[0].id : null;
       const showId = query.id || firstId;
       const user = users.find(usr => usr.id === Number(showId));
+
       const access = {
-        edit: ctx.state.auth.hasAccess('editUser', user.id),
-        delete: ctx.state.auth.hasAccess('deleteUser', user.id),
+        edit: ctx.state.auth.hasAccess('editUser', user ? user.id : null),
+        delete: ctx.state.auth.hasAccess('deleteUser', user ? user.id : null),
       };
 
       ctx.render('users/index', {
+        query,
         users,
         pages: pagination(result.count, pageSize, currentPage), // sequelize-pagination ?
         showId,

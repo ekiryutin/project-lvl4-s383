@@ -11,14 +11,14 @@
     if access.delete
       +buttonDelete(urlFor('deleteUser', user.id), 'пользователя')
 
-  .card.card-body.shadow-sm
+  .card.card-body.shadow-sm(class = (user ? '' : 'semi-transparent'))
     .form-group.row
-      +inputText(user.firstName, 'Имя', { inputClass: 'font-weight-bold' })
+      +inputText(user ? user.firstName : '', 'Имя', { inputClass: 'font-weight-bold' })
     .form-group.row
-      +inputText(user.lastName, 'Фамилия')
+      +inputText(user ? user.lastName : '', 'Фамилия')
     .form-group.row
-      +inputText(user.email, 'E-mail')
+      +inputText(user ? user.email : '', 'E-mail')
     .form-group.row
-      +inputText(user.formattedDate, 'Дата регистрации')
+      +inputText(user ? user.formattedDate : '', 'Дата регистрации')
 
   //- +confirmDelete()

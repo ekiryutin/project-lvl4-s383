@@ -65,8 +65,8 @@ nav.navbar {
 }
 
 .toolbar-right {
-  margin-top: -38px;
-  min-height: 38px;
+  margin-top: -42px;
+  min-height: 42px;
 }
 
 .pos-right {
@@ -109,6 +109,10 @@ nav.navbar {
 
 .callout-danger {
   border-left: 3px solid $red!important;
+}
+
+.semi-transparent {
+  opacity: 0.5;
 }
 
 .ui-autocomplete .highlight {

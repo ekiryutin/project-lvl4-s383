@@ -6,13 +6,21 @@ block define
 
 block content
   //- параметры
+  //-   query
   //-   users
   //-   pages: { pageCount, pageSize, currentPage, recordCount }
   //-   showId
   //-   user
   //-   access
   //-   paramUrl()
-  +title(pageTitle)
+  +title(pageTitle, 'col-3 col-lg-2')
+    div.col-3.col-lg-3.pl-0.pl-lg-4.pl-xl-0
+      form(action= urlFor('users') method= 'get')
+        .input-group
+          input.form-control(name= 'name' id= 'name' autocomplete='off' type='text' placeholder='Поиск' value= query.name )
+          .input-group-append
+            button.btn.btn-light.border.text-muted(type='submit')
+              i.fas.fa-search
     //- a.btn.btn-link.btn-sm.ml-4(href=urlFor('users.json'))
     //-  i.fas.fa-code
 
@@ -50,6 +58,7 @@ block content
         +pagination({ url: urlFor('users'), pages })
 
     //-.col-lg-7.col-6(id='pnlDetail')
+    // if user
     include detail.pug
 
     +confirmDelete()

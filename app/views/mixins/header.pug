@@ -1,9 +1,10 @@
 mixin title(name, titleCol='', prevUrl = null)
-  h4.mb-0
+  div.row
     if prevUrl
-      a.btn.btn-light.mr-1(href=prevUrl data-toggle='tooltip' title='Вернуться' data-placement='top')
+      a.btn.btn-light.mr-1.ml-3(href=prevUrl data-toggle='tooltip' title='Вернуться' data-placement='top')
         i.fas.fa-arrow-left.text-muted
-    span.form_title.pr-2(class=titleCol)= name
+    - let padding = prevUrl ? 'pl-0 ' : 'pl-3 ';
+    h4.mb-0.form_title.pr-2(class=padding+titleCol)= name
     block
 
 mixin flashMessage(param)
