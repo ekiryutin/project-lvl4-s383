@@ -38,16 +38,17 @@ mixin autocomplete(f, property, caption, options = { url:'#', col: null })
     if f.errors[propertyName]
       .invalid-feedback= f.errors[propertyName].map(({ message }) => message).join('. ')
 
-mixin input(f, property, caption, options = { as: 'text', col: null, autofocus: false })
+mixin input(f, property, caption, options = { as: 'text', col: null, autofocus: false, autocomplete: 'off' })
   - const invalidClass = f.errors[property] ? 'is-invalid' : '';
   - const labelCol = options.col ? options.col.label : (defaultCol ? defaultCol.label : 'pt-0');
   - const inputCol = options.col ? options.col.input : (defaultCol ? defaultCol.input : '');
+  - const autocomplete = options.autocomplete || 'off';
   label.col-form-label.text-muted(class=`${labelCol}`)= caption
     if isRequired(f, property) 
       sup.text-danger.pl-1 *
   div(class= inputCol)
     - const value = f.object[property] === undefined ? '' : f.object[property]
-    input.form-control(name= property id= property class=`${invalidClass}` autocomplete='off' autofocus=options.autofocus type=options['as'] value= value)
+    input.form-control(name= property id= property class=`${invalidClass}` autocomplete= autocomplete autofocus=options.autofocus type=options['as'] value= value)
     if f.errors[property]
       .invalid-feedback= f.errors[property].map(({ message }) => message).join('. ')
 

@@ -16,8 +16,8 @@ block content
             .text-danger= message.text
 
         .form-group
-          +input(f, 'email', 'E-mail', { autofocus: true })
+          +input(f, 'email', 'E-mail', { autofocus: true, autocomplete: 'on' })
         .form-group
-          +input(f, 'password', 'Пароль', { as: 'password' })
+          +input(f, 'password', 'Пароль', { as: 'password', autocomplete: 'on' })
         +formFooter('Войти')
 
