@@ -6,7 +6,7 @@ import referer from '../lib/referer';
 import { getParamUrl } from '../lib/utils';
 import renderAndSend from '../lib/chunkRender';
 
-import Tasks from '../entities/Tasks';
+import TaskService from '../services/TaskService';
 import {
   Task, TaskStatus, Tag, Attachment,
 } from '../models';
@@ -35,7 +35,7 @@ export default (router) => {
       };
       log('init');
 
-      const result = await Tasks.find(query);
+      const result = await TaskService.find(query);
       log('sql query');
 
       ctx.render('tasks', {
@@ -73,7 +73,7 @@ export default (router) => {
       });
       log('render filter');
 
-      const result = await Tasks.find(query);
+      const result = await TaskService.find(query);
       log('sql query');
 
       renderAndSend(ctx, 'tasks/list_table', {
@@ -111,7 +111,7 @@ export default (router) => {
         authorId: ctx.state.userId(),
         authorName: ctx.state.userName(),
       };
-      const { task, error } = await Tasks.createTask(attributes);
+      const { task, error } = await TaskService.createTask(attributes);
 
       if (error === null) {
         ctx.flash.set({ type: 'success', text: 'Задание успешно сохранено.' });
@@ -164,7 +164,7 @@ export default (router) => {
         ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
       }
       const form = ctx.request.body;
-      const { task, error } = await Tasks.updateTask(ctx.params.id, form);
+      const { task, error } = await TaskService.updateTask(ctx.params.id, form);
 
       if (error === null) {
         // ctx.flash.set({ type: 'success', text: `Изменения успешно сохранены.` });
@@ -186,7 +186,7 @@ export default (router) => {
         ctx.state.auth.checkAccess(ctx, task ? task.executorId : 0);
       }
       const form = ctx.request.body;
-      const { task, error } = await Tasks.setTaskStatus(ctx.params.id, form);
+      const { task, error } = await TaskService.setTaskStatus(ctx.params.id, form);
 
       if (error !== null) {
         ctx.flash.set({ type: 'error', text: error });
@@ -201,7 +201,7 @@ export default (router) => {
         ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
       }
 
-      const error = await Tasks.deleteTask(ctx.params.id);
+      const error = await TaskService.deleteTask(ctx.params.id);
 
       if (error === null) {
         ctx.flash.set({ type: 'success', text: 'Задание успешно удалено.' });

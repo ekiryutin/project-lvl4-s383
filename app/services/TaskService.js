@@ -32,7 +32,7 @@ const queryInclude = [
   { model: Tag },
 ];
 
-// про Entities
+// про Entities & Domain Services
 // https://habr.com/ru/company/mobileup/blog/335382/
 
 export default {

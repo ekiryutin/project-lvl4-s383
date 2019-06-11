@@ -1,6 +1,6 @@
 import pagination from '../../lib/pagination';
 // import { Task } from '../../models';
-import Tasks from '../../entities/Tasks';
+import TaskService from '../../services/TaskService';
 
 const pageSize = 10; // config
 
@@ -10,7 +10,7 @@ export default (router) => {
       const { query } = ctx.request;
       const currentPage = query.page || 1;
 
-      const result = await Tasks.find(query);
+      const result = await TaskService.find(query);
 
       ctx.type = 'application/json';
       ctx.body = JSON.stringify({
