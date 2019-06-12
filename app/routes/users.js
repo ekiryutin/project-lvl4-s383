@@ -1,25 +1,12 @@
-import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import pagination from '../lib/pagination';
 import referer from '../lib/referer';
 import { getParamUrl } from '../lib/utils';
-import { User, Sequelize } from '../models';
+import UserService from '../services/UserService';
+import { User } from '../models';
 
+// import { pageSize } from '../config';
 const pageSize = 10;
-
-const { Op } = Sequelize;
-
-const makeWhere = (query) => {
-  const where = {};
-  if (query.name) {
-    const name = _.startCase(query.name); // normalize
-    where[Op.or] = [
-      { firstName: { [Op.like]: `${name}%` } },
-      { lastName: { [Op.like]: `${name}%` } },
-    ];
-  }
-  return where;
-};
 
 export default (router) => {
   router
@@ -27,13 +14,7 @@ export default (router) => {
       const { query } = ctx.request;
       const currentPage = query.page || 1;
 
-      // const users = await User.findAll({
-      const result = await User.findAndCountAll({
-        where: makeWhere(query),
-        offset: (currentPage - 1) * pageSize,
-        limit: pageSize,
-        order: ['lastName', 'firstName'], // index
-      });
+      const result = await UserService.find(query);
       const users = result.rows;
 
       const firstId = users.length > 0 ? users[0].id : null;
@@ -64,13 +45,13 @@ export default (router) => {
 
     .post('saveUser', '/users', async (ctx) => { // сохранение (нового) пользователя
       const form = ctx.request.body;
-      const user = User.build(form);
-      try {
-        await user.save();
+      const { user, error } = await UserService.createUser(form);
+
+      if (error === null) {
         ctx.flash.set({ type: 'success', text: `Пользователь '${user.fullName}' успешно зарегистрирован.` });
         ctx.redirect(router.url('root'));
-      } catch (err) {
-        ctx.render('users/new', { f: buildFormObj(user, User.attributes, err) });
+      } else {
+        ctx.render('users/new', { f: buildFormObj(user, User.attributes, error) });
       }
     })
 
@@ -96,24 +77,29 @@ export default (router) => {
       ctx.state.auth.checkAccess(ctx, ctx.params.id);
 
       const form = ctx.request.body;
-      const user = await User.findByPk(ctx.params.id);
-      try {
-        await user.update(form);
+      const { user, error } = await UserService.updateUser(ctx.params.id, form);
+
+      if (error === null) {
         // ctx.redirect(router.url('showUser', user.id)); // axios не поддерживает redirect
         ctx.type = 'application/json';
         ctx.body = JSON.stringify({ redirect: router.url('showUser', user.id) });
-      } catch (err) {
-        ctx.render('users/edit', { f: buildFormObj(user, User.attributes, err) });
+      } else {
+        ctx.render('users/edit', { f: buildFormObj(user, User.attributes, error) });
       }
     })
 
     .delete('deleteUser', '/users/:id', async (ctx) => { // удаление пользователя
       ctx.state.auth.checkAccess(ctx, ctx.params.id);
-
       const user = await User.findByPk(ctx.params.id);
-      await user.destroy();
-      ctx.flash.set({ type: 'success', text: `Пользователь '${user.fullName}' успешно удален.` });
-      // logout ?
+
+      const error = await UserService.deleteUser(ctx.params.id);
+
+      if (error === null) {
+        ctx.flash.set({ type: 'success', text: `Пользователь '${user.fullName}' успешно удален.` });
+        // logout ?
+      } else {
+        ctx.flash.set({ type: 'danger', text: `Ошибка при удалении пользователя '${user.fullName}'.` });
+      }
       const paramUrl = getParamUrl(ctx);
       ctx.redirect(paramUrl({ id: '' }, ctx.get('Referer')));
     });
