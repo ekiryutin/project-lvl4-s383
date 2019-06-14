@@ -1,4 +1,4 @@
-import Where from '../lib/Where';
+import { makeWhere } from '../lib/utils';
 import {
   Task, TaskStatus, Tag, Sequelize,
 } from '../models';
@@ -6,24 +6,30 @@ import {
 const { Op } = Sequelize;
 const pageSize = 10; // config
 
-const makeWhere = (query) => {
-  const where = new Where(query, Task);
-
-  where.searchBy('statusId');
-  where.searchBy('executorId');
-  where.searchBy('authorId');
-  where.searchBy('tags', (value) => {
-    const tags = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    const strTags = tags.map(s => `'${s}'`).join(',');
-    const subquery = `(select "TaskId" from "TaskTags" join "Tags" on "Tags"."id" = "TagId" where "Tags"."name" in (${strTags}))`;
-    return {
-      param: '$Task.id$',
-      // condition: { [Op.in]: [53] },
-      condition: { [Op.in]: Sequelize.literal(subquery) },
-    };
-  });
-  return where.get();
-};
+const searchConditions = [
+  {
+    param: 'statusId',
+    condition: value => ({ [Op.eq]: Number(value) }), // { [Op.in]: [53] },
+  },
+  {
+    param: 'executorId',
+    condition: value => ({ [Op.eq]: Number(value) }),
+  },
+  {
+    param: 'authorId',
+    condition: value => ({ [Op.eq]: Number(value) }),
+  },
+  {
+    param: 'tags',
+    field: '$Task.id$',
+    condition: (value) => {
+      const tags = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+      const strTags = tags.map(s => `'${s}'`).join(',');
+      const subquery = `(select "TaskId" from "TaskTags" join "Tags" on "Tags"."id" = "TagId" where "Tags"."name" in (${strTags}))`;
+      return { [Op.in]: Sequelize.literal(subquery) };
+    },
+  },
+];
 
 const queryInclude = [
   { model: TaskStatus, as: 'status', attributes: ['id', 'name', 'color'] },
@@ -41,7 +47,7 @@ export default {
 
     const result = await Task.findAndCountAll({
       include: queryInclude,
-      where: makeWhere(query),
+      where: makeWhere(query, searchConditions),
       subQuery: false,
       order: ['dateTo'],
       offset: (currentPage - 1) * pageSize,
