@@ -10,15 +10,17 @@ mixin formFor(f, options = {})
         input(name='_method' type='hidden' value= method)
       block
 
-mixin select(f, property, caption, list, options = { col: null })
+mixin select(f, property, caption, list, options = { col: null, multiselect: false })
   - const labelCol = options.col ? options.col.label : (defaultCol ? defaultCol.label : 'pt-0');
   - const inputCol = options.col ? options.col.input : (defaultCol ? defaultCol.input : '');
   label.col-form-label.text-muted(class=`${labelCol}`)= caption
   div(class= inputCol)
-    - const value = f.object[property] === undefined ? '' : f.object[property]
-    select.form-control(name= property)
+    //- const value = f.object[property] === undefined ? '' : f.object[property]
+    - const value = f.object[property] === undefined ? [] : f.object[property]
+    - const values = Array.isArray(value) ? value.map(id => Number(id)) : [Number(value)]
+    select.form-control(name= property multiple= (options.multiselect ?  'multiple': false))
       for item in list
-        option(value=item.id selected=(item.id === Number(value)))= item.name
+        option(value=item.id selected= values.includes(item.id))= item.name
 
 mixin autocomplete(f, property, caption, options = { url:'#', col: null })
   - const propertyId = `${property}Id`;

@@ -42,7 +42,8 @@ export default (router) => {
         tasks: result.rows,
         pages: pagination(result.count, pageSize, currentPage),
         f: buildFormObj(query, null), // for filter
-        statuses: [{ id: '', name: '' }, ...statuses], // append empty status
+        // statuses: [{ id: '', name: '' }, ...statuses], // append empty status
+        statuses,
         access,
         paramUrl: getParamUrl(ctx), // для формирования ссылок
       });

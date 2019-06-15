@@ -9,7 +9,9 @@ const pageSize = 10; // config
 const searchConditions = [
   {
     param: 'statusId',
-    condition: value => ({ [Op.eq]: Number(value) }), // { [Op.in]: [53] },
+    condition: value => (Array.isArray(value)
+      ? { [Op.in]: value.map(id => Number(id)) }
+      : { [Op.eq]: Number(value) }),
   },
   {
     param: 'executorId',

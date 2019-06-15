@@ -141,6 +141,34 @@ nav.navbar {
   border: 1px solid transparent!important;
 }
 
+@import '~bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
+
+.dropdown-menu {
+  width:100%;
+}
+
+.multiselect {
+  text-align: left;
+}
+
+.multiselect-container {
+  margin-top: -1px;
+}
+
+.multiselect-container li a {
+  display: block;
+  color: inherit;
+}
+
+.multiselect-container li a label {
+  padding: 3px 20px 3px 20px;
+}
+
+.multiselect-selected {
+  background-color: $blue;
+  color: white;
+}
+
 
 @import '~dm-file-uploader/dist/css/jquery.dm-uploader.min.css';
 
