@@ -6,7 +6,7 @@ include /mixins/forms.pug
     .row
       .col-md.col-lg.col-xl-12
         .form-group
-          +select(f, 'statusId', 'Статус', statuses )
+          +select(f, 'statusId', 'Статус', statuses, { multiselect: true } )
           //-div.btn-group(style='width:240px')
           //-  .btn.btn-outline-warning Новое
           //-  .btn.btn-outline-primary В работе

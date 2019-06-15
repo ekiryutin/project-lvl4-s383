@@ -18,7 +18,8 @@ mixin select(f, property, caption, list, options = { col: null, multiselect: fal
     //- const value = f.object[property] === undefined ? '' : f.object[property]
     - const value = f.object[property] === undefined ? [] : f.object[property]
     - const values = Array.isArray(value) ? value.map(id => Number(id)) : [Number(value)]
-    select.form-control(name= property multiple= (options.multiselect ?  'multiple': false))
+    - const correctHeight = options.multiselect ? 'max-height: 38px;' : ''
+    select.form-control(name= property multiple= (options.multiselect ?  'multiple': false) style= correctHeight)
       for item in list
         option(value=item.id selected= values.includes(item.id))= item.name
 

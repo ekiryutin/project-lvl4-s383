@@ -69,7 +69,7 @@ export default (router) => {
 
       renderAndSend(ctx, 'tasks/list_filter', {
         f: buildFormObj(query, null), // for filter
-        statuses: [{ id: '', name: '' }, ...statuses], // append empty status
+        statuses,
         access,
       });
       log('render filter');
