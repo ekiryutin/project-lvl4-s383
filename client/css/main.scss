@@ -41,20 +41,36 @@ nav.navbar {
   text-decoration: none;
 }
 
+.state-danger {
+  background-color: rgba($red, .15);
+  border: 1px solid rgba($red, .4);
+  border-left-width: 4px;
+}
+
 .state-warning {
-  background-color: rgba($orange, .2);
-  border: 1px solid rgba($orange, .3);
+  background-color: rgba($orange, .15);
+  border: 1px solid rgba($orange, .4);
+  border-left-width: 4px;
 }
 
 .state-info {
-  background-color: rgba($blue, .2);
-  border: 1px solid rgba($blue, .3);
+  background-color: rgba($blue, .15);
+  border: 1px solid rgba($blue, .4);
+  border-left-width: 4px;
 }
 
 .state-success {
-  background-color: rgba($green, .2);
-  border: 1px solid rgba($green, .3);
+  background-color: rgba($green, .15);
+  border: 1px solid rgba($green, .4);
+  border-left-width: 4px;
 }
+
+.state-done {
+  background-color: rgba($gray-500, .2);
+  border: 1px solid rgba($gray-500, .4);
+  border-left-width: 4px;
+}
+
 
 .badge-gray {
   background-color: #e5e5e5; /* $gray-200; */

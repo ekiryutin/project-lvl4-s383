@@ -8,12 +8,21 @@ block define
 block content
   //- параметры
   //-   task
+  //-   actions
   //-   access
   div.row.justify-content-center
     div.col-xl-8.col-lg-9.col-md-12.col-sm-12
 
       +title('Задание','col-2 pl-0', referFor('showTask'))
         span.ml-4
+          each action in actions
+            //- a.btn.btn-outline-primary.mr-1(href= urlFor('statusTask', task.id) data-method='patch' rel='nofollow')= action.name
+            - const btnStyle = action.priority === '1' ? 'btn-outline-primary' : 'btn-outline-secondary';
+            form(action= urlFor('statusTask', task.id) method='post' style='display: inline')
+              input(name='_method' type='hidden' value='patch')
+              input(name='statusId' type='hidden' value= action.toId)
+              button.btn(type='submit' class=btnStyle)= action.name
+
           if access.edit
             +buttonEdit(urlFor('editTask', task.id), true)
           if access.delete
@@ -26,14 +35,8 @@ block content
           +inputText(task.dateTo, 'Срок', { col: { label: 'col-3', input: 'col-3' } })
 
           label.col-form-label.text-muted(class= 'col-2') Статус
-          .input-group(class= 'col-4')
+          .col-4
             .form-control.form-control-plaintext.border-bottom(class=`state-${task.status.color}`)= task.status.name
-            if access.status 
-              .input-group-append
-                form(action= urlFor('statusTask', task.id) method='post')
-                  input(name='_method' type='hidden' value='patch')
-                  input(name='statusId' type='hidden' value=task.nextStatus.id)
-                  button.btn.btn-outline-primary(type='submit')= task.nextStatus.action
 
         .form-group.row
           +textareaText(task.description, 'Описание')

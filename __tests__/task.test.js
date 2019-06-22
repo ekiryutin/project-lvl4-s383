@@ -5,7 +5,7 @@ import matchers from 'jest-supertest-matchers';
 import { sequelize } from '../app/models';
 import app from '../app';
 import {
-  task, invalidTask, statuses,
+  task, invalidTask, statuses, transitions,
 } from './__fixtures__/data';
 import {
   authenticate, testGET, testPATCH, testDELETE,
@@ -24,7 +24,12 @@ describe('task', () => {
 
   beforeAll(async () => {
     expect.extend(matchers);
+    // создаем базу
     await sequelize.sync({ force: false });
+    // заполняем справочники
+    const queryInterface = sequelize.getQueryInterface();
+    await queryInterface.bulkInsert('TaskStatuses', statuses);
+    await queryInterface.bulkInsert('StatusTransitions', transitions);
 
     server = app().listen();
 
@@ -46,21 +51,6 @@ describe('task', () => {
           .expect(200, { type: 'success', text: 'Файл успешно прикреплен.' }));
     });
   };
-
-  it('addStatuses', async () => {
-    await request.agent(server)
-      .post('/statuses')
-      .send(statuses[0])
-      .expect(403); // forbidden
-
-    statuses.forEach(async (status) => {
-      await request.agent(server)
-        .post('/statuses')
-        .set('Cookie', authCookie)
-        .send(status)
-        .expect(302);
-    });
-  });
 
   it('createTask', async () => {
     await request.agent(server)
@@ -123,8 +113,9 @@ describe('task', () => {
   it('statusTask', async () => {
     const tests = [
       { url: `${ownerTask}/status`, data: { statusId: 2 }, code: 302 }, // success
-      { url: `${ownerTask}/status`, data: { statusId: -1 }, code: 302 }, // with flash
-      { url: `${otherTask}/status`, data: { statusId: 2 }, code: 403 }, // forbidden
+      { url: `${ownerTask}/status`, data: { statusId: -1 }, code: 400 }, // bad param
+      // { url: `${otherTask}/status`, data: { statusId: 2 }, code: 403 }, // forbidden
+      { url: `${otherTask}/status`, data: { statusId: 2 }, code: 404 }, // not found
     ];
     await testPATCH(server, authCookie, tests);
   });

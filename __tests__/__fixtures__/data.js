@@ -13,9 +13,21 @@ export const invalidUser = {
 };
 
 export const statuses = [
-  { name: 'Новое', color: 'warning' },
-  { name: 'В работе', color: 'info' },
-  { name: 'Завершено', color: 'success' },
+  {
+    name: 'Новое', color: 'warning', createdAt: new Date(), updatedAt: new Date(),
+  },
+  {
+    name: 'В работе', color: 'info', createdAt: new Date(), updatedAt: new Date(),
+  },
+  {
+    name: 'Завершено', color: 'success', createdAt: new Date(), updatedAt: new Date(),
+  },
+];
+
+export const transitions = [
+  {
+    fromId: 1, toId: 2, name: 'Начать', access: 'executor', priority: '1',
+  },
 ];
 
 export const task = {

@@ -6,7 +6,7 @@ import tasks from './tasks';
 import jsonTasks from './api/tasks';
 import attachments from './attachments';
 import taskAttachments from './taskAttachments';
-import statuses from './statuses';
+// import statuses from './statuses';
 import jsonStatuses from './api/statuses';
 
 const controllers = [
@@ -15,7 +15,7 @@ const controllers = [
   tasks, jsonTasks,
   attachments,
   taskAttachments,
-  statuses, jsonStatuses,
+  jsonStatuses,
 ];
 
 export default (router, container) => controllers.forEach(f => f(router, container));

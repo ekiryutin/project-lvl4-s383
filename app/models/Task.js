@@ -120,16 +120,12 @@ export default (sequelize, DataTypes) => {
   }, {
     paranoid: true, // использует `deletedAt, добавляет в запрос ...`deletedAt` IS NULL
 
-    getterMethods: {
+    /* getterMethods: {
       nextStatus() {
-        // по идее надо загружать из БД, иначе справочник нет смысла хранить в БД
-        switch (this.statusId) { // StateMachine :)
-          case 1: return { id: 2, action: 'Принять' };
-          case 2: return { id: 3, action: 'Завершить' };
-          default: return null;
+          return null;
         }
       },
-    },
+    }, */
   });
   Task.associate = (models) => {
     Task.belongsTo(models.TaskStatus, { as: 'status' });

@@ -31,6 +31,12 @@ module.exports = {
         name: 'В работе', color: 'info', createdAt: new Date(), updatedAt: new Date(),
       },
       {
+        name: 'Выполнено', color: 'success', createdAt: new Date(), updatedAt: new Date(),
+      },
+      {
+        name: 'Отклонено', color: 'danger', createdAt: new Date(), updatedAt: new Date(),
+      },
+      {
         name: 'Завершено', color: 'success', createdAt: new Date(), updatedAt: new Date(),
       },
     ], {})),

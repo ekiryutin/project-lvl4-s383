@@ -17,6 +17,6 @@ export const makeWhere = (query, conditions) => {
   conditions
     .filter(c => params.includes(c.param) && query[c.param])
     .forEach((c) => { where[c.field || c.param] = c.condition(query[c.param]); });
-  console.log(where);
+  // console.log(where);
   return where;
 };

@@ -7,6 +7,7 @@ import { getParamUrl } from '../lib/utils';
 import renderAndSend from '../lib/chunkRender';
 
 import TaskService from '../services/TaskService';
+import TaskStatusService from '../services/TaskStatusService';
 import {
   Task, TaskStatus, Tag, Attachment,
 } from '../models';
@@ -29,7 +30,7 @@ export default (router) => {
       log('GET');
       const { query } = ctx.request;
       const currentPage = query.page || 1;
-      const statuses = await TaskStatus.findAll();
+      const statuses = await TaskStatusService.list();
       const access = {
         new: ctx.state.auth.hasAccess('newTask'),
       };
@@ -55,7 +56,7 @@ export default (router) => {
       log('GET');
       const { query } = ctx.request;
       const currentPage = query.page || 1;
-      const statuses = await TaskStatus.findAll();
+      const statuses = await TaskStatusService.list();
       const access = {
         new: ctx.state.auth.hasAccess('newTask'),
       };
@@ -93,7 +94,7 @@ export default (router) => {
       // ctx.state.auth.checkAccess(ctx); { // проверка не работает, т.к. matchedRoute = showTask
       //                                    // некритично - сработает проверка в saveTask
 
-      const statuses = await TaskStatus.findAll();
+      const statuses = await TaskStatusService.list();
       const task = Task.build();
       referer.saveFor(ctx, ['showTask', 'newTask']); // чтобы после сохранения вернуться из просмотра и для Cancel
 
@@ -115,11 +116,11 @@ export default (router) => {
       const { task, error } = await TaskService.createTask(attributes);
 
       if (error === null) {
-        ctx.flash.set({ type: 'success', text: 'Задание успешно сохранено.' });
+        ctx.flash.set({ type: 'success', text: 'Задание успешно добавлено.' });
         referer.prevent(ctx);
         ctx.redirect(router.url('showTask', task.id));
       } else {
-        const statuses = await TaskStatus.findAll();
+        const statuses = await TaskStatusService.list();
         ctx.render('tasks/new', {
           f: buildFormObj(task, Task.attributes, error),
           statuses,
@@ -134,14 +135,18 @@ export default (router) => {
           { model: Attachment },
         ],
       });
+
+      const actions = await TaskStatusService.getStatusTransitions(task.statusId,
+        [task.authorId === ctx.session.userId ? 'author' : '',
+          task.executorId === ctx.session.userId ? 'executor' : '',
+        ]);
       const access = {
         edit: ctx.state.auth.hasAccess('editTask', task.authorId),
         delete: ctx.state.auth.hasAccess('deleteTask', task.authorId),
-        status: ctx.state.auth.hasAccess('statusTask', task.executorId) && task.nextStatus !== null,
         attach: ctx.state.auth.hasAccess('saveTaskAttachment', [task.authorId, task.executorId]),
       };
       referer.saveFor(ctx, ['showTask', 'deleteTask']);
-      ctx.render('tasks/show', { task, access });
+      ctx.render('tasks/show', { task, actions, access });
     })
 
     .get('editTask', '/tasks/:id/edit', async (ctx) => { // форма редактирования задания
@@ -150,7 +155,7 @@ export default (router) => {
       });
       ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
 
-      const statuses = await TaskStatus.findAll();
+      const statuses = await TaskStatusService.list();
       referer.saveFor(ctx, ['editTask', 'updateTask']); // для Cancel
 
       ctx.render('tasks/edit', {
@@ -172,7 +177,7 @@ export default (router) => {
         referer.prevent(ctx);
         ctx.redirect(router.url('showTask', task.id));
       } else {
-        const statuses = await TaskStatus.findAll();
+        const statuses = await TaskStatusService.list();
         // referer.prevent(ctx); ?
         ctx.render('tasks/edit', {
           f: buildFormObj(task, Task.attributes, error),
@@ -182,11 +187,18 @@ export default (router) => {
     })
 
     .patch('statusTask', '/tasks/:id/status', async (ctx) => { // изменение статуса
+      const form = ctx.request.body;
       {
         const task = await Task.findByPk(ctx.params.id);
-        ctx.state.auth.checkAccess(ctx, task ? task.executorId : 0);
+        if (task === null) {
+          ctx.throw(404); // Not found
+        }
+        const trans = await TaskStatusService.getTransition(task.statusId, form.statusId);
+        if (trans === undefined) {
+          ctx.throw(400); // Bad request
+        }
+        ctx.state.auth.checkAccess(ctx, trans.access === 'author' ? task.authorId : task.executorId);
       }
-      const form = ctx.request.body;
       const { task, error } = await TaskService.setTaskStatus(ctx.params.id, form);
 
       if (error !== null) {
