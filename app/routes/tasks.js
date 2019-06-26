@@ -8,6 +8,7 @@ import renderAndSend from '../lib/chunkRender';
 
 import TaskService from '../services/TaskService';
 import TaskStatusService from '../services/TaskStatusService';
+import FilterService from '../services/FilterService';
 import {
   Task, TaskStatus, Tag, Attachment,
 } from '../models';
@@ -39,6 +40,8 @@ export default (router) => {
       const result = await TaskService.find(query);
       log('sql query');
 
+      const filterPresets = await FilterService.getFilters(ctx);
+
       ctx.render('tasks', {
         tasks: result.rows,
         pages: pagination(result.count, pageSize, currentPage),
@@ -46,6 +49,7 @@ export default (router) => {
         // statuses: [{ id: '', name: '' }, ...statuses], // append empty status
         statuses,
         access,
+        filterPresets,
         paramUrl: getParamUrl(ctx), // для формирования ссылок
       });
       log('render');

@@ -82,11 +82,9 @@ export default {
     }
   },
 
-  // для изменения статуса сделать отдельные функции: takeTaskInWork, completeTask
+  // для изменения статуса сделать (?) отдельные функции: completeTask, acceptTask, rejectTask
   setTaskStatus: async (id, form) => { // изменение статуса
-    // const form = ctx.request.body;
     const task = await Task.findByPk(id);
-    // ctx.state.auth.checkAccess(ctx, task ? task.executorId : 0);
 
     try {
       await task.update(form);
@@ -98,7 +96,6 @@ export default {
 
   deleteTask: async (id) => { // удаление задания
     const task = await Task.findByPk(id);
-    // ctx.state.auth.checkAccess(ctx, task ? task.authorId : 0);
 
     try {
       await task.destroy();

@@ -11,8 +11,19 @@ block content
   //-   f: { name, object, errors }
   //-   statuses
   //-   access
-  +title(pageTitle, 'col-xl-3 col-md-2 col-sm-3')
-    span.ml-3
+  //-   filterPresets
+  +title(pageTitle, 'col-xl-3 col-lg-3 col-md-4 col-sm-4')
+    .dropdown(style="position:absolute; margin-left:130px;")
+      - const title = filterPresets.name || 'Поиск'
+      button.btn.btn-link.link-light.dropdown-toggle(id='filterMenu' data-toggle='dropdown' Xaria-haspopup='true' Xaria-expanded='false' href='#')= title
+        //- if !filterPresets.name
+        //-   span.notify-status
+      .dropdown-menu.shadow(aria-labelledby='filterMenu')
+        each filter in filterPresets.filters
+          a.dropdown-item(href=filter.link)= filter.name
+            //- span.badge.badge-primary filter.amount
+
+    span.ml-xl-3.ml-lg-5.ml-md-3.ml-sm-4
       if access.new
         a.btn.btn-outline-primary(href= urlFor('newTask') Xstyle='margin-left: 40px')
           span.pl-1 Добавить

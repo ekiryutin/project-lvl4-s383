@@ -45,10 +45,10 @@ module.exports = {
 
     .then(() => queryInterface.bulkInsert('StatusTransitions', [
       {
-        fromId: 1, toId: 2, name: 'Начать', access: 'executor', priority: '1',
+        fromId: 1, toId: 2, name: 'Начать работу', access: 'executor', priority: '1',
       },
       {
-        fromId: 2, toId: 3, name: 'Готово', access: 'executor', priority: '1',
+        fromId: 2, toId: 3, name: 'Завершить', access: 'executor', priority: '1',
       },
       {
         fromId: 3, toId: 5, name: 'Принять', access: 'author', priority: '1',
@@ -57,7 +57,7 @@ module.exports = {
         fromId: 3, toId: 4, name: 'Отклонить', access: 'author', priority: '2',
       },
       {
-        fromId: 4, toId: 2, name: 'Начать', access: 'executor', priority: '1',
+        fromId: 4, toId: 2, name: 'Начать работу', access: 'executor', priority: '1',
       },
     ], {})),
 

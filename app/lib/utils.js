@@ -1,12 +1,23 @@
 import { URL } from 'url';
 
-export const getParamUrl = ctx => (params, fromUrl = ctx.url) => {
-  const url = new URL(fromUrl, ctx.origin);
+const setUrlQueryParams = (url, params) => { // achtung - побочные эффекты, меняет url
   const keys = Object.keys(params);
   keys.forEach((param) => {
-    if (params[param] !== '') url.searchParams.set(param, params[param]);
-    else url.searchParams.delete(param);
+    const value = params[param];
+    url.searchParams.delete(param);
+    // if (param !== '')
+    if (Array.isArray(value)) {
+      value.forEach(v => url.searchParams.append(param, v));
+    } else {
+      url.searchParams.append(param, value);
+    }
   });
+  return url;
+};
+
+export const getParamUrl = ctx => (params, fromUrl = ctx.url) => {
+  const url = new URL(fromUrl, ctx.origin);
+  setUrlQueryParams(url, params);
   return `${url.pathname}${url.search}`;
 };
 

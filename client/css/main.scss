@@ -131,6 +131,25 @@ nav.navbar {
   opacity: 0.5;
 }
 
+.link-light {
+  text-decoration: none!important;
+  margin-top: -1px;
+}
+
+.notify-status {
+  background-clip: padding-box;
+  background-image: linear-gradient($yellow, $orange);
+  border: 2px solid #f8f9fa;
+  border-radius: 50%;
+  color: #fff;
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  z-index: 2;
+}
+
 .ui-autocomplete .highlight {
   font-weight: bold;
 }
