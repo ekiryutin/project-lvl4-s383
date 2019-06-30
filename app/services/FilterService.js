@@ -10,6 +10,8 @@ const getPresets = async (userId = '', userName = '') => { // можно заг�
   filterPresets = [
     {
       name: 'Новые',
+      status: 'new',
+      priority: 1,
       params: {
         statusId: [1, 4], // Новое, Отклонено
         executorId: userId,
@@ -18,6 +20,8 @@ const getPresets = async (userId = '', userName = '') => { // можно заг�
     },
     {
       name: 'На исполнении',
+      status: 'process',
+      priority: 3,
       params: {
         statusId: [2], // В работе
         executorId: userId,
@@ -26,6 +30,8 @@ const getPresets = async (userId = '', userName = '') => { // можно заг�
     },
     {
       name: 'На проверку',
+      status: 'success',
+      priority: 2,
       params: {
         statusId: [3], // Выполнено
         authorId: userId,
@@ -65,6 +71,6 @@ export default {
     });
     // определение текущего фильтра
     const cur = filterPresets.find(f => compareQuery(f.params, ctx.query));
-    return { name: cur ? cur.name : '', filters };
+    return { name: cur ? cur.name : '', filters, userId: ctx.session.userId };
   },
 };

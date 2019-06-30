@@ -71,6 +71,15 @@ nav.navbar {
   border-left-width: 4px;
 }
 
+.badge-new {
+  color: #fff;
+  background-color: $orange;
+}
+
+.badge-process {
+  color: #fff;
+  background-color: $primary;
+}
 
 .badge-gray {
   background-color: #e5e5e5; /* $gray-200; */
@@ -138,7 +147,7 @@ nav.navbar {
 
 .notify-status {
   background-clip: padding-box;
-  background-image: linear-gradient($yellow, $orange);
+  /* background-image: linear-gradient($yellow, $orange); */
   border: 2px solid #f8f9fa;
   border-radius: 50%;
   color: #fff;
@@ -148,6 +157,18 @@ nav.navbar {
   width: 14px;
   height: 14px;
   z-index: 2;
+}
+
+.notify-new {
+  background-image: linear-gradient($yellow, $orange);
+}
+
+.notify-process {
+  background-image: linear-gradient(#00d0ff, $blue);
+}
+
+.notify-success {
+  background-image: linear-gradient($teal, $green);
 }
 
 .ui-autocomplete .highlight {

@@ -16,12 +16,13 @@ block content
     .dropdown(style="position:absolute; margin-left:130px;")
       - const title = filterPresets.name || 'Поиск'
       button.btn.btn-link.link-light.dropdown-toggle(id='filterMenu' data-toggle='dropdown' Xaria-haspopup='true' Xaria-expanded='false' href='#')= title
-        //- if !filterPresets.name
-        //-   span.notify-status
-      .dropdown-menu.shadow(aria-labelledby='filterMenu')
+        if filterPresets.notify
+          span.notify-status(class=`notify-${filterPresets.notify}`)
+      .dropdown-menu.shadow(aria-labelledby='filterMenu' style="width:175px")
         each filter in filterPresets.filters
           a.dropdown-item(href=filter.link)= filter.name
-            //- span.badge.badge-primary filter.amount
+            if filter.amount > 0
+              span.badge.ml-2(class=`badge-${filter.status}`)= filter.amount
 
     span.ml-xl-3.ml-lg-5.ml-md-3.ml-sm-4
       if access.new

@@ -9,6 +9,7 @@ import renderAndSend from '../lib/chunkRender';
 import TaskService from '../services/TaskService';
 import TaskStatusService from '../services/TaskStatusService';
 import FilterService from '../services/FilterService';
+import TaskSummaryService from '../services/TaskSummaryService';
 import {
   Task, TaskStatus, Tag, Attachment,
 } from '../models';
@@ -40,7 +41,8 @@ export default (router) => {
       const result = await TaskService.find(query);
       log('sql query');
 
-      const filterPresets = await FilterService.getFilters(ctx);
+      const filters = await FilterService.getFilters(ctx);
+      const filterPresets = await TaskSummaryService.get(filters);
 
       ctx.render('tasks', {
         tasks: result.rows,
@@ -206,7 +208,7 @@ export default (router) => {
       const { task, error } = await TaskService.setTaskStatus(ctx.params.id, form);
 
       if (error !== null) {
-        ctx.flash.set({ type: 'error', text: error });
+        ctx.flash.set({ type: 'danger', text: error });
       }
       referer.prevent(ctx);
       ctx.redirect(router.url('showTask', task.id));
