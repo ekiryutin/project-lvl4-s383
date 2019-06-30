@@ -157,7 +157,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER Tasks_AD_Status
-AFTE DELETE ON "Tasks"
+AFTER DELETE ON "Tasks"
 FOR EACH ROW
 EXECUTE PROCEDURE TaskSummary_delete();
 `];
