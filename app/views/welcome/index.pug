@@ -29,9 +29,9 @@ block content
           ul.mb-0
             each filter in taskInfo.filters
               li
-                a(href=`${urlFor('tasks')}${filter.link}`)= filter.name
+                a(href=`${urlFor('tasks')}${filter.link}` style="display: inline-block; min-width:120px;")= filter.name
                   - const status = filter.amount > 0 ? filter.status : 'none';
-                  span.badge.ml-2(class=`badge-${status}`)= filter.amount
+                span.badge.ml-2(class=`badge-${status}`)= filter.amount
 
       .card.shadow-sm 
         .card-body
