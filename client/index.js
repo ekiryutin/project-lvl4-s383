@@ -19,6 +19,9 @@ $('[data-toggle="tooltip"]').tooltip();
 
 $('.toast').toast('show');
 
+// $('.animation-slide-down').slideDown();
+$('.animation-slide-down').collapse('show');
+
 $('select[multiple="multiple"]').multiselect({
   buttonClass: 'form-control',
   buttonWidth: '100%',
