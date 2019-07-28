@@ -20,7 +20,7 @@ export default {
         order: ['id'], // можно добавить отдельное поле для сортировки
       });
     }
-    return statuses;
+    return statuses; // вернуть копию?
   },
 
   getStatusTransitions: async (fromId, userRoles = []) => { //  получить доступные действия

@@ -34,14 +34,18 @@ block content
                 span.badge.ml-2(class=`badge-${status}`)= filter.amount
 
       .card.shadow-sm 
-        .card-body
-          h5 Статистика
-          .text-muted Скоро будет
+        //- .card-body
+        div.d-none(id='chartInfo')= JSON.stringify(chartInfo)
+        div.diagram(id='chartContainer' data-target='chartInfo' style='max-height:220px;')
+          .text-muted.p-3 Загрузка..
 
       .card.shadow-sm 
         .card-body
-          h5 Что-то ещё
-          .text-muted Скоро будет
+          h5 Статистика
+          ul.mb-0
+            li
+              a(href=urlFor('statistics')) Состояние исполнения
+            li.text-muted Исполнительская дисциплина
 
   else
     p.p-2.pl-3.rounded-lg.bg-white.border.shadow-sm.col-xl-8.col-lg-10.animation-slide-down.collapse
@@ -58,19 +62,20 @@ block content
         ul 
           li просмотр пользователей
           li регистрация новых пользователей
-          li(class= muted) изменение и удаление (своего) пользователя 
+          li изменение и удаление (своего) пользователя 
           //- i.fas.fa-lock
       li
         b задания
         ul 
           li просмотр и поиск заданий
-          li(class= muted) добавление заданий
-          li(class= muted) изменение и удаление заданий (автор)
-          li(class= muted) обновление статуса заданий (исполнитель)
-          li(class= muted) прикрепление файлов к заданию
+          li добавление заданий
+          li изменение и удаление заданий (автор)
+          li обновление статуса заданий (исполнитель)
+          li прикрепление файлов к заданию
           //- li добавление комментариев
           //- li уведомления (задание назначено, исполнено)
           //- li просмотр истории изменений
+          li статистика
       li
         b общее
         ul 

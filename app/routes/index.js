@@ -8,6 +8,7 @@ import attachments from './attachments';
 import taskAttachments from './taskAttachments';
 // import statuses from './statuses';
 import jsonStatuses from './api/statuses';
+import statistics from './statistics';
 
 const controllers = [
   welcome, sessions,
@@ -16,6 +17,7 @@ const controllers = [
   attachments,
   taskAttachments,
   jsonStatuses,
+  statistics,
 ];
 
 export default (router, container) => controllers.forEach(f => f(router, container));

@@ -103,7 +103,7 @@ block content
                 //-    i.fas.fa-clock
                   //-div.badge(class=`badge-${task.dateState.color}`)= task.dateState.name
               td
-                span.rounded.pl-2.pr-2.pb-1.pt-1(class= `state-${task.status.color}`)
+                span.rounded.pl-2.pr-2.pb-1.pt-1.text-nowrap(class= `state-${task.status.color}`)
                   = task.status.name
               td= task.executorName
               td

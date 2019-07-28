@@ -1,7 +1,9 @@
-import { TaskSummary } from '../models';
+import { TaskSummary, Sequelize } from '../models';
+
+const { Op } = Sequelize;
 
 export default {
-  get: async (filters) => { // загрузка
+  get: async (filters) => { // загрузка для quick filter
     const summary = await TaskSummary.findAll({
       where: { userId: Number(filters.userId || -1) },
     });
@@ -22,5 +24,17 @@ export default {
       filters: filtersWithAmount,
       notify: sorted.length > 0 ? sorted[0].status : null,
     };
+  },
+
+  find: async (query) => { // загрузка данных
+    const where = {};
+    if (query.users) {
+      where.userId = { [Op.in]: query.users };
+    }
+
+    const summary = await TaskSummary.findAll({
+      where,
+    });
+    return summary;
   },
 };

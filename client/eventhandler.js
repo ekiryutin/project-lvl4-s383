@@ -3,6 +3,7 @@ import attachAutocomplete from './autocomplete';
 import attachDatepicker from './datepicker';
 import attachFileUploader from './fileuploader';
 import attachLoader from './loader';
+import attachCharts from './charts';
 
 const attachDeleteButton = (element) => {
   element.querySelectorAll('button.btn-delete')
@@ -20,4 +21,5 @@ export default (element) => { // attachEventHandlers
   attachAutocomplete(element);
   attachDatepicker(element);
   attachFileUploader(element);
+  attachCharts(element);
 };

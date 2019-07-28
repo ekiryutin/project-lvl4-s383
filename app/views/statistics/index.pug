@@ -1,0 +1,25 @@
+extends /layouts/application.pug
+
+block define
+  - const pageTitle = 'Статистика';
+
+block content
+  //- параметры
+  //-   chartInfo
+  +title(pageTitle)
+  .row
+    .col-xl-3
+      ul
+        li
+          a(href='#') Состояние исполнения заданий
+        //-  switch Показатели по сотрудникам / по подразделениям
+        li.text-muted Исполнительская дисциплина
+        li.text-muted Кол-во заданий по месяцам
+
+    .col-xl-9
+      .card.card-body.shadow-sm
+        div.d-none(id='chartInfo')= JSON.stringify(chartInfo)
+        div.diagram(id='chartContainer' data-target='chartInfo')
+          .text-muted Загрузка..
+
+
