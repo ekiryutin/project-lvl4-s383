@@ -4,15 +4,14 @@ import UserService from './UserService';
 
 // get colors from css variables ComputedStyle().getPropertyValue()
 const colorMap = {
-  danger: 'rgba(220, 53, 69, 0.6)', // '#e87a84',
-  info: 'rgba(0, 123, 255, 0.6)', // '#57a8ff',
-  success: 'rgba(40, 167, 69, 0.6)', // '#71c584',
-  warning: '#f5d049',
-  reject: '#e486af', // base #e83ecb
-  // orange: '#feaa64',
+  danger: 'rgba(220, 53, 69, 0.6)', // $red
+  info: 'rgba(0, 123, 255, 0.6)', // $blue
+  success: 'rgba(40, 167, 69, 0.6)', // $green,
+  warning: 'rgba(255, 193, 7, 0.6)', // $yellow
+  reject: 'rgba(144, 66, 193, 0.6)', // $purple
 };
 
-const taskWord = (amount) => {
+const taskDeclension = (amount) => {
   switch (amount) {
     case 1: return 'задание';
     case 2:
@@ -53,7 +52,7 @@ export default {
         enabled: false,
       },
       title: {
-        text: `<b>${totalAmount}</b><br>${taskWord(totalAmount)}`, // map 1 задание, 2-4 задания, заданий
+        text: `<b>${totalAmount}</b><br>${taskDeclension(totalAmount)}`,
         align: 'center',
         verticalAlign: 'middle',
         y: 20,

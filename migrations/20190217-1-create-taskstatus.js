@@ -25,19 +25,19 @@ module.exports = {
   })
     .then(() => queryInterface.bulkInsert('TaskStatuses', [
       {
-        name: 'Новое', color: 'warning', createdAt: new Date(), updatedAt: new Date(),
+        name: 'Новое', color: 'danger', createdAt: new Date(), updatedAt: new Date(),
       },
       {
         name: 'В работе', color: 'info', createdAt: new Date(), updatedAt: new Date(),
       },
       {
+        name: 'На проверке', color: 'warning', createdAt: new Date(), updatedAt: new Date(),
+      },
+      {
+        name: 'Отклонено', color: 'reject', createdAt: new Date(), updatedAt: new Date(),
+      },
+      {
         name: 'Выполнено', color: 'success', createdAt: new Date(), updatedAt: new Date(),
-      },
-      {
-        name: 'Отклонено', color: 'danger', createdAt: new Date(), updatedAt: new Date(),
-      },
-      {
-        name: 'Завершено', color: 'success', createdAt: new Date(), updatedAt: new Date(),
       },
     ], {})),
 

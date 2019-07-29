@@ -48,15 +48,21 @@ nav.navbar {
 }
 
 .state-warning {
-  background-color: rgba($orange, .15);
-  border: 1px solid rgba($orange, .4);
-  border-left: 4px solid rgba($orange, .7);
+  background-color: rgba($yellow, .2);
+  border: 1px solid rgba($yellow, .4);
+  border-left: 4px solid rgba($yellow, .8);
 }
 
 .state-info {
   background-color: rgba($blue, .15);
   border: 1px solid rgba($blue, .4);
   border-left: 4px solid rgba($blue, .7);
+}
+
+.state-reject {
+  background-color: rgba(144, 66, 193, .15); /* $purple */
+  border: 1px solid rgba(144, 66, 193, .4);
+  border-left: 4px solid rgba(144, 66, 193, .7);
 }
 
 .state-success {
@@ -71,9 +77,9 @@ nav.navbar {
   border-left: 4px solid rgba($gray-500, .7);
 }
 
-.badge-new {
+.badge-danger {
   color: #fff;
-  background-color: $orange;
+  background-color: rgba($red, .8);
 }
 
 .badge-process {
@@ -81,17 +87,22 @@ nav.navbar {
   background-color: $primary;
 }
 
+.badge-warning {
+  color: #fff;
+  background-color: $yellow;
+}
+
 .badge-none {
-  background-color: $gray-500;
+  background-color: rgba(gray, .5);
   color: #fff;
 }
 
 .badge-gray {
-  background-color: #e5e5e5; /* $gray-200; */
+  background-color: #eceff1; /* $gray-200; */
 }
 
 .badge-gray:hover {
-  background-color: #d9d9d9; /* $gray-300; */
+  background-color: #cfd8dc; /* $gray-300; */
 }
 
 .toolbar-right {
@@ -168,16 +179,16 @@ nav.navbar {
   z-index: 2;
 }
 
-.notify-new {
-  background-image: linear-gradient($yellow, $orange);
+.notify-danger {
+  background-image: linear-gradient($orange, $red);
 }
 
 .notify-process {
   background-image: linear-gradient(#00d0ff, $blue);
 }
 
-.notify-success {
-  background-image: linear-gradient($teal, $green);
+.notify-warning {
+  background-image: linear-gradient($yellow, $warning);
 }
 
 .ui-autocomplete .highlight {

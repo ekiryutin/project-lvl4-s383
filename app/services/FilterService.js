@@ -10,7 +10,7 @@ const getPresets = async (userId = '', userName = '') => { // можно заг�
   filterPresets = [
     {
       name: 'Новые',
-      status: 'new',
+      status: 'danger',
       priority: 1,
       params: {
         statusId: [1, 4], // Новое, Отклонено
@@ -30,7 +30,7 @@ const getPresets = async (userId = '', userName = '') => { // можно заг�
     },
     {
       name: 'На проверку',
-      status: 'success',
+      status: 'warning',
       priority: 2,
       params: {
         statusId: [3], // Выполнено
