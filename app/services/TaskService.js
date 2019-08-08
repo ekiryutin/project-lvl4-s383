@@ -4,7 +4,6 @@ import {
 } from '../models';
 
 const { Op } = Sequelize;
-const pageSize = 10; // config
 
 const searchConditions = [
   {
@@ -44,7 +43,7 @@ const queryInclude = [
 // https://habr.com/ru/company/mobileup/blog/335382/
 
 export default {
-  find: async (query) => { // поиск (список) заданий
+  find: async (query, pageSize = 10) => { // поиск (список) заданий
     const currentPage = query.page || 1;
 
     const result = await Task.findAndCountAll({

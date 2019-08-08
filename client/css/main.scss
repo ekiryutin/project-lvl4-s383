@@ -131,10 +131,19 @@ nav.navbar {
   background-color: #d0e6ff;
 }
 
-/* .table-primary:after {
-  content: "<";
+/*
+.table-primary:after {
+  content: "";
+  width: 0;
+  height: 0;
   position: absolute;
-} */ 
+  right: 14px;
+  margin-top: 15px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #fff;
+  z-index: 1;
+} */
 
 .callout {
   border-left: 3px solid $gray-300!important;
@@ -191,6 +200,59 @@ nav.navbar {
   background-image: linear-gradient($yellow, $warning);
 }
 
+.day-info-danger:after {
+  content:'';
+  width: 5px;
+  height: 5px;
+  box-shadow: 
+    -6px 0 0 0 $blue,
+    /* -6px 0 0 1px #f6f6f6, */
+    -15px 0 0 0 $red;
+  position: absolute;
+  margin-left: 25px;
+  margin-top: -7px;
+}
+
+.day-info-1:after {
+  content:'';
+  width: 5px;
+  height: 5px;
+  box-shadow: 
+    -6px 0 0 0 $blue;
+  position: absolute;
+  margin-left: 21px;
+  margin-top: -7px;
+}
+
+.day-info-2:after {
+  content:'';
+  width: 5px;
+  height: 5px;
+  box-shadow: 
+    -6px 0 0 0 $blue,
+    -15px 0 0 0 $blue;
+  position: absolute;
+  margin-left: 25px;
+  margin-top: -7px;
+}
+
+.day-info-3:after {
+  content:'';
+  width: 5px;
+  height: 5px;
+  box-shadow: 
+    -6px 0 0 0 $blue,
+    -15px 0 0 0 $blue,
+    -24px 0 0 0 $blue;
+  position: absolute;
+  margin-left: 31px;
+  margin-top: -7px;
+}
+
+.Calendar .ui-datepicker {
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); /* shadow-sm */
+}
+
 .ui-autocomplete .highlight {
   font-weight: bold;
 }
@@ -202,6 +264,7 @@ nav.navbar {
 
 .ui-datepicker th {
   padding-top: 0.1em;
+  color: $gray-600; /* text-muted */
 }
 
 .ui-datepicker-today a {

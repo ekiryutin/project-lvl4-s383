@@ -33,19 +33,23 @@ block content
                   - const status = filter.amount > 0 ? filter.status : 'none';
                 span.badge.ml-2(class=`badge-${status}`)= filter.amount
 
-      .card.shadow-sm 
+      .card.shadow-sm
         //- .card-body
         div.d-none(id='chartInfo')= JSON.stringify(chartInfo)
         div.diagram(id='chartContainer' data-target='chartInfo' style='max-height:220px;')
           .text-muted.p-3 Загрузка..
 
-      .card.shadow-sm 
-        .card-body
-          h5 Статистика
-          ul.mb-0
-            li
-              a(href=urlFor('statistics')) Состояние исполнения
-            li.text-muted Исполнительская дисциплина
+      //-.card.shadow-sm
+      //-  .card-body
+      //-    h5 Статистика
+      //-    ul.mb-0
+      //-      li
+      //-        a(href=urlFor('statistics')) Состояние исполнения
+      //-      li.text-muted Исполнительская дисциплина
+
+      .card(style='background: transparent; border: 0px;')
+        .Calendar(data-source=urlFor('taskDaily.json'))
+          //- .text-muted Загрузка..
 
   else
     p.p-2.pl-3.rounded-lg.bg-white.border.shadow-sm.col-xl-8.col-lg-10.animation-slide-down.collapse
