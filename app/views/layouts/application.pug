@@ -19,11 +19,11 @@ html.h-100(lang="ru")
           span.navbar-toggler-icon
         .collapse.navbar-collapse#navbarSupportedContent
           ul.navbar-nav.mr-auto
-            - const curTasks = section === 'tasks' ? 'active' : '';
-            li.nav-item(class= curTasks)
+            li.nav-item(class= (section === 'tasks' ? 'active' : ''))
               a.nav-link(href=urlFor('tasks')) Задания
-            - const curUsers = section === 'users' ? 'active' : '';
-            li.nav-item(class= curUsers)
+            li.nav-item(class= (section === 'statistics' ? 'active' : ''))
+              a.nav-link(href=urlFor('statistics')) Статистика
+            li.nav-item(class= (section === 'users' ? 'active' : ''))
               a.nav-link(href=urlFor('users')) Пользователи
           ul.navbar-nav
             if isSignedIn()
