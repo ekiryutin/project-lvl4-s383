@@ -1,45 +1,48 @@
 import _ from 'lodash';
-// import { URLSearchParams } from 'url';
-import { getParamUrl } from '../lib/utils';
+import { getParamUrl, replaceObjectValue } from '../lib/utils';
 // import { Filter } from '../models';
 
-let filterPresets = null;
+const filterPresets = `[
+    {
+      "name": "Новые",
+      "status": "danger",
+      "priority": 1,
+      "params": {
+        "statusId": [1, 4],
+        "executorId": "$userId",
+        "executorName": "$userName"
+      }
+    },
+    {
+      "name": "На исполнении",
+      "status": "process",
+      "priority": 3,
+      "params": {
+        "statusId": [2],
+        "executorId": "$userId",
+        "executorName": "$userName"
+      }
+    },
+    {
+      "name": "На проверку",
+      "status": "warning",
+      "priority": 2,
+      "params": {
+        "statusId": [3],
+        "authorId": "$userId",
+        "authorName": "$userName"
+      }
+    }
+  ]`;
 
-const getPresets = async (userId = '', userName = '') => { // можно загружать из БД
+const getPresets = async (userId = '', userName = '') => {
   // if (filterPresets === null) {
-  filterPresets = [
-    {
-      name: 'Новые',
-      status: 'danger',
-      priority: 1,
-      params: {
-        statusId: [1, 4], // Новое, Отклонено
-        executorId: userId,
-        executorName: userName,
-      },
-    },
-    {
-      name: 'На исполнении',
-      status: 'process',
-      priority: 3,
-      params: {
-        statusId: [2], // В работе
-        executorId: userId,
-        executorName: userName,
-      },
-    },
-    {
-      name: 'На проверку',
-      status: 'warning',
-      priority: 2,
-      params: {
-        statusId: [3], // Выполнено
-        authorId: userId,
-        authorName: userName,
-      },
-    },
-  ];
-  return filterPresets;
+  //   загрузить из БД
+
+  const presets = JSON.parse(filterPresets);
+  return presets
+    .map(obj => replaceObjectValue(obj, '$userId', userId))
+    .map(obj => replaceObjectValue(obj, '$userName', userName));
 };
 
 const compareValues = (first, second) => {
@@ -62,15 +65,15 @@ const compareQuery = (filter, query) => {
 
 export default {
   getFilters: async (ctx) => {
-    await getPresets(ctx.session.userId, ctx.session.userName);
+    const userPresets = await getPresets(ctx.session.userId, ctx.session.userName);
 
     const paramUrl = getParamUrl(ctx);
-    const filters = filterPresets.map((filter) => {
+    const filters = userPresets.map((filter) => {
       const link = paramUrl(filter.params, ctx.path);
       return { ...filter, link };
     });
     // определение текущего фильтра
-    const cur = filterPresets.find(f => compareQuery(f.params, ctx.query));
+    const cur = userPresets.find(f => compareQuery(f.params, ctx.query));
     return { name: cur ? cur.name : '', filters, userId: ctx.session.userId };
   },
 };

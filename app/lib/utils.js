@@ -1,4 +1,5 @@
 import { URL } from 'url';
+import _ from 'lodash';
 
 const setUrlQueryParams = (url, params) => { // achtung - побочные эффекты, меняет url
   const keys = Object.keys(params);
@@ -30,4 +31,19 @@ export const makeWhere = (query, conditions) => {
     .forEach((c) => { where[c.field || c.param] = c.condition(query[c.param]); });
   // console.log(where);
   return where;
+};
+
+export const replaceObjectValue = (obj, placeholder, value) => {
+  const clone = {};
+  const keys = Object.keys(obj);
+
+  keys.forEach((key) => {
+    const curValue = obj[key];
+    if (_.isArray(curValue) || _.isString(curValue) || _.isNumber(curValue)) {
+      clone[key] = curValue === placeholder ? value : curValue;
+    } else {
+      clone[key] = replaceObjectValue(obj[key], placeholder, value);
+    }
+  });
+  return clone;
 };

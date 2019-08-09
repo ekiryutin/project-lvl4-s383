@@ -21,6 +21,74 @@ const taskDeclension = (amount) => {
   }
 };
 
+const pieChart = (totalAmount, colors, data) => ({
+  chart: {
+    height: '80%',
+    spacingBottom: 0,
+  },
+  credits: {
+    enabled: false,
+  },
+  title: {
+    text: `<b>${totalAmount}</b><br>${taskDeclension(totalAmount)}`,
+    align: 'center',
+    verticalAlign: 'middle',
+    y: 20,
+  },
+  // tooltip: {
+  //   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+  // },
+  plotOptions: {
+    pie: {
+      dataLabels: {
+        enabled: false,
+        /* distance: -40,
+        format: '{point.y}',
+        style: {
+          fontWeight: 'bold',
+          color: 'white',
+        }, */
+      },
+      startAngle: -90,
+      endAngle: 90,
+      center: ['50%', '65%'],
+      size: '120%',
+    },
+  },
+  colors,
+  series: [{
+    type: 'pie',
+    name: '', // задания
+    innerSize: '40%',
+    data,
+  }],
+});
+
+const stackedBarChart = (users, colors, series) => ({
+  chart: {
+    type: 'bar',
+    // type: 'column',
+  },
+  plotOptions: {
+    series: {
+      stacking: 'normal',
+    },
+  },
+  title: {
+    text: 'Состояние исполнения заданий',
+  },
+  xAxis: {
+    categories: users.map(user => user.fullName),
+  },
+  yAxis: {
+    title: {
+      text: 'Кол-во заданий',
+    },
+  },
+  colors,
+  series,
+});
+
 export default {
   userStatuses: async (userId) => { // Состояние исполнения пользователя
     let totalAmount = 0; // 'Нет';
@@ -43,48 +111,7 @@ export default {
         totalAmount += amount;
       });
 
-    return {
-      chart: {
-        height: '80%',
-        spacingBottom: 0,
-      },
-      credits: {
-        enabled: false,
-      },
-      title: {
-        text: `<b>${totalAmount}</b><br>${taskDeclension(totalAmount)}`,
-        align: 'center',
-        verticalAlign: 'middle',
-        y: 20,
-      },
-      // tooltip: {
-      //   pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-      // },
-      plotOptions: {
-        pie: {
-          dataLabels: {
-            enabled: false,
-            /* distance: -40,
-            format: '{point.y}',
-            style: {
-              fontWeight: 'bold',
-              color: 'white',
-            }, */
-          },
-          startAngle: -90,
-          endAngle: 90,
-          center: ['50%', '65%'],
-          size: '120%',
-        },
-      },
-      colors,
-      series: [{
-        type: 'pie',
-        name: '', // задания
-        innerSize: '40%',
-        data,
-      }],
-    };
+    return pieChart(totalAmount, colors, data);
   },
 
   personsStatuses: async () => { // Состояние исполнения по людям
@@ -111,29 +138,6 @@ export default {
       series.push({ name: status.name, data });
     });
 
-    return {
-      chart: {
-        type: 'bar',
-        // type: 'column',
-      },
-      plotOptions: {
-        series: {
-          stacking: 'normal',
-        },
-      },
-      title: {
-        text: 'Состояние исполнения заданий',
-      },
-      xAxis: {
-        categories: users.map(user => user.fullName),
-      },
-      yAxis: {
-        title: {
-          text: 'Кол-во заданий',
-        },
-      },
-      colors,
-      series,
-    };
+    return stackedBarChart(users, colors, series);
   },
 };
