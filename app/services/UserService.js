@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { User, Sequelize } from '../models';
 
 const { Op } = Sequelize;
@@ -7,10 +6,12 @@ const pageSize = 10; // config
 const makeWhere = (query) => {
   const where = {};
   if (query.name) {
-    const name = _.startCase(query.name); // normalize
+    const name = query.name.toLowerCase();
     where[Op.or] = [
-      { firstName: { [Op.like]: `${name}%` } },
-      { lastName: { [Op.like]: `${name}%` } },
+      // { Sequelize.where( Sequelize.fn('lower', Sequelize.col('firstName')), `${name}%` ) },
+      Sequelize.literal(`lower("firstName") like '${name}%'`),
+      Sequelize.literal(`lower("lastName") like '${name}%'`),
+      // в базе нужны индексы по lower("firstName") и lower("lastName")
     ];
   }
   return where;
