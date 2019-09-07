@@ -145,6 +145,16 @@ nav.navbar {
   z-index: 1;
 } */
 
+ul.list-dash li {
+  list-style: none;
+}
+
+ul.list-dash li:before {
+  content: "\2013";
+  margin-left: -18px;
+  margin-right: 10px;
+}
+
 .callout {
   border-left: 3px solid $gray-300!important;
 }

@@ -50,6 +50,11 @@ block content
       .card(style='background: transparent; border: 0px;')
         .Calendar(data-source=urlFor('taskDaily.json'))
           //- .text-muted Загрузка..
+        .card.shadow-sm(style="position: absolute; top: 235px; width: 273px; padding: 10px; margin-left: 0px; ") 
+          div(id="dateTaskList")
+            a(href='#') Список заданий
+          div(id="dateTaskEmpty")
+
 
   else
     p.p-2.pl-3.rounded-lg.bg-white.border.shadow-sm.col-xl-8.col-lg-10.animation-slide-down.collapse
@@ -60,17 +65,18 @@ block content
 
   p Реализованы следующие функции:
     - const muted = isSignedIn() ? '' : 'text-muted';
+
     ul
       li
         b пользователи
-        ul 
+        ul.list-dash
           li просмотр пользователей
           li регистрация новых пользователей
           li изменение и удаление (своего) пользователя 
           //- i.fas.fa-lock
       li
         b задания
-        ul 
+        ul.list-dash
           li просмотр и поиск заданий
           li добавление заданий
           li изменение и удаление заданий (автор)
@@ -82,7 +88,7 @@ block content
           li статистика
       li
         b общее
-        ul 
+        ul.list-dash
           //- li REST
           li аутентификация и авторизация
           li валидация значений в формах ввода
