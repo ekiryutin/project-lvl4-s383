@@ -68,7 +68,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       { from: './client/attachments', to: '../attachments' },
-      // { from: './favicon.ico', to: '../favicon.ico' },
+      { from: './client/favicon.ico', to: '../favicon.ico' },
     ]),
   ],
 };
